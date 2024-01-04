@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
+    <app appid='iogonlpplekgmbanhnojkipmgppnphfj'>
+    <updatecheck codebase='https://white-rock-014490f00.4.azurestaticapps.net/crx/source-1.1.2.crx'
+        version='1.1.2' />
+    </app>
+</gupdate>
