@@ -1,8 +1,9 @@
 {
     "globalHeaders": {
       "X-Frame-Options": "SAMEORIGIN",
-      "X-Permitted-Cross-Domain-Policies": "none",
+      "X-Permitted-Cross-Domain-Policies": "",
       "Referrer-Policy":"no-referrer",
+      "X-Content-Type-Options": "",
       "Permissions-Policy": "autoplay=()"
   }
 }
