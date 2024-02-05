@@ -4,6 +4,7 @@
       "X-Permitted-Cross-Domain-Policies": "",
       "Referrer-Policy":"no-referrer",
       "X-Content-Type-Options": "",
-      "Permissions-Policy": "autoplay=()"
+      "Permissions-Policy": "autoplay=()",
+      "Access-Control-Allow-Origin": "chrome-extension://nhjpodepdgpngadgdneokojlheipkdme"
   }
 }
