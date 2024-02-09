@@ -1,4 +1,4 @@
-/* START_FILE genesys_css_main.css */
+/* START_FILE genesys_css_main.css -- */
 span.outbound-option-contact-address,
 .call-history-entity.clearfix.ember-view .name,
 button.btn.btn-link.btn-phone.make-call 
