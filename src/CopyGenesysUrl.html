@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy URL Parameter to Clipboard</title>
+</head>
+<body>
+    <button id="copyButton">Copy Interaction ID</button>
+
+    <script>
+        // Function to get URL parameter
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Get the 'id' from URL
+        var paramValue = getUrlParameter('id');
+		var genesysUrl = 'https://apps.mypurecloud.com.au/directory/#/analytics/interactions/' + paramValue + '/admin';
+
+
+        function copyToClipboard() {
+		//if (window.confirm("Copy Genesys ID to your clipboard?")) {
+
+			// Copy to clipboard
+			navigator.clipboard.writeText(genesysUrl).then(function() {
+				console.log('Parameter copied to clipboard');
+				//window.close();
+				//document.close();
+			}, function(err) {
+				console.error('Could not copy text: ', err);
+			});
+		//}
+		}
+        // Add click event listener to the button
+        document.getElementById('copyButton').addEventListener('click', copyToClipboard);
+		
+    </script>
+</body>
+</html>
