@@ -66,7 +66,7 @@
         // Get the 'id' from URL
         var paramValue = getUrlParameter('id');
 		var genesysUrl = 'https://apps.mypurecloud.com.au/directory/#/analytics/interactions/' + paramValue + '/admin';
-
+        var autocloseValue = getUrlParameter('autoclose') || false;
 
         function copyToClipboard() {
 		//if (window.confirm("Copy Genesys ID to your clipboard?")) {
@@ -74,8 +74,10 @@
 			// Copy to clipboard
 			navigator.clipboard.writeText(genesysUrl).then(function() {
 				console.log('Parameter copied to clipboard');
-				window.close();
-				document.close();
+                if (autocloseValue) {
+                    window.close();
+                    document.close();
+                }
 			}, function(err) {
 				console.error('Could not copy text: ', err);
 			});
