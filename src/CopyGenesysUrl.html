@@ -74,8 +74,8 @@
 			// Copy to clipboard
 			navigator.clipboard.writeText(genesysUrl).then(function() {
 				console.log('Parameter copied to clipboard');
-				//window.close();
-				//document.close();
+				window.close();
+				document.close();
 			}, function(err) {
 				console.error('Could not copy text: ', err);
 			});
