@@ -74,10 +74,10 @@
 			// Copy to clipboard
 			navigator.clipboard.writeText(genesysUrl).then(function() {
 				console.log('Parameter copied to clipboard');
-                if (autocloseValue === 'true') {
-                    window.close();
-                    document.close();
-                }
+                // if (autocloseValue === 'true') {
+                //     window.close();
+                //     document.close();
+                // }
 			}, function(err) {
 				console.error('Could not copy text: ', err);
 			});
@@ -86,7 +86,11 @@
         // Add click event listener to the button
         document.getElementById('copyButton').addEventListener('click', copyToClipboard);
 		
-        if (autocloseValue === 'true') copyToClipboard()
+        if (autocloseValue === 'true') {
+            copyToClipboard()
+            window.close();
+            document.close();
+        }
 
     </script>
 </body>
