@@ -87,7 +87,8 @@
         document.getElementById('copyButton').addEventListener('click', copyToClipboard);
 		
         if (autocloseValue === 'true') {
-            copyToClipboard()
+            // copyToClipboard()
+            document.getElementById('copyButton').click();
             window.close();
             document.close();
         }
