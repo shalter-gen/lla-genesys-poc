@@ -67,6 +67,7 @@
         var paramValue = getUrlParameter('id');
 		var genesysUrl = 'https://apps.mypurecloud.com.au/directory/#/analytics/interactions/' + paramValue + '/admin';
         var autocloseValue = getUrlParameter('autoclose') || false;
+        var hideButton = getUrlParameter('hideButton') || false;
 
         function copyToClipboard() {
 		//if (window.confirm("Copy Genesys ID to your clipboard?")) {
@@ -93,6 +94,12 @@
             // window.close();
             // document.close();
         }
+
+        if (hideButton === 'true') {
+            document.getElementById('copyButton').style.display = 'none';
+            document.addEventListener('click', copyToClipboard);
+        }
+
 
     </script>
 </body>
