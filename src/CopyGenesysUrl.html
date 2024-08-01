@@ -74,13 +74,14 @@
 			// Copy to clipboard
 			navigator.clipboard.writeText(genesysUrl).then(function() {
 				console.log('Parameter copied to clipboard');
-                // if (autocloseValue === 'true') {
-                //     window.close();
-                //     document.close();
-                // }
 			}, function(err) {
 				console.error('Could not copy text: ', err);
+                alert('Could not copy text: ', err);
 			});
+            if (autocloseValue === 'true') {
+                window.close();
+                document.close();
+            }
 		//}
 		}
         // Add click event listener to the button
@@ -89,8 +90,8 @@
         if (autocloseValue === 'true') {
             // copyToClipboard()
             document.getElementById('copyButton').click();
-            window.close();
-            document.close();
+            // window.close();
+            // document.close();
         }
 
     </script>
