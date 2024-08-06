@@ -44,8 +44,11 @@
 	<script>
 		const url = new URL(window.location.href);
 		const targetUrl = url.searchParams.get('url');
-		let openedWindow;
+		const buttonLabel = url.searchParams.get('ButtonLabel') || 'Open Page';
 
+        let openedWindow;
+
+		document.getElementById('open-page-btn').textContent = buttonLabel;
 		document.getElementById('open-page-btn').addEventListener('click', () => {
 			if (!openedWindow || openedWindow.closed) {
 				openedWindow = window.open(targetUrl, '_blank');
