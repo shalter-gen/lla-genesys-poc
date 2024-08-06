@@ -7,11 +7,14 @@
 	<script>
 		const url = new URL(window.location.href);
 		const targetUrl = url.searchParams.get('url');
-		if (targetUrl) {
-			window.open(targetUrl, '_blank');
-		} else {
-			alert('No URL parameter provided');
-		}
+		let pageFocused = false;
+
+		window.addEventListener('focus', () => {
+			if (!pageFocused && targetUrl) {
+				pageFocused = true;
+				window.open(targetUrl, '_blank');
+			}
+		});
 	</script>
 </body>
 </html>
