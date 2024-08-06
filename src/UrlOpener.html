@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Auto Open URL</title>
+</head>
+<body>
+	<script>
+		const url = new URL(window.location.href);
+		const targetUrl = url.searchParams.get('url');
+		if (targetUrl) {
+			window.open(targetUrl, '_blank');
+		} else {
+			alert('No URL parameter provided');
+		}
+	</script>
+</body>
+</html>
