@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Network Checker</title>
+    <script>
+        // Define the checkClientIP function here (same as before)
+
+        function ipToInteger(ip) {
+            return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+        }
+
+        function prefixToMask(prefix) {
+            return (0xffffffff << (32 - prefix)) >>> 0;
+        }
+
+        async function checkClientIP(lifelineInternalCIDRs, zscalerCIDRs) {
+            try {
+                const response = await fetch('https://ip.zscaler.com/?json');
+                const jsonData = await response.json();
+                const clientIP = jsonData.srcip;
+
+                // Convert client IP to integer for comparison
+                const clientIPInt = ipToInteger(clientIP);
+
+                // Check if client IP is within lifeline internal CIDRs
+                const isLifelineInternal = lifelineInternalCIDRs.some((cidrRange) => {
+                    const [cidrAddress, cidrPrefix] = cidrRange.split('/');
+                    const cidrMask = prefixToMask(cidrPrefix);
+                    const cidrAddressInt = ipToInteger(cidrAddress);
+
+                    return (clientIPInt & cidrMask) === (cidrAddressInt & cidrMask);
+                });
+
+                // Check if client IP is within zscaler CIDRs
+                const isZscaler = zscalerCIDRs.some((cidrRange) => {
+                    const [cidrAddress, cidrPrefix] = cidrRange.split('/');
+                    const cidrMask = prefixToMask(cidrPrefix);
+                    const cidrAddressInt = ipToInteger(cidrAddress);
+
+                    return (clientIPInt & cidrMask) === (cidrAddressInt & cidrMask);
+                });
+
+                // Return the appropriate result
+                if (isLifelineInternal) {
+                    return 'lifeline_internal';
+                } else if (isZscaler) {
+                    return 'zscaler';
+                } else {
+                    return 'external';
+                }
+            } catch (error) {
+                console.error('Error fetching IP data:', error);
+            }
+        }
+        // Define the event handler for the button click
+        async function checkNetwork() {
+            const lifelineInternalCIDRs = ['192.168.1.0/24', '10.0.0.0/16'];
+            const zscalerCIDRs = ['172.16.0.0/12', '192.168.2.0/24'];
+            const result = await checkClientIP(lifelineInternalCIDRs, zscalerCIDRs);
+            document.getElementById('network-type').innerText = result;
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Network Checker</h1>
+    <button onclick="checkNetwork()">Check My Network</button>
+    <p id="network-type"></p>
+</body>
+
+</html>

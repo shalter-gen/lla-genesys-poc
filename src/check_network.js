@@ -1,0 +1,53 @@
+function ipToInteger(ip) {
+  return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+}
+
+function prefixToMask(prefix) {
+  return (0xffffffff << (32 - prefix)) >>> 0;
+}
+
+async function checkClientIP(lifelineInternalCIDRs, zscalerCIDRs) {
+  try {
+    const response = await fetch('https://ip.zscaler.com/?json');
+    const jsonData = await response.json();
+    const clientIP = jsonData.srcip;
+
+    // Convert client IP to integer for comparison
+    const clientIPInt = ipToInteger(clientIP);
+
+    // Check if client IP is within lifeline internal CIDRs
+    const isLifelineInternal = lifelineInternalCIDRs.some((cidrRange) => {
+      const [cidrAddress, cidrPrefix] = cidrRange.split('/');
+      const cidrMask = prefixToMask(cidrPrefix);
+      const cidrAddressInt = ipToInteger(cidrAddress);
+
+      return (clientIPInt & cidrMask) === (cidrAddressInt & cidrMask);
+    });
+
+    // Check if client IP is within zscaler CIDRs
+    const isZscaler = zscalerCIDRs.some((cidrRange) => {
+      const [cidrAddress, cidrPrefix] = cidrRange.split('/');
+      const cidrMask = prefixToMask(cidrPrefix);
+      const cidrAddressInt = ipToInteger(cidrAddress);
+
+      return (clientIPInt & cidrMask) === (cidrAddressInt & cidrMask);
+    });
+
+    // Return the appropriate result
+    if (isLifelineInternal) {
+      return 'lifeline_internal';
+    } else if (isZscaler) {
+      return 'zscaler';
+    } else {
+      return 'external';
+    }
+  } catch (error) {
+    console.error('Error fetching IP data:', error);
+  }
+}
+
+// Example usage
+const lifelineInternalCIDRs = ['203.174.168.92/32','203.174.184.66/32','60.240.51.190/32','60.240.123.170/32'];
+const zscalerCIDRs = ['124.248.141.0/24','136.226.248.0/23','147.161.216.0/23','147.161.218.0/23','167.103.82.0/23 ','147.161.212.0/23','165.225.226.0/23','167.103.80.0/23','167.103.98.0/23','167.103.100.0/23','167.103.102.0/23','167.103.104.0/23','167.103.106.0/23','147.161.214.0/23','165.225.114.0/23','165.225.232.0/23'];
+checkClientIP(lifelineInternalCIDRs, zscalerCIDRs).then(
+    (result) => console.log(result));
