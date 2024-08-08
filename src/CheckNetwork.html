@@ -55,8 +55,9 @@
         }
         // Define the event handler for the button click
         async function checkNetwork() {
-            const lifelineInternalCIDRs = ['192.168.1.0/24', '10.0.0.0/16'];
-            const zscalerCIDRs = ['172.16.0.0/12', '192.168.2.0/24'];
+            const lifelineInternalCIDRs = ['203.174.168.92/32', '203.174.184.66/32', '60.240.51.190/32', '60.240.123.170/32'];
+            const zscalerCIDRs = ['124.248.141.0/24', '136.226.248.0/23', '147.161.216.0/23', '147.161.218.0/23', '167.103.82.0/23 ', '147.161.212.0/23', '165.225.226.0/23', '167.103.80.0/23', '167.103.98.0/23', '167.103.100.0/23', '167.103.102.0/23', '167.103.104.0/23', '167.103.106.0/23', '147.161.214.0/23', '165.225.114.0/23', '165.225.232.0/23'];
+
             const result = await checkClientIP(lifelineInternalCIDRs, zscalerCIDRs);
             document.getElementById('network-type').innerText = result;
         }
