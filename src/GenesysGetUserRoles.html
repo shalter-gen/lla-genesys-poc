@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesys Cloud User Roles Extractor</title>
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+<body>
+    <h1>Genesys Cloud User Roles Extractor</h1>
+    <button id="extractButton">Extract Users and Roles</button>
+
+    <script>
+        const platformClient = require('platformClient');
+
+        const client = platformClient.ApiClient.instance;
+        const usersApi = new platformClient.UsersApi();
+        const authorizationApi = new platformClient.AuthorizationApi();
+
+        // Replace with your Genesys Cloud credentials
+        const clientId = 'f7b4d59c-cdb2-4466-ba66-e7ae6cd6aefb';
+        const clientSecret = '2fmnZFhf5qvvMJi50NPpQ0tzAziVyR5YitV3CKILsBQ';
+        const environment = 'mypurecloud.com.au'; // Change if using a different environment
+
+        client.setEnvironment(environment);
+
+        async function authenticate() {
+            try {
+                await client.loginClientCredentialsGrant(clientId, clientSecret);
+                console.log('Authentication successful');
+            } catch (err) {
+                console.error('Authentication failed:', err);
+            }
+        }
+
+        async function getAllUsers() {
+            let users = [];
+            let pageNumber = 1;
+            let pageSize = 100;
+            
+            while (true) {
+                try {
+                    const response = await usersApi.getUsers({ pageSize: pageSize, pageNumber: pageNumber });
+                    users = users.concat(response.entities);
+                    
+                    if (response.entities.length < pageSize) {
+                        break;
+                    }
+                    pageNumber++;
+                } catch (err) {
+                    console.error('Error fetching users:', err);
+                    break;
+                }
+            }
+            return users;
+        }
+
+        async function getUserRoles(userId) {
+            try {
+                const response = await authorizationApi.getUserRoles(userId);
+                return response.map(role => role.name).join(', ');
+            } catch (err) {
+                console.error(`Error fetching roles for user ${userId}:`, err);
+                return 'Error fetching roles';
+            }
+        }
+
+        async function extractUsersAndRoles() {
+            await authenticate();
+            const users = await getAllUsers();
+            let csvContent = "User ID,Name,Email,Roles\n";
+
+            for (const user of users) {
+                const roles = await getUserRoles(user.id);
+                csvContent += `${user.id},"${user.name}",${user.email},"${roles}"\n`;
+            }
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "genesys_users_roles.csv");
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        document.getElementById('extractButton').addEventListener('click', extractUsersAndRoles);
+    </script>
+</body>
+</html>

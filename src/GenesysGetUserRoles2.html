@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesys Cloud User Roles Extractor</title>
+</head>
+<body>
+    <h1>Genesys Cloud User Roles Extractor</h1>
+    <input type="text" id="bearerToken" placeholder="Enter Bearer Token">
+    <button id="extractButton">Extract Users and Roles</button>
+
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+    <script>
+        // Wait for the SDK to load
+        function onSdkLoaded() {
+              // Obtain a reference to the platformClient object
+            const platformClient = require('platformClient');
+
+            const client = platformClient.ApiClient.instance;
+            client.setEnvironment('mypurecloud.com.au');
+
+            const usersApi = new platformClient.UsersApi();
+            const authorizationApi = new platformClient.AuthorizationApi();
+
+            const bearerTokenInput = document.getElementById('bearerToken');
+            const extractButton = document.getElementById('extractButton');
+
+            extractButton.addEventListener('click', async () => {
+                const bearerToken = bearerTokenInput.value;
+                client.setAccessToken(bearerToken);
+
+                try {
+                    const users = await getAllUsers();
+                    let csvContent = "User ID,Name,Email,Roles\n";
+
+                    for (const user of users) {
+                        const roles = await getUserRoles(user.id);
+                        csvContent += `${user.id},"${user.name}",${user.email},"${roles}"\n`;
+                    }
+
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement("a");
+                    if (link.download !== undefined) {
+                        const url = URL.createObjectURL(blob);
+                        link.setAttribute("href", url);
+                        link.setAttribute("download", "genesys_users_roles.csv");
+                        link.style.visibility = 'hidden';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                } catch (err) {
+                    console.error('Error extracting users and roles:', err);
+                }
+            });
+
+            async function getAllUsers() {
+                let users = [];
+                let pageNumber = 1;
+                let pageSize = 100;
+                
+                while (true) {
+                    try {
+                        const response = await usersApi.getUsers({ pageSize: pageSize, pageNumber: pageNumber });
+                        users = users.concat(response.entities);
+                        
+                        if (response.entities.length < pageSize) {
+                            break;
+                        }
+                        pageNumber++;
+                    } catch (err) {
+                        console.error('Error fetching users:', err);
+                        break;
+                    }
+                }
+                return users;
+            }
+
+            async function getUserRoles(userId) {
+                try {
+                    const response = await authorizationApi.getUserRoles(userId);
+                    return response.map(role => role.name).join(', ');
+                } catch (err) {
+                    console.error(`Error fetching roles for user ${userId}:`, err);
+                    return 'Error fetching roles';
+                }
+            }
+        }
+
+        // Check if the SDK is already loaded
+        if (window.platformClient) {
+            onSdkLoaded();
+        } else {
+            // If not, wait for it to load
+            window.addEventListener('load', onSdkLoaded);
+        }
+    </script>
+</body>
+</html>
