@@ -1424,4 +1424,10 @@ window.onload = function() {
   OpenSpeedTest.Start = function() {
     new openSpeedtestEngine();
   };
+
+  OpenSpeedTest.GetOpenSpeedtestEngine = function() {
+    return openSpeedtestEngine;
+  };
+
+
 })(window.OpenSpeedTest = window.OpenSpeedTest || {});
