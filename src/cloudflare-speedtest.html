@@ -1,21 +1,92 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Speed Test</title>
-</head>
 <body>
-  <button onclick="runSpeedTest()">Run Speed Test</button>
-  <script type="module">
-    import SpeedTest from 'https://cdn.jsdelivr.net/npm/@cloudflare/speedtest@latest/dist/index.mjs';
+    <div id="controls"></div>
+    <div id="result"></div>
 
-    function runSpeedTest() {
-      const speedTest = new SpeedTest();
-      speedTest.onFinish = (results) => {
-        console.log(results.getSummary());
-        // You can display the results to the user here
-      };
-      speedTest.play();
-    }
-  </script>
+    <script type="module">
+        import SpeedTest from 'https://cdn.skypack.dev/@cloudflare/speedtest';
+
+        const controlEl = document.getElementById('controls');
+        const resEl = document.getElementById('result');
+
+        const engine = new SpeedTest({
+            autoStart: false,
+            turnServerUri: 'global.turn.twilio.com:3478',   // https://www.twilio.com/docs/stun-turn/api
+            turnServerUser: "e980de8d1d3361857a3a9fdf676604f70c7a0877f45c75a80daa7107ab909e89", // https://console.twilio.com/?frameUrl=%2Fconsole%3Fx-target-region%3Dus1
+            turnServerPass: "3wMA38wsg6C7fc3SkVWOPllOFUFsZQihCs70UHY4tXk=",
+            measurements: [
+                { type: 'latency', numPackets: 1 }, // initial latency estimation
+                { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
+                { type: 'latency', numPackets: 50 },
+                { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
+                { type: 'download', bytes: 1e7, count: 3 },
+                { type: 'upload', bytes: 1e5, count: 3 },
+            ],
+            _defaultMeasurements: [
+                { type: 'latency', numPackets: 1 }, // initial latency estimation
+                { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
+                { type: 'latency', numPackets: 20 },
+                { type: 'download', bytes: 1e5, count: 9 },
+                { type: 'download', bytes: 1e6, count: 8 },
+                { type: 'upload', bytes: 1e5, count: 8 },
+                { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 3000 },
+                { type: 'upload', bytes: 1e6, count: 6 },
+                { type: 'download', bytes: 1e7, count: 6 },
+                { type: 'upload', bytes: 1e7, count: 4 },
+                { type: 'download', bytes: 2.5e7, count: 4 },
+                { type: 'upload', bytes: 2.5e7, count: 4 },
+                { type: 'download', bytes: 1e8, count: 3 },
+                { type: 'upload', bytes: 5e7, count: 3 },
+                { type: 'download', bytes: 2.5e8, count: 2 }
+            ]
+        });
+        engine.onRunningChange = running => controlEl.textContent = running ? 'Running...' : 'Finished!';
+        engine.onResultsChange = ({ type }) => {
+            !engine.isFinished && setResult(engine.results.raw);
+            console.log(type);
+            // console.log(engine.results.raw);
+        };
+        engine.onFinish = results => {
+            const testDuration = (new Date() - startTime)/1000;
+            setResult({
+                TotalTime: testDuration,
+                Summary: results.getSummary(),
+                Scores: results.getScores(),
+                UnloadedLatency: results.getUnloadedLatency(),
+                UnloadedJitter: results.getUnloadedJitter(),
+                //UnloadedLatencyPoints: results.getUnloadedLatencyPoints(),
+                DownLoadedLatency: results.getDownLoadedLatency(),
+                DownLoadedJitter: results.getDownLoadedJitter(),
+                //DownLoadedLatencyPoints: results.getDownLoadedLatencyPoints(),
+                UpLoadedLatency: results.getUpLoadedLatency(),
+                UpLoadedJitter: results.getUpLoadedJitter(),
+                //UpLoadedLatencyPoints: results.getUpLoadedLatencyPoints(),
+                DownloadBandwidth: results.getDownloadBandwidth(),
+                //DownloadBandwidthPoints: results.getDownloadBandwidthPoints(),
+                UploadBandwidth: results.getUploadBandwidth(),
+                //UploadBandwidthPoints: results.getUploadBandwidthPoints(),
+                PacketLoss: results.getPacketLoss(),
+                PacketLossDetails: results.getPacketLossDetails(),
+            });
+
+            console.log(results.getSummary());
+            console.log(results.getScores());
+            console.log(results);
+        };
+
+        engine.onError = (e) => console.log(e);
+
+        const playButton = document.createElement('button');
+        playButton.textContent = "Start Speed Measurement";
+        playButton.onclick = () => engine.play();
+        //add a variable with current date-time
+        const startTime = new Date();
+        controlEl.appendChild(playButton);
+
+        function setResult(obj) {
+            const resTxt = document.createElement('pre');
+            resTxt.textContent = JSON.stringify(obj, null, 2);
+            resEl.textContent = '';
+            resEl.appendChild(resTxt);
+        }
+    </script>
 </body>
-</html>
