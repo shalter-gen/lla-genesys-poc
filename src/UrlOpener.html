@@ -40,12 +40,13 @@
 		const buttonLabel = url.searchParams.get('ButtonLabel') || 'Open Page';
 
         let openedWindow;
-
 		document.getElementById('open-page-btn').textContent = buttonLabel;
 		document.getElementById('open-page-btn').addEventListener('click', () => {
 			if (!openedWindow || openedWindow.closed) {
 				openedWindow = window.open(targetUrl, '_blank');
 			} else {
+// in this branch, update code to update the url of the openedWindow before putting in focus
+				openedWindow.location = targetUrl; 
 				openedWindow.focus();
 			}
 		});
