@@ -45,7 +45,6 @@
 			if (!openedWindow || openedWindow.closed) {
 				openedWindow = window.open(targetUrl, '_blank');
 			} else {
-// in this branch, update code to update the url of the openedWindow before putting in focus
 				openedWindow.location = targetUrl; 
 				openedWindow.focus();
 			}

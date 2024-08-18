@@ -8,7 +8,7 @@
         const controlEl = document.getElementById('controls');
         const resEl = document.getElementById('result');
 
-        // See https://github.com/cloudflare/speedtest
+        // See https://github.com/cloudflare/speedtest        
         const engine = new SpeedTest({
             autoStart: false,
             turnServerUri: 'global.turn.twilio.com:3478',   // https://www.twilio.com/docs/stun-turn/api
@@ -19,8 +19,8 @@
                 { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
                 { type: 'latency', numPackets: 50 },
                 { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
-                { type: 'download', bytes: 1e7, count: 3 },
-                { type: 'upload', bytes: 1e5, count: 3 },
+                { type: 'download', bytes: 1e7, count: 1 },
+                { type: 'upload', bytes: 1e5, count: 2 },
             ],
             _defaultMeasurements: [
                 { type: 'latency', numPackets: 1 }, // initial latency estimation
@@ -71,10 +71,9 @@
 
             console.log(results.getSummary());
             console.log(results.getScores());
-            console.log(results);
         };
 
-        engine.onError = (e) => console.log(e);
+        engine.onError = (e) => console.error(e);
 
         const playButton = document.createElement('button');
         playButton.textContent = "Start Speed Measurement";
