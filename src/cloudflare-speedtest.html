@@ -12,8 +12,8 @@
         const engine = new SpeedTest({
             autoStart: false,
             turnServerUri: 'global.turn.twilio.com:3478',   // https://www.twilio.com/docs/stun-turn/api
-            turnServerUser: "e980de8d1d3361857a3a9fdf676604f70c7a0877f45c75a80daa7107ab909e89", // https://console.twilio.com/?frameUrl=%2Fconsole%3Fx-target-region%3Dus1
-            turnServerPass: "3wMA38wsg6C7fc3SkVWOPllOFUFsZQihCs70UHY4tXk=",
+            turnServerUser: "bcc6ecd4b8aa85de8b5bd18890fcb716577cc3a2e04828203ba56128bb914c2c", // https://console.twilio.com/?frameUrl=%2Fconsole%3Fx-target-region%3Dus1
+            turnServerPass: "tcpEWCWCZi7HcE431P+lZaK42jVzHQqk5/tCvBfEx4o=",
             _measurements: [
                 { type: 'latency', numPackets: 1 }, // initial latency estimation
                 { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
@@ -25,11 +25,11 @@
             measurements: [
                 { type: 'latency', numPackets: 1 }, // initial latency estimation
                 { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
-                //{ type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
-                { type: 'download', bytes: 1e7, count: 1 },
+                { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
+                //{ type: 'download', bytes: 1e7, count: 1 },
                 { type: 'latency', numPackets: 50 },
                 { type: 'upload', bytes: 5e5, count: 1 },
-                { type: 'download', bytes: 5e6, count: 2 },
+                { type: 'download', bytes: 5e7, count: 2 },
             ],
             _defaultMeasurements: [
                 { type: 'latency', numPackets: 1 }, // initial latency estimation
