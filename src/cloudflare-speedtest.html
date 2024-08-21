@@ -1,12 +1,17 @@
 <body>
     <div id="controls"></div>
-    <div id="result"></div>
+    <div id="speed-check-result"></div>
+    <div id="browser-check-result"></div> <!-- Element to display browser check result -->
+
+    <!-- Include Bowser library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5.js"></script>
 
     <script type="module">
         import SpeedTest from 'https://cdn.skypack.dev/@cloudflare/speedtest';
+        // import Bowser from 'https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5.js';
 
         const controlEl = document.getElementById('controls');
-        const resEl = document.getElementById('result');
+        const resEl = document.getElementById('speed-check-result');
 
         // See https://github.com/cloudflare/speedtest        
         const engine = new SpeedTest({
@@ -52,11 +57,11 @@
         engine.onRunningChange = running => controlEl.textContent = running ? 'Running...' : 'Finished!';
         engine.onResultsChange = ({ type }) => {
             !engine.isFinished && setResult(engine.results.raw);
-            console.log(type+' finished at ' + new Date());
+            console.log(type + ' finished at ' + new Date());
             // console.log(engine.results.raw);
         };
         engine.onFinish = results => {
-            const testDuration = (new Date() - startTime)/1000;
+            const testDuration = (new Date() - startTime) / 1000;
             setResult({
                 TotalTime: testDuration,
                 Summary: results.getSummary(),
@@ -96,6 +101,46 @@
             resTxt.textContent = JSON.stringify(obj, null, 2);
             resEl.textContent = '';
             resEl.appendChild(resTxt);
+        }
+
+        // Create Check Browser button
+        const checkBrowserButton = document.createElement('button');
+        checkBrowserButton.textContent = "Check Browser";
+        checkBrowserButton.onclick = () => checkBrowser();
+        controlEl.appendChild(checkBrowserButton);
+
+        async function fetchLatestVersion(url) {
+            const response = await fetch(url);
+            return response.text();
+        }
+
+        async function checkBrowser() {
+            const browser = bowser.getParser(window.navigator.userAgent);
+            const browserInfo = browser.getBrowser();
+            const browserName = browserInfo.name;
+            const browserVersion = parseInt(browserInfo.version, 10);
+
+            let result;
+            try {
+                if (browserName === 'Safari') {
+                    result = 'Fail: Safari is not allowed.';
+                } else if (browserName === 'Chrome' || browserName === 'Chromium') {
+                    const latestChromeVersion = await fetchLatestVersion('https://chromedriver.storage.googleapis.com/LATEST_RELEASE');
+                    result = (browserVersion >= parseInt(latestChromeVersion, 10) - 2) ? 'OK: Chrome is allowed.' : 'Fail: Chrome version is too old.';
+                } else if (browserName === 'Edge') {
+                    const latestEdgeVersion = await fetchLatestVersion('https://msedgedriver.azureedge.net/LATEST_STABLE');
+                    result = (browserVersion >= parseInt(latestEdgeVersion, 10) - 2) ? 'OK: Edge is allowed.' : 'Fail: Edge version is too old.';
+                } else {
+                    result = 'Fail: Unsupported browser.';
+                }
+            } catch (error) {
+                result = 'Error fetching latest browser version.';
+                console.error(error);
+            }
+            // Display result on the page
+            browserCheckResultEl.textContent = result;
+
+            // alert(result);
         }
     </script>
 </body>
