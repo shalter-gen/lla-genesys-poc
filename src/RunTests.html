@@ -144,42 +144,42 @@
             console.log(details);
 
             let status;
-            let description='';
+            let description = '';
             if (details.Summary.download < config.networkSpeedTestThresholds.fail.download) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
 
                 // description += 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
-            } 
+            }
             if (details.Summary.download < config.networkSpeedTestThresholds.warning.download) {
-                if (status!=='Fail') status = 'Warning';
+                if (status !== 'Fail') status = 'Warning';
                 description += (description ? '\n' : '') + 'Download speed is a bit low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
             }
             if (details.Summary.upload < config.networkSpeedTestThresholds.fail.upload) {
                 status = 'Fail';
-                description += (description ? '\n' : '') + 'Upload speed is too low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps'; 
-            } 
+                description += (description ? '\n' : '') + 'Upload speed is too low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps';
+            }
             if (details.Summary.upload < config.networkSpeedTestThresholds.warning.upload) {
-                if (status!=='Fail') status = 'Warning';
+                if (status !== 'Fail') status = 'Warning';
                 description += (description ? '\n' : '') + 'Upload speed is a bit low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps';
-            } 
+            }
             if (details.Summary.latency > config.networkSpeedTestThresholds.fail.latency) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Latency is too high: ' + (details.Summary.latency).toFixed(0) + ' ms';
-            } 
+            }
             if (details.Summary.latency > config.networkSpeedTestThresholds.warning.latency) {
-                if (status!=='Fail') status = 'Warning';
-                description += (description ? '\n' : '') + 'Latency is a bit high: ' + (details.Summary.latency).toFixed(0) + ' ms'; 
-            } 
+                if (status !== 'Fail') status = 'Warning';
+                description += (description ? '\n' : '') + 'Latency is a bit high: ' + (details.Summary.latency).toFixed(0) + ' ms';
+            }
             if (details.Summary.jitter > config.networkSpeedTestThresholds.fail.jitter) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Jitter is too high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
-            } 
+            }
             if (details.Summary.jitter > config.networkSpeedTestThresholds.warning.jitter) {
-                if (status!=='Fail') status = 'Warning';
+                if (status !== 'Fail') status = 'Warning';
                 description += (description ? '\n' : '') + 'Jitter is a bit high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
             }
-            if (status!=='Fail' && status!=='Warning') {
+            if (status !== 'Fail' && status !== 'Warning') {
                 status = 'OK';
                 description = 'Network speed is good';
             }
@@ -217,10 +217,14 @@
             setDetails("");
             const browser = bowser.getParser(window.navigator.userAgent);
 
+            let extractVersion = function (str) {
+                const match = str.match(/\d+/);
+                return match ? parseInt(match[0]) : null;
+            }
             // Get the operating system name and version
             const osName = browser.getOSName(true); // 'windows', 'macos', etc.
-            const osVersion = browser.getOS().versionName; // e.g., '10.15.7'
-            const majorVersion = parseInt(osVersion.split('.')[0], 10);
+            const osVersion = browser.getOS().version; // e.g., '10.15.7'
+            const majorVersion = extractVersion(osVersion);
 
             // Check if the operating system matches the configuration
             if (osName === 'windows') {
