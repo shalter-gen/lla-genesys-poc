@@ -50,6 +50,17 @@
             networkSpeedTestConfig: {
                 measurements: [
                     { type: 'latency', numPackets: 1 }, // initial latency estimation
+                    { type: 'download', bytes: 1e4, count: 1, bypassMinDuration: true }, // initial download estimation
+                    // { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
+                    { type: 'download', bytes: 1e6, count: 2 },
+                    // { type: 'upload', bytes: 5e6, count: 1 },
+                    { type: 'latency', numPackets: 20 },
+                    { type: 'upload', bytes: 1e6, count: 2 },
+                    // { type: 'download', bytes: 5e6, count: 1 },
+                    // { type: 'download', bytes: 5e7, count: 2 },
+                ],
+               _measurements: [
+                    { type: 'latency', numPackets: 1 }, // initial latency estimation
                     { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
                     // { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
                     { type: 'download', bytes: 1e7, count: 1 },
@@ -148,8 +159,6 @@
             if (details.Summary.download < config.networkSpeedTestThresholds.fail.download) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
-
-                // description += 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
             }
             if (details.Summary.download < config.networkSpeedTestThresholds.warning.download) {
                 if (status !== 'Fail') status = 'Warning';
