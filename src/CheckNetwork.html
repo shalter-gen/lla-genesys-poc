@@ -4,8 +4,6 @@
 <head>
     <title>Network Checker</title>
     <script>
-        // Define the checkClientIP function here (same as before)
-
         function ipToInteger(ip) {
             return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
         }

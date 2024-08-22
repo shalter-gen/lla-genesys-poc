@@ -1,6 +1,7 @@
 <body>
     <div id="controls"></div>
-    <div id="speed-check-result"></div>
+    <div id="results"></div>
+    <div id="details"></div>
     <div id="browser-check-result"></div> <!-- Element to display browser check result -->
 
     <!-- Include Bowser library from CDN -->
@@ -11,7 +12,41 @@
         // import Bowser from 'https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5.js';
 
         const controlEl = document.getElementById('controls');
-        const resEl = document.getElementById('speed-check-result');
+        const resEl = document.getElementById('results');
+        const detailsEl = document.getElementById('details');
+        
+        // Configuration
+        const config = {
+            browsers: {
+                chrome: ">=125",
+                edge: ">=125",
+                firefox: ">=127",
+            },
+            // Operating system
+            operatingSystems: {
+                windows: ">=7",
+                mac: ">=10",
+            },
+            // Networks
+            networkRanges: {
+                lifelineInternalCIDRs: ['203.174.168.92/32', '203.174.184.66/32', '60.240.51.190/32', '60.240.123.170/32'],
+                zscalerCIDRs: ['124.248.141.0/24', '136.226.248.0/23', '147.161.216.0/23', '147.161.218.0/23', '167.103.82.0/23 ',
+                    '147.161.212.0/23', '165.225.226.0/23', '167.103.80.0/23', '167.103.98.0/23', '167.103.100.0/23', '167.103.102.0/23',
+                    '167.103.104.0/23', '167.103.106.0/23', '147.161.214.0/23', '165.225.114.0/23', '165.225.232.0/23'],
+            },            
+            // Network Speed Test
+            networkSpeedTest: {
+                measurements: [
+                    { type: 'latency', numPackets: 1 }, // initial latency estimation
+                    { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
+                    { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
+                    //{ type: 'download', bytes: 1e7, count: 1 },
+                    { type: 'latency', numPackets: 50 },
+                    { type: 'upload', bytes: 5e5, count: 1 },
+                    { type: 'download', bytes: 5e7, count: 2 },
+                ],
+            }
+        }
 
         // See https://github.com/cloudflare/speedtest        
         const engine = new SpeedTest({
@@ -56,29 +91,24 @@
         });
         engine.onRunningChange = running => controlEl.textContent = running ? 'Running...' : 'Finished!';
         engine.onResultsChange = ({ type }) => {
-            !engine.isFinished && setResult(engine.results.raw);
+            !engine.isFinished && setDetails(engine.results.raw);
             console.log(type + ' finished at ' + new Date());
             // console.log(engine.results.raw);
         };
         engine.onFinish = results => {
             const testDuration = (new Date() - startTime) / 1000;
-            setResult({
+            setDetails({
                 TotalTime: testDuration,
                 Summary: results.getSummary(),
                 Scores: results.getScores(),
                 UnloadedLatency: results.getUnloadedLatency(),
                 UnloadedJitter: results.getUnloadedJitter(),
-                //UnloadedLatencyPoints: results.getUnloadedLatencyPoints(),
                 DownLoadedLatency: results.getDownLoadedLatency(),
                 DownLoadedJitter: results.getDownLoadedJitter(),
-                //DownLoadedLatencyPoints: results.getDownLoadedLatencyPoints(),
                 UpLoadedLatency: results.getUpLoadedLatency(),
                 UpLoadedJitter: results.getUpLoadedJitter(),
-                //UpLoadedLatencyPoints: results.getUpLoadedLatencyPoints(),
                 DownloadBandwidth: results.getDownloadBandwidth(),
-                //DownloadBandwidthPoints: results.getDownloadBandwidthPoints(),
                 UploadBandwidth: results.getUploadBandwidth(),
-                //UploadBandwidthPoints: results.getUploadBandwidthPoints(),
                 PacketLoss: results.getPacketLoss(),
                 PacketLossDetails: results.getPacketLossDetails(),
             });
@@ -103,6 +133,13 @@
             resEl.appendChild(resTxt);
         }
 
+        function setDetails(obj) {
+            const detailsTxt = document.createElement('pre');
+            detailsTxt.textContent = JSON.stringify(obj, null, 2);
+            detailsEl.textContent = '';
+            detailsEl.appendChild(detailsTxt);
+        }
+
         // Create Check Browser button
         const checkBrowserButton = document.createElement('button');
         checkBrowserButton.textContent = "Check Browser";
@@ -116,31 +153,131 @@
 
         async function checkBrowser() {
             const browser = bowser.getParser(window.navigator.userAgent);
+            const isValidBrowser = browser.satisfies(config.browsers);
+            let result = isValidBrowser ? 'OK: Browser is allowed.' : 'Fail: Browser is not allowed.';
+
             const browserInfo = browser.getBrowser();
             const browserName = browserInfo.name;
             const browserVersion = parseInt(browserInfo.version, 10);
-
-            let result;
-            try {
-                if (browserName === 'Safari') {
-                    result = 'Fail: Safari is not allowed.';
-                } else if (browserName === 'Chrome' || browserName === 'Chromium') {
-                    const latestChromeVersion = await fetchLatestVersion('https://chromedriver.storage.googleapis.com/LATEST_RELEASE');
-                    result = (browserVersion >= parseInt(latestChromeVersion, 10) - 2) ? 'OK: Chrome is allowed.' : 'Fail: Chrome version is too old.';
-                } else if (browserName === 'Edge') {
-                    const latestEdgeVersion = await fetchLatestVersion('https://msedgedriver.azureedge.net/LATEST_STABLE');
-                    result = (browserVersion >= parseInt(latestEdgeVersion, 10) - 2) ? 'OK: Edge is allowed.' : 'Fail: Edge version is too old.';
-                } else {
-                    result = 'Fail: Unsupported browser.';
-                }
-            } catch (error) {
-                result = 'Error fetching latest browser version.';
-                console.error(error);
-            }
-            // Display result on the page
-            browserCheckResultEl.textContent = result;
-
+            let details = 'Browser: ' + browserName + ' ' + browserVersion;
+            setResult(result);
+            setDetails(details);
             // alert(result);
         }
+
+        async function fetchLatestChromeVersion() {
+            const url = 'https://versionhistory.googleapis.com/v1/chrome/platforms/all/channels/stable/versions';
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const latestVersion = data.versions[0].version; // Assuming the first entry is the latest
+                return latestVersion;
+            } catch (error) {
+                console.error('Error fetching Chrome version:', error);
+                return null;
+            }
+        }
+
+        async function fetchLatestEdgeVersion() {
+            const url = 'https://msedgedriver.azureedge.net/LATEST_STABLE';
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const version = await response.text();
+                console.log('Latest Edge Stable Version:', version.trim());
+                return version.trim();
+            } catch (error) {
+                console.error('Error fetching Edge version:', error);
+                return null;
+            }
+        }
+
+        // Usage example
+        // fetchLatestEdgeVersion().then(version => {
+        //     if (version) {
+        //         // Use this version number in your application logic
+        //         console.log('Successfully retrieved Edge version:', version);
+        //     } else {
+        //         console.log('Failed to retrieve Edge version');
+        //     }
+        // });
+
+
+        //     async function fetchLatestEdgeVersion() {
+        //         const query = `
+        // SELECT ?version ?versionLabel WHERE {
+        //   ?version wdt:P348 ?versionNumber;
+        //            wdt:P361 wd:Q11660;  # Microsoft Edge
+        //            wdt:P548 wd:Q2804301. # Stable version
+        //   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+        // }
+        // ORDER BY DESC(?versionNumber)
+        // LIMIT 1
+        // `;
+        //         const url = 'https://query.wikidata.org/sparql?query=' + encodeURIComponent(query) + '&format=json';
+
+        //         try {
+        //             const response = await fetch(url, {
+        //                 headers: { 'Accept': 'application/sparql-results+json' }
+        //             });
+        //             const data = await response.json();
+        //             const latestVersion = data.results.bindings[0].versionLabel.value;
+        //             console.log('Latest Edge Stable Version:', latestVersion);
+        //             return latestVersion;
+        //         } catch (error) {
+        //             console.error('Error fetching Edge version:', error);
+        //             return null;
+        //         }
+        //     }
+
+        //     fetchLatestEdgeVersion().then(version => {
+        //         if (version) {
+        //             // Use this version number in your application logic
+        //         }
+        //     });
+        // fetchLatestChromeVersion().then(version => {
+        //     if (version) {
+        //         console.log('Latest Chrome Stable Version:', version);
+        //         // Use this version number in your application logic
+        //     }
+        // });
+
+        // async function fetchLatestEdgeVersion() {
+        //     const url = 'https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel';
+        //     try {
+        //         const response = await fetch(url);
+        //         const text = await response.text();
+
+        //         // Create a DOM parser to parse the HTML
+        //         const parser = new DOMParser();
+        //         const doc = parser.parseFromString(text, 'text/html');
+
+        //         // Find the version number in the parsed HTML
+        //         // This assumes that the version number is in an element with a specific pattern
+        //         const versionElements = doc.querySelectorAll('h2'); // Assuming version numbers are in <h2> tags
+        //         for (let element of versionElements) {
+        //             const match = element.textContent.match(/Version (\d+\.\d+\.\d+\.\d+)/);
+        //             if (match) {
+        //                 return match[1]; // Return the first matched version number
+        //             }
+        //         }
+
+        //         throw new Error('Version number not found');
+        //     } catch (error) {
+        //         console.error('Error fetching Edge version:', error);
+        //         return null;
+        //     }
+        // }
+
+        // fetchLatestEdgeVersion().then(version => {
+        //     if (version) {
+        //         console.log('Latest Edge Stable Version:', version);
+        //         // Use this version number in your application logic
+        //     }
+        // });
+
+
     </script>
 </body>
