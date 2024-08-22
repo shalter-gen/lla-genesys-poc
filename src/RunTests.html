@@ -2,7 +2,11 @@
     <div id="controls"></div>
     <div>
         <h3>Result</h3>
-        <p id="results"></p>
+        <p id="result"></p>
+    </div>
+    <div>
+        <h3>Description</h3>
+        <p id="description"></p>
     </div>
     <div>
         <h3>Details</h3>
@@ -57,7 +61,8 @@
         }
 
         const controlEl = document.getElementById('controls');
-        const resutlsElement = document.getElementById('results');
+        const resultElement = document.getElementById('result');
+        const descriptionElement = document.getElementById('description');
         const detailsElement = document.getElementById('details');
 
         const checkNetworkButton = document.createElement('button');
@@ -80,7 +85,17 @@
         checkComputerButton.onclick = () => checkComputer();
         controlEl.appendChild(checkComputerButton);
 
+        function setResult(result) {
+            resultElement.innerHTML = result.replace(/\n/g, '<br>');
+        }
 
+        function setDescription(description) {
+            descriptionElement.innerHTML = description.replace(/\n/g, '<br>');
+        }
+
+        function setDetails(obj) {
+            detailsElement.textContent = JSON.stringify(obj, null, 2);
+        }
 
         // See https://github.com/cloudflare/speedtest      
         const speedConfig = {
@@ -98,6 +113,7 @@
                 startTime = new Date();
                 speedCheckButton.textContent = 'Running...';
                 setResult("");
+                setDescription("");
                 setDetails({});
             }
         }
@@ -127,54 +143,77 @@
             setDetails(details);
             console.log(details);
 
+            let status;
+            let description='';
             if (details.Summary.download < config.networkSpeedTestThresholds.fail.download) {
-                setResult('Fail: Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps - Check your internet connection'); // details.Summary.download + 'Mbps - Check your internet connection');
-            } else if (details.Summary.download < config.networkSpeedTestThresholds.warning.download) {
-                setResult('Warning: Download speed is a bit low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps - Check your internet connection'); // details.Summary.download + 'Mbps - Check your internet connection');
-            } else if (details.Summary.upload < config.networkSpeedTestThresholds.fail.upload) {
-                setResult('Fail: Upload speed is too low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps - Check your internet connection'); // details.Summary.upload + 'Mbps - Check your internet connection');
-            } else if (details.Summary.upload < config.networkSpeedTestThresholds.warning.upload) {
-                setResult('Warning: Upload speed is a bit low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps - Check your internet connection'); // details.Summary.upload + 'Mbps - Check your internet connection');
-            } else if (details.Summary.latency > config.networkSpeedTestThresholds.fail.latency) {
-                setResult('Fail: Latency is too high: ' + (details.Summary.latency).toFixed(0) + ' ms - Check your internet connection'); // details.Summary.latency + 'ms - Check your internet connection');
-            } else if (details.Summary.latency > config.networkSpeedTestThresholds.warning.latency) {
-                setResult('Warning: Latency is a bit high: ' + (details.Summary.latency).toFixed(0) + ' ms - Check your internet connection'); // details.Summary.latency + 'ms - Check your internet connection');
-            } else if (details.Summary.jitter > config.networkSpeedTestThresholds.fail.jitter) {
-                setResult('Fail: Jitter is too high: ' + (details.Summary.jitter).toFixed(0) + ' ms - Check your internet connection'); // details.Summary.jitter + 'ms - Check your internet connection');
-            } else if (details.Summary.jitter > config.networkSpeedTestThresholds.warning.jitter) {
-                setResult('Warning: Jitter is a bit high: ' + (details.Summary.jitter).toFixed(0) + ' ms - Check your internet connection'); // details.Summary.jitter + 'ms - Check your internet connection');
-            } else {
-                setResult('OK: Network speed is good');
+                status = 'Fail';
+                description += (description ? '\n' : '') + 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
+
+                // description += 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
+            } 
+            if (details.Summary.download < config.networkSpeedTestThresholds.warning.download) {
+                if (status!=='Fail') status = 'Warning';
+                description += (description ? '\n' : '') + 'Download speed is a bit low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
             }
+            if (details.Summary.upload < config.networkSpeedTestThresholds.fail.upload) {
+                status = 'Fail';
+                description += (description ? '\n' : '') + 'Upload speed is too low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps'; 
+            } 
+            if (details.Summary.upload < config.networkSpeedTestThresholds.warning.upload) {
+                if (status!=='Fail') status = 'Warning';
+                description += (description ? '\n' : '') + 'Upload speed is a bit low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps';
+            } 
+            if (details.Summary.latency > config.networkSpeedTestThresholds.fail.latency) {
+                status = 'Fail';
+                description += (description ? '\n' : '') + 'Latency is too high: ' + (details.Summary.latency).toFixed(0) + ' ms';
+            } 
+            if (details.Summary.latency > config.networkSpeedTestThresholds.warning.latency) {
+                if (status!=='Fail') status = 'Warning';
+                description += (description ? '\n' : '') + 'Latency is a bit high: ' + (details.Summary.latency).toFixed(0) + ' ms'; 
+            } 
+            if (details.Summary.jitter > config.networkSpeedTestThresholds.fail.jitter) {
+                status = 'Fail';
+                description += (description ? '\n' : '') + 'Jitter is too high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
+            } 
+            if (details.Summary.jitter > config.networkSpeedTestThresholds.warning.jitter) {
+                if (status!=='Fail') status = 'Warning';
+                description += (description ? '\n' : '') + 'Jitter is a bit high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
+            }
+            if (status!=='Fail' && status!=='Warning') {
+                status = 'OK';
+                description = 'Network speed is good';
+            }
+            setResult(status);
+            setDescription(description);
         };
 
         speedTestEngine.onError = (e) => console.error(e);
 
-        function setResult(result) {
-            resutlsElement.textContent = result;
-        }
-
-        function setDetails(obj) {
-            detailsElement.textContent = JSON.stringify(obj, null, 2);
-        }
-
         async function checkBrowser() {
             setResult("");
+            setDescription("");
             setDetails("");
             const browser = bowser.getParser(window.navigator.userAgent);
             const isValidBrowser = browser.satisfies(config.browsers);
-            let result = isValidBrowser ? 'OK: Browser is allowed.' : 'Fail: Browser is not allowed.';
+            // let result = isValidBrowser ? 'OK: Browser is allowed.' : 'Fail: Browser is not supported.';
+            if (isValidBrowser) {
+                setResult('OK');
+                setDescription('Browser is supported.');
+            } else {
+                setResult('Fail');
+                setDescription('Browser is not supported.');
+            }
 
             const browserInfo = browser.getBrowser();
             const browserName = browserInfo.name;
             const browserVersion = parseInt(browserInfo.version, 10);
             let details = 'Browser: ' + browserName + ' ' + browserVersion;
-            setResult(result);
             setDetails(details);
         }
 
         async function checkComputer() {
             setResult("");
+            setDescription("");
             setDetails("");
             const browser = bowser.getParser(window.navigator.userAgent);
 
@@ -186,23 +225,28 @@
             // Check if the operating system matches the configuration
             if (osName === 'windows') {
                 if (majorVersion >= config.operatingSystems.windows) {
-                    setResult("OK: Windows version is supported.");
+                    setResult("OK");
+                    setDescription("Windows version is supported.");
                     setDetails(osName + ' ' + osVersion);
                 } else {
-                    setResult("Fail: Windows version is not supported. Minimum version is " + config.operatingSystems.windows + ".");
+                    setResult("Fail");
+                    setDescription("Windows version is not supported. Minimum version is " + config.operatingSystems.windows + ".");
                     setDetails(osName + ' ' + osVersion);
                 }
             } else if (osName === 'macos') {
                 if (majorVersion >= config.operatingSystems.mac) {
-                    setResult("OK: MacOS version is supported.");
+                    setResult("OK");
+                    setDescription("MacOS version is supported.");
                     setDetails(osName + ' ' + osVersion);
                 } else {
-                    setResult("Fail: MacOS version is not supported. Minimum version is " + config.operatingSystems.mac + ".");
+                    setResult("Fail");
+                    setDescription("MacOS version is not supported. Minimum version is " + config.operatingSystems.mac + ".");
                     setDetails(osName + ' ' + osVersion);
                 }
 
             } else {
-                setResult("Fail: Unsupported Operating System. Only Windows " + config.operatingSystems.windows + " and above or MacOS " + config.operatingSystems.mac + " or above are supported.");
+                setResult("Fail");
+                setDescription("Unsupported Operating System. Only Windows " + config.operatingSystems.windows + " and above or MacOS " + config.operatingSystems.mac + " or above are supported.");
                 setDetails(osName + ' ' + osVersion);
             }
         }
@@ -215,13 +259,15 @@
                 const clientIP = jsonData.srcip;
 
                 return {
-                    result: loggedInToZscaler ? 'OK: Logged in to Zscaler.' : 'Fail: Not logged in to Zscaler.',
+                    result: loggedInToZscaler ? 'OK' : 'Fail',
+                    description: loggedInToZscaler ? 'Logged in to Zscaler.' : 'Not logged in to Zscaler.',
                     ip: clientIP
                 }
             } catch (error) {
                 console.error('Error fetching IP data:', error);
                 return {
-                    result: 'Error: ' + error.message,
+                    result: 'Error',
+                    description: error.message,
                     ip: ''
                 }
 
@@ -231,10 +277,12 @@
         async function checkNetwork() {
             checkNetworkButton.textContent = 'Running...';
             setResult("");
+            setDescription("");
             setDetails("");
             const network = await detectClientNetwork();
             checkNetworkButton.textContent = "Check Network";
             setResult(network.result);
+            setDescription(network.description);
             setDetails(network.ip);
         }
     </script>
