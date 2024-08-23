@@ -29,8 +29,8 @@
             // Network Speed Thresholds
             networkSpeedTestThresholds: {
                 fail: {
-                    download: 0.5 * 1000 * 1000,    // 0.5 Mbps
-                    upload: 0.5 * 1000 * 1000,      // 0.5 Mbps
+                    download: 0.9 * 1000 * 1000,    // 0.9 Mbps
+                    upload: 0.9 * 1000 * 1000,      // 0.9 Mbps
                     latency: 400,                   // 400 ms
                     jitter: 100,                    // 100 ms
                 },
@@ -53,20 +53,8 @@
                     { type: 'download', bytes: 1e4, count: 1, bypassMinDuration: true }, // initial download estimation
                     // { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
                     { type: 'download', bytes: 1e6, count: 2 },
-                    // { type: 'upload', bytes: 5e6, count: 1 },
                     { type: 'latency', numPackets: 20 },
                     { type: 'upload', bytes: 1e6, count: 2 },
-                    // { type: 'download', bytes: 5e6, count: 1 },
-                    // { type: 'download', bytes: 5e7, count: 2 },
-                ],
-               _measurements: [
-                    { type: 'latency', numPackets: 1 }, // initial latency estimation
-                    { type: 'download', bytes: 1e5, count: 1, bypassMinDuration: true }, // initial download estimation
-                    // { type: 'packetLoss', numPackets: 1e3, responsesWaitTime: 1000 },
-                    { type: 'download', bytes: 1e7, count: 1 },
-                    { type: 'latency', numPackets: 50 },
-                    { type: 'upload', bytes: 5e5, count: 1 },
-                    { type: 'download', bytes: 5e7, count: 2 },
                 ],
             },
         }
@@ -161,32 +149,40 @@
                 description += (description ? '\n' : '') + 'Download speed is too low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
             }
             if (details.Summary.download < config.networkSpeedTestThresholds.warning.download) {
-                if (status !== 'Fail') status = 'Warning';
-                description += (description ? '\n' : '') + 'Download speed is a bit low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
+                if (status !== 'Fail') { 
+                    status = 'Warning';
+                    description += (description ? '\n' : '') + 'Download speed is low: ' + (details.Summary.download / 1000000).toFixed(1) + ' Mbps';
+                }
             }
             if (details.Summary.upload < config.networkSpeedTestThresholds.fail.upload) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Upload speed is too low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps';
             }
             if (details.Summary.upload < config.networkSpeedTestThresholds.warning.upload) {
-                if (status !== 'Fail') status = 'Warning';
-                description += (description ? '\n' : '') + 'Upload speed is a bit low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps';
+                if (status !== 'Fail') { 
+                    status = 'Warning';
+                    description += (description ? '\n' : '') + 'Upload speed is low: ' + (details.Summary.upload / 1000000).toFixed(1) + ' Mbps';
+                }
             }
             if (details.Summary.latency > config.networkSpeedTestThresholds.fail.latency) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Latency is too high: ' + (details.Summary.latency).toFixed(0) + ' ms';
             }
             if (details.Summary.latency > config.networkSpeedTestThresholds.warning.latency) {
-                if (status !== 'Fail') status = 'Warning';
-                description += (description ? '\n' : '') + 'Latency is a bit high: ' + (details.Summary.latency).toFixed(0) + ' ms';
+                if (status !== 'Fail') { 
+                    status = 'Warning';
+                    description += (description ? '\n' : '') + 'Latency is high: ' + (details.Summary.latency).toFixed(0) + ' ms';
+                }
             }
             if (details.Summary.jitter > config.networkSpeedTestThresholds.fail.jitter) {
                 status = 'Fail';
                 description += (description ? '\n' : '') + 'Jitter is too high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
             }
             if (details.Summary.jitter > config.networkSpeedTestThresholds.warning.jitter) {
-                if (status !== 'Fail') status = 'Warning';
-                description += (description ? '\n' : '') + 'Jitter is a bit high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
+                if (status !== 'Fail') { 
+                    status = 'Warning';
+                    description += (description ? '\n' : '') + 'Jitter is high: ' + (details.Summary.jitter).toFixed(0) + ' ms';
+                }
             }
             if (status !== 'Fail' && status !== 'Warning') {
                 status = 'OK';
