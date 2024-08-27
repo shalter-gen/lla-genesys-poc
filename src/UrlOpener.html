@@ -67,8 +67,12 @@
 		// Automatically click the button if 'autoclick' parameter is present
 		if (autoClick) {
             openTargetPage();
-            window.close(); // Attempt to close the current page
-        }
+			// run following after timeout of 1s
+			// setTimeout(() => {
+			// 	window.close();
+			// }, 1000);
+		}
+
 
 	</script>
 </body>
