@@ -38,17 +38,38 @@
 		const url = new URL(window.location.href);
 		const targetUrl = url.searchParams.get('url');
 		const buttonLabel = url.searchParams.get('ButtonLabel') || 'Open Page';
+        const autoClick = url.searchParams.has('autoclick');
 
         let openedWindow;
-		document.getElementById('open-page-btn').textContent = buttonLabel;
-		document.getElementById('open-page-btn').addEventListener('click', () => {
-			if (!openedWindow || openedWindow.closed) {
-				openedWindow = window.open(targetUrl, '_blank');
-			} else {
-				openedWindow.location = targetUrl; 
-				openedWindow.focus();
-			}
-		});
+		// document.getElementById('open-page-btn').textContent = buttonLabel;
+		// document.getElementById('open-page-btn').addEventListener('click', () => {
+		// 	if (!openedWindow || openedWindow.closed) {
+		// 		openedWindow = window.open(targetUrl, '_blank');
+		// 	} else {
+		// 		openedWindow.location = targetUrl; 
+		// 		openedWindow.focus();
+		// 	}
+		// });
+
+        const button = document.getElementById('open-page-btn');
+        button.textContent = buttonLabel;
+
+        function openTargetPage() {
+            if (!openedWindow || openedWindow.closed) {
+                openedWindow = window.open(targetUrl, '_blank');
+            } else {
+                openedWindow.location = targetUrl; 
+                openedWindow.focus();
+            }
+        }
+        button.addEventListener('click', openTargetPage);
+
+		// Automatically click the button if 'autoclick' parameter is present
+		if (autoClick) {
+            openTargetPage();
+            window.close(); // Attempt to close the current page
+        }
+
 	</script>
 </body>
 </html>
