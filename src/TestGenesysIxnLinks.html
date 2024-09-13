@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open and Update Single Tab</title>
+    <style>
+        input[type="text"] {
+            width: 100%; /* Set width to 100% of the container */
+            box-sizing: border-box; /* Include padding and border in the element's total width */
+        }
+        .input-container {
+            width: 80%; /* Set a specific width for the container */
+            margin-bottom: 10px; /* Add some space between inputs */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Open and Update Single Tab in Genesys</h1>
+
+    <form>
+        <div class="input-container">
+            <label for="url1">URL 1:</label>
+            <input type="text" id="url1" value="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/24615d75-d22b-4b07-aecd-a9e18b92d8a6/admin?tabId=0" readonly>
+            <button type="button" onclick="openOrUpdateTab('url1')">Open in Genesys</button>
+        </div>
+        <div class="input-container">
+            <label for="url2">URL 2:</label>
+            <input type="text" id="url2" value="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/7531ce3f-1346-4115-b69c-1530482f63df/admin?tabId=0" readonly>
+            <button type="button" onclick="openOrUpdateTab('url2')">Open in Genesys</button>
+        </div>
+    </form>
+
+    <script>
+        // Reference to the opened window
+        let sharedTab;
+
+        function openOrUpdateTab(inputId) {
+            const url = document.getElementById(inputId).value;
+
+            // Open a new window or update the existing one
+            if (sharedTab && !sharedTab.closed) {
+                // If the tab is already open, update its URL
+                sharedTab.location.href = url;
+                sharedTab.focus();
+            } else {
+                // If the tab is not open, open a new tab
+                sharedTab = window.open(url, 'sharedGenesysTab');
+            }
+        }
+    </script>
+
+</body>
+</html>
