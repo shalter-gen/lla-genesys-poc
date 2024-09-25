@@ -19,8 +19,14 @@
     </style>
 </head>
 <body>
-    <script src="https://unpkg.com/x-frame-bypass"></script>
-    <script>
+    <!-- <script src="https://unpkg.com/x-frame-bypass"></script> -->
+    <!-- <script type="module" src="https://niutech.github.io/x-frame-bypass/x-frame-bypass.js"></script> -->
+    <script src="https://unpkg.com/@ungap/custom-elements-builtin"></script>
+    <script type="module" src="https://unpkg.com/x-frame-bypass"></script>
+
+    <iframe is="x-frame-bypass" src="https://trust.zscaler.com/zscaler.net/cloud-status"></iframe>
+
+    <!-- <script>
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -35,6 +41,6 @@
         iframe.src = iframeUrl;
 
         document.body.appendChild(iframe);
-    </script>
+    </script> -->
 </body>
 </html>
