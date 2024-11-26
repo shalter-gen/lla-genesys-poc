@@ -13,39 +13,83 @@
 
 <script>
 
-    const clientId ='90a3b83c-a180-4667-abc3-bedf68ba86ae';
-    const redirectUri = window.location.href;
-    // const redirectUri = 'https://apps.mypurecloud.com.au/admin/#/admin/oauth/authorizations/90a3b83c-a180-4667-abc3-bedf68ba86ae';
-    let environment = 'mypurecloud.com.au';
+    // Implicit grant credentials
+    const CLIENT_ID ='90a3b83c-a180-4667-abc3-bedf68ba86ae';
 
-    // Set Genesys Cloud objects
-    const platformClient = require('platformClient');
-    const client = platformClient.ApiClient.instance;
-    let organizationApi = new platformClient.OrganizationApi();
+    // Genesys Cloud environment
+    const ENVIRONMENT = 'mypurecloud.com.au';
 
-    client.setEnvironment(environment);
-
-    document.addEventListener('DOMContentLoaded', function () {
-        client.loginImplicitGrant(clientId, redirectUri)
-            .then(() => {
-                organizationApi.getOrganizationsMe()
-                    .then((data) => {
-                        populateParagraph(data)
-                    })
-                    .catch((err) => {
-                        console.log('There was a failure calling getOrganizationsMe');
-                        console.error(err);
-                    });
-            })
-    });
-
-    function populateParagraph(data) {
-        for (key in data) {
-            console.log(key, data[key]);
-            let textnode = document.createTextNode(key + ' : ' + data[key]);
-            let br = document.createElement("br")
-            document.getElementById("orgDetails").appendChild(textnode);
-            document.getElementById("orgDetails").appendChild(br);
-        }
+    function getParameterByName(name) {
+        name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
+          results = regex.exec(location.hash);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
+
+    if(window.location.hash) {
+        console.log(location.hash);
+        var token = getParameterByName('access_token');
+
+
+        $.ajax({
+            url: `https://api.${ENVIRONMENT}/api/v2/users/me`,
+            type: "GET",
+            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'bearer ' + token);},
+            success: function(data) {
+                console.log(data);
+            }
+        });
+
+        location.hash=''
+
+    } else {
+
+        var queryStringData = {
+            response_type : "token",
+            client_id : CLIENT_ID,
+            // redirect_uri : "http://localhost:8085/oauth2/callback"
+            redirect_uri : "https://white-rock-014490f00.4.azurestaticapps.net/AdminHelper.html"
+        }
+
+        window.location.replace(`https://login.${ENVIRONMENT}/oauth/authorize?` + jQuery.param(queryStringData));
+    }
+
+
+
+
+    // const clientId ='90a3b83c-a180-4667-abc3-bedf68ba86ae';
+    // const redirectUri = 'https://white-rock-014490f00.4.azurestaticapps.net/AdminHelper.html'; //window.location.href;
+    // // const redirectUri = 'https://apps.mypurecloud.com.au/admin/#/admin/oauth/authorizations/90a3b83c-a180-4667-abc3-bedf68ba86ae';
+    // let environment = 'mypurecloud.com.au';
+
+    // // Set Genesys Cloud objects
+    // const platformClient = require('platformClient');
+    // const client = platformClient.ApiClient.instance;
+    // let organizationApi = new platformClient.OrganizationApi();
+
+    // client.setEnvironment(environment);
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     client.loginImplicitGrant(clientId, redirectUri)
+    //         .then(() => {
+    //             organizationApi.getOrganizationsMe()
+    //                 .then((data) => {
+    //                     populateParagraph(data)
+    //                 })
+    //                 .catch((err) => {
+    //                     console.log('There was a failure calling getOrganizationsMe');
+    //                     console.error(err);
+    //                 });
+    //         })
+    // });
+
+    // function populateParagraph(data) {
+    //     for (key in data) {
+    //         console.log(key, data[key]);
+    //         let textnode = document.createTextNode(key + ' : ' + data[key]);
+    //         let br = document.createElement("br")
+    //         document.getElementById("orgDetails").appendChild(textnode);
+    //         document.getElementById("orgDetails").appendChild(br);
+    //     }
+    // }
 </script>
