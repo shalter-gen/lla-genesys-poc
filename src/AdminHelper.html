@@ -1,54 +1,74 @@
 <html>
 
 <head>
-    <script src='https://sdk-cdn.mypurecloud.com/javascript/27.0.0/purecloud-platform-client-v2.min.js'></script>
+    <!-- <script src='https://sdk-cdn.mypurecloud.com/javascript/27.0.0/purecloud-platform-client-v2.min.js'></script> -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Monitored Chats</title>
+    <link rel="stylesheet" href="monitored-chats.css">
 </head>
 
 <body>
-    <h4>Get Org Details</h4>
-    <p id="orgDetails"></p>
+    <h1>List of Monitored Chats</h1>
+    <button id="refreshButton">Refresh</button>
+    <table id="monitoredChatsTable">
+        <thead>
+            <tr>
+                <th>Chat Start Date</th>
+                <th>Queue</th>
+                <th>Message Type</th>
+                <th>Conversation ID</th>
+                <th>External Tag</th>
+                <th>CS User(s)</th>
+                <th>Monitor Start Date</th>
+                <th>Monitoring User</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="monitoredChatsBody"></tbody>
+    </table>
+    <script src="monitored-chats.js"></script>
 </body>
 
 </html>
 
 <script>
-
     // Implicit grant credentials
-    const CLIENT_ID ='90a3b83c-a180-4667-abc3-bedf68ba86ae';
-
+    const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
     // Genesys Cloud environment
     const ENVIRONMENT = 'mypurecloud.com.au';
 
     function getParameterByName(name) {
         name = name.replace(/[\\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
-          results = regex.exec(location.hash);
+            results = regex.exec(location.hash);
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    if(window.location.hash) {
+    if (window.location.hash) {
         console.log(location.hash);
         var token = getParameterByName('access_token');
+        localStorage.setItem('access_token', token);
 
 
-        $.ajax({
-            url: `https://api.${ENVIRONMENT}/api/v2/users/me`,
-            type: "GET",
-            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'bearer ' + token);},
-            success: function(data) {
-                console.log(data);
+        fetch(`https://api.${ENVIRONMENT}/api/v2/users/me`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-        });
-
-        location.hash=''
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        location.hash = ''
 
     } else {
 
         var queryStringData = {
-            response_type : "token",
-            client_id : CLIENT_ID,
-            // redirect_uri : "http://localhost:8085/oauth2/callback"
-            redirect_uri : "https://white-rock-014490f00.4.azurestaticapps.net/AdminHelper.html"
+            response_type: "token",
+            client_id: CLIENT_ID,
+            redirect_uri: "https://white-rock-014490f00.4.azurestaticapps.net/AdminHelper.html"
         }
 
         // window.location.replace(`https://login.${ENVIRONMENT}/oauth/authorize?` + jQuery.param(queryStringData));
@@ -57,42 +77,4 @@
         window.location.replace(url + params);
     }
 
-
-
-
-    // const clientId ='90a3b83c-a180-4667-abc3-bedf68ba86ae';
-    // const redirectUri = 'https://white-rock-014490f00.4.azurestaticapps.net/AdminHelper.html'; //window.location.href;
-    // // const redirectUri = 'https://apps.mypurecloud.com.au/admin/#/admin/oauth/authorizations/90a3b83c-a180-4667-abc3-bedf68ba86ae';
-    // let environment = 'mypurecloud.com.au';
-
-    // // Set Genesys Cloud objects
-    // const platformClient = require('platformClient');
-    // const client = platformClient.ApiClient.instance;
-    // let organizationApi = new platformClient.OrganizationApi();
-
-    // client.setEnvironment(environment);
-
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     client.loginImplicitGrant(clientId, redirectUri)
-    //         .then(() => {
-    //             organizationApi.getOrganizationsMe()
-    //                 .then((data) => {
-    //                     populateParagraph(data)
-    //                 })
-    //                 .catch((err) => {
-    //                     console.log('There was a failure calling getOrganizationsMe');
-    //                     console.error(err);
-    //                 });
-    //         })
-    // });
-
-    // function populateParagraph(data) {
-    //     for (key in data) {
-    //         console.log(key, data[key]);
-    //         let textnode = document.createTextNode(key + ' : ' + data[key]);
-    //         let br = document.createElement("br")
-    //         document.getElementById("orgDetails").appendChild(textnode);
-    //         document.getElementById("orgDetails").appendChild(br);
-    //     }
-    // }
 </script>
