@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <script src='https://sdk-cdn.mypurecloud.com/javascript/27.0.0/purecloud-platform-client-v2.min.js'></script>
+</head>
+
+<body>
+    <h4>Get Org Details</h4>
+    <p id="orgDetails"></p>
+</body>
+
+</html>
+
+<script>
+
+    const clientId ='90a3b83c-a180-4667-abc3-bedf68ba86ae';
+    const redirectUri = window.location.href;
+    let environment = 'mypurecloud.com.au';
+
+    // Set Genesys Cloud objects
+    const platformClient = require('platformClient');
+    const client = platformClient.ApiClient.instance;
+    let organizationApi = new platformClient.OrganizationApi();
+
+    client.setEnvironment(environment);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        client.loginImplicitGrant(clientId, redirectUri)
+            .then(() => {
+                organizationApi.getOrganizationsMe()
+                    .then((data) => {
+                        populateParagraph(data)
+                    })
+                    .catch((err) => {
+                        console.log('There was a failure calling getOrganizationsMe');
+                        console.error(err);
+                    });
+            })
+    });
+
+    function populateParagraph(data) {
+        for (key in data) {
+            console.log(key, data[key]);
+            let textnode = document.createTextNode(key + ' : ' + data[key]);
+            let br = document.createElement("br")
+            document.getElementById("orgDetails").appendChild(textnode);
+            document.getElementById("orgDetails").appendChild(br);
+        }
+    }
+</script>
