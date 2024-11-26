@@ -51,7 +51,10 @@
             redirect_uri : "https://white-rock-014490f00.4.azurestaticapps.net/AdminHelper.html"
         }
 
-        window.location.replace(`https://login.${ENVIRONMENT}/oauth/authorize?` + jQuery.param(queryStringData));
+        // window.location.replace(`https://login.${ENVIRONMENT}/oauth/authorize?` + jQuery.param(queryStringData));
+        const url = `https://login.${ENVIRONMENT}/oauth/authorize?`;
+        const params = new URLSearchParams(queryStringData).toString();
+        window.location.replace(url + params);
     }
 
 
