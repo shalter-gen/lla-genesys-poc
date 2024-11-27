@@ -1,22 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-    chrome.storage.local.get(['authToken'], function (result) {
-        if (result.authToken) {
-            fetchMonitoredChats(result.authToken);
-        } else {
-            console.error('No token found');
-        }
-    });
+    const token = getToken();
+    if (token) {
+        fetchMonitoredChats(token);
+    } else {
+        console.error('No token found');
+    }
     document.getElementById('refreshButton').addEventListener('click', refreshTable);
 });
 
-function refreshTable() {
-    chrome.storage.local.get(['authToken'], function (result) {
-        if (result.authToken) {
-            fetchMonitoredChats(result.authToken);
-        } else {
-            console.error('No token found');
-        }
-    });
+function getToken() {
+    return localStorage.getItem('access_token');
 }
 
 function fetchMonitoredChats(token) {
