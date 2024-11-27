@@ -1,0 +1,88 @@
+.message {
+    margin: 10px 0;
+    max-width: 80%;
+    padding: 8px 15px;
+    border-radius: 15px;
+    position: relative;
+    clear: both;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 16px;
+    line-height: 18px;
+}
+
+.message.inbound {
+    float: left;
+    background-color: #f0f7ff;
+    margin-right: auto;
+}
+
+.message.outbound {
+    float: right;
+    background-color: #f5f5f5;
+    margin-left: auto;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgb(42, 42, 46);
+    margin-bottom: 4px;
+}
+
+.message-content {
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.status-icon {
+    width: 16px;
+    height: 16px;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    fill: rgb(42, 42, 46);
+    display: block;
+}
+
+.time {
+    color: #666;
+    font-size: 12px;
+}
+
+.user-initials {
+    background-color: #4a5568;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+#attributesTable {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+}
+
+#attributesTable th, #attributesTable td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#attributesTable th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+#attributesTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
