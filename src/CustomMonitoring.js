@@ -1,4 +1,8 @@
 let token, previousData;
+
+const urlParams = new URLSearchParams(window.location.search);
+let conversationId = urlParams.get('conversationId');
+
 // let conversationId, token, previousData;
 
 // window.addEventListener('message', function (event) {
@@ -19,17 +23,48 @@ let token, previousData;
 //     }
 // });
 
-const urlParams = new URLSearchParams(window.location.search);
-let conversationId = urlParams.get('conversationId');
-const storageKey = `transcript_${conversationId}`;
-const storedData = JSON.parse(localStorage.getItem(storageKey));
+window.addEventListener('message', function (event) {
+    if (event.origin !== window.location.origin) {
+        console.warn('Received message from unexpected origin:', event.origin);
+        return;
+    }
 
-if (storedData) {
-    ({ conversationId, token } = storedData);
+    // Check if the message has the expected structure
+    if (event.data && event.data.conversationId && event.data.token && conversationId == event.data.conversationId) {
+        // conversationId = event.data.conversationId;
+        token = event.data.token;
+
+        // const storageKey = `transcript_${conversationId}`;
+        // localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
+
+        localStorage.setItem('access_token', token);
+
+
+        document.title = `Transcript: ${conversationId}`;
+        fetchTranscript();
+    } else {
+        console.error('Received message with unexpected format');
+    }
+});
+
+
+// const storageKey = `transcript_${conversationId}`;
+// const storedData = JSON.parse(localStorage.getItem(storageKey));
+
+// if (storedData) {
+//     ({ conversationId, token } = storedData);
+//     fetchTranscript();
+// } else {
+//     console.error('No stored conversation data found');
+// }
+
+token = localStorage.getItem('access_token');
+if (token) {
     fetchTranscript();
 } else {
-    console.error('No stored conversation data found');
+    console.error('No stored token found');
 }
+
 
 function fetchTranscript(retryCount = 0, delay = 2000) {
     fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${conversationId}`, {

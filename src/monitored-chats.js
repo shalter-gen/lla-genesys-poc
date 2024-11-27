@@ -175,24 +175,22 @@ function processConversations(conversations, token) {
 
 function customMonitor(conversationId, token) {
     const popupName = `transcript_${conversationId}`;
-    // const popupWindow = window.open('CustomMonitoring.html', 'CustomMonitor', 'width=600,height=400');
-    // const popupWindow = window.open('CustomMonitoring.html', popupName, 'width=600,height=400');
     const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, popupName, 'width=600,height=400');
 
-    // if (popupWindow) {
-    //   // Use a timeout to ensure the window has time to load
-    //   setTimeout(() => {
-    //     popupWindow.postMessage({ conversationId, token }, '*');
-    //   }, 500);
-    // } else {
-    //   console.error('Popup window could not be opened. Please check your popup blocker settings.');
-    // }
     if (popupWindow) {
-        const storageKey = `transcript_${conversationId}`;
-        localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
-      } else {
-        console.error('Popup window could not be opened. Please check your popup blocker settings.');
-      }    
+      // Use a timeout to ensure the window has time to load
+      setTimeout(() => {
+        popupWindow.postMessage({ conversationId, token }, '*');
+      }, 500);
+    } else {
+      console.error('Popup window could not be opened. Please check your popup blocker settings.');
+    }
+    // if (popupWindow) {
+    //     const storageKey = `transcript_${conversationId}`;
+    //     localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
+    //   } else {
+    //     console.error('Popup window could not be opened. Please check your popup blocker settings.');
+    //   }    
   }
 
 //   function customMonitor(conversationId, token) {
