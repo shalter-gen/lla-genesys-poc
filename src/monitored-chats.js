@@ -21,6 +21,7 @@ function refreshTable() {
     }
 }
 
+
 //================================
 
 function fetchMonitoredChats(token) {
@@ -126,64 +127,130 @@ function processConversations(conversations, token) {
         );
 
         // if (monitoringParticipant) {
-            const row = tableBody.insertRow();
-            // Add cells
-            row.insertCell().textContent = new Date(conversation.conversationStart).toLocaleString();
-            row.insertCell().textContent = getQueueName(conversation);
-            row.insertCell().textContent = getMessageType(conversation);
-            row.insertCell().textContent = conversation.conversationId;
-            row.insertCell().textContent = conversation.externalTag || 'N/A';
-            row.insertCell().textContent = getParticipantNames(conversation);
+        const row = tableBody.insertRow();
+        // Add cells
+        row.insertCell().textContent = new Date(conversation.conversationStart).toLocaleString();
+        row.insertCell().textContent = getQueueName(conversation);
+        row.insertCell().textContent = getMessageType(conversation);
+        row.insertCell().textContent = conversation.conversationId;
+        row.insertCell().textContent = conversation.externalTag || 'N/A';
+        row.insertCell().textContent = getParticipantNames(conversation);
 
 
-            if (monitoringParticipant) {
-                row.insertCell().textContent = getMonitoringStartTime(monitoringParticipant);
-                row.insertCell().textContent = monitoringParticipant.participantName;
+        if (monitoringParticipant) {
+            row.insertCell().textContent = getMonitoringStartTime(monitoringParticipant);
+            row.insertCell().textContent = monitoringParticipant.participantName;
 
-                // Add Stop Monitoring button
-                const stopCell = row.insertCell();
-                const stopButton = document.createElement('button');
-                stopButton.textContent = 'Stop Monitoring';
-                stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
-                stopCell.appendChild(stopButton);
-            } else {
-                row.insertCell();
-                row.insertCell();
-                row.insertCell();
-            }
-            // Add Peak button
-            // const peakCell = row.insertCell();
-            // const peakButton = document.createElement('button');
-            // peakButton.textContent = 'Peak';
-            // peakButton.onclick = () => peakChat(conversation.conversationId, token, peakButton);
-            // peakCell.appendChild(peakButton);
+            // Add Stop Monitoring button
+            const stopCell = row.insertCell();
+            const stopButton = document.createElement('button');
+            stopButton.textContent = 'Stop Monitoring';
+            stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
+            stopCell.appendChild(stopButton);
+        } else {
+            row.insertCell();
+            row.insertCell();
+            row.insertCell();
+        }
+        // Add Peak button
+        // const peakCell = row.insertCell();
+        // const peakButton = document.createElement('button');
+        // peakButton.textContent = 'Peak';
+        // peakButton.onclick = () => peakChat(conversation.conversationId, token, peakButton);
+        // peakCell.appendChild(peakButton);
 
-            const customMonitorCell = row.insertCell();
-            const customMonitorButton = document.createElement('button');
-            customMonitorButton.textContent = 'Custom Monitor';
-            customMonitorButton.onclick = () => customMonitor(conversation.conversationId, token);
-            customMonitorCell.appendChild(customMonitorButton);
+        // const customMonitorCell = row.insertCell();
+        // const customMonitorButton = document.createElement('button');
+        // customMonitorButton.textContent = 'Custom Monitor';
+        // customMonitorButton.onclick = () => customMonitor(conversation.conversationId, token);
+        // customMonitorCell.appendChild(customMonitorButton);
 
-            // actionCell.appendChild(stopButton);
-            // actionCell.appendChild(document.createTextNode(' ')); // Add space between buttons
-            // actionCell.appendChild(customMonitorButton);
+        // const actionCell = row.insertCell();
+        // const dropdownHtml = `
+        //         <div class="dropdown">
+        //             <button class="dropbtn">Monitor</button>
+        //             <div class="dropdown-content">
+        //                 <a href="#" onclick="customMonitorTab('${conversation.conversationId}', token)">In new tab</a>
+        //                 <a href="#" onclick="customMonitorPopup('${conversation.conversationId}', token)">In new popup</a>
+        //             </div>
+        //         </div>
+        //     `;
+        // actionCell.innerHTML = dropdownHtml;
+
+        const actionCell = row.insertCell();
+        const dropdownDiv = document.createElement('div');
+        dropdownDiv.className = 'dropdown';
+        
+        const mainButton = document.createElement('button');
+        mainButton.className = 'dropbtn';
+        mainButton.textContent = 'Custom Monitor';
+        
+        const dropdownContent = document.createElement('div');
+        dropdownContent.className = 'dropdown-content';
+        
+        const tabLink = document.createElement('a');
+        tabLink.textContent = 'In new tab';
+        tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, token));
+        
+        const popupLink = document.createElement('a');
+        popupLink.textContent = 'In new popup';
+        popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, token));
+        
+        dropdownContent.appendChild(tabLink);
+        dropdownContent.appendChild(popupLink);
+        dropdownDiv.appendChild(mainButton);
+        dropdownDiv.appendChild(dropdownContent);
+        actionCell.appendChild(dropdownDiv);
 
 
         // }
     });
 }
 
+// Split the customMonitor function into two separate functions
+function customMonitorPopup(conversationId, token) {
+    const popupName = `transcript_${conversationId}`;
+    const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, popupName, 'width=800,height=500');
+    if (popupWindow) {
+        customMonitorShareData(popupWindow, conversationId, token);
+        // // Use a timeout to ensure the window has time to load
+        // setTimeout(() => {
+        //     popupWindow.postMessage({ conversationId, token }, '*');
+        // }, 800);
+    } else {
+        console.error('Popup window could not be opened. Please check your popup blocker settings.');
+    }
+}
+
+function customMonitorTab(conversationId, token) {
+    const storageKey = `transcript_${conversationId}`;
+    localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
+    const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, '_blank');
+    if (popupWindow) {
+        customMonitorShareData(popupWindow, conversationId, token);
+    } else {
+        console.error('Popup window could not be opened. Please check your popup blocker settings.');
+    }
+}
+
+function customMonitorShareData(handle, conversationId, token) {
+    // Use a timeout to ensure the window has time to load
+    setTimeout(() => {
+        handle.postMessage({ conversationId, token }, '*');
+    }, 500);
+}
+
 function customMonitor(conversationId, token) {
     const popupName = `transcript_${conversationId}`;
-    const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, popupName, 'width=600,height=400');
+    const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, popupName, 'width=800,height=500');
 
     if (popupWindow) {
-      // Use a timeout to ensure the window has time to load
-      setTimeout(() => {
-        popupWindow.postMessage({ conversationId, token }, '*');
-      }, 500);
+        // Use a timeout to ensure the window has time to load
+        setTimeout(() => {
+            popupWindow.postMessage({ conversationId, token }, '*');
+        }, 800);
     } else {
-      console.error('Popup window could not be opened. Please check your popup blocker settings.');
+        console.error('Popup window could not be opened. Please check your popup blocker settings.');
     }
     // if (popupWindow) {
     //     const storageKey = `transcript_${conversationId}`;
@@ -191,7 +258,7 @@ function customMonitor(conversationId, token) {
     //   } else {
     //     console.error('Popup window could not be opened. Please check your popup blocker settings.');
     //   }    
-  }
+}
 
 //   function customMonitor(conversationId, token) {
 //     const popupName = `transcript_${conversationId}`;

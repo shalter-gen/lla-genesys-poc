@@ -141,9 +141,25 @@ function getStatusIcon(status) {
     </svg>`;
 }
 
+function updatePopupTitle(messagesDetails) {
+    const customer = messagesDetails.participants.find(p => p.purpose === 'customer');
+    const customerName = customer?.attributes?.HSName || 'Unknown Customer';
+    
+    const headerElement = document.querySelector('h1');
+    if (headerElement) {
+        headerElement.textContent = `Custom Monitoring of "${customerName}"`;
+    }
+    const titleElement = document.querySelector('title');
+    if (titleElement) {
+        titleElement.textContent = `"${customerName}"`;
+    }
+
+}
+
 let displayedMessageIds = new Set();
 
 function displayTranscript(messagesDetails) {
+    updatePopupTitle(messagesDetails);
     displayConversationAttributes(messagesDetails);
 
     const transcriptDiv = document.getElementById('transcript');
@@ -179,13 +195,25 @@ function displayTranscript(messagesDetails) {
             participantName = message.normalizedMessage.channel.from.nickname;
 
         } else if (message.fromAddress) {
-            // Customer
+            // Customer or Flow
             const participant = messagesDetails.participants.find(p =>
                 p.fromAddress?.addressNormalized === message.fromAddress
             );
             if (participant) {
-                participantName = participant.attributes?.name;
+                participantName = participant.attributes?.name ||   // Customer
+                    participant.fromAddress?.name ||                // Flow
+                    participant.name;                               // Flow
             }
+        // } else if (message.fromAddress && message.purpose !== 'customer') {
+        //     // Flow
+        //     const participant = messagesDetails.participants.find(p =>
+        //         p.fromAddress?.addressNormalized === message.fromAddress
+        //     );
+        //     if (participant) {
+        //         participantName = participant.fromAddress?.name || participant.name;
+        //     }
+        } else {
+            participantName = 'Un-known';
         }
 
         const initials = participantName?.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -243,12 +271,15 @@ function displayConversationAttributes(messagesDetails) {
         </thead>
         <tbody>
             ${Object.entries(allAttributes)
-            .map(([key, value]) => `
+                .filter(([key]) => !['name', 'HSName'].includes(key))
+                .map(([key, value]) => `
                     <tr>
                         <td>${key}</td>
                         <td>${value || 'N/A'}</td>
                     </tr>
                 `).join('')}
+
+    
         </tbody>
     `;
 }
