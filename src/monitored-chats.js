@@ -12,12 +12,27 @@ function getToken() {
     return localStorage.getItem('access_token');
 }
 
+function refreshTable() {
+    const token = getToken();
+    if (token) {
+        fetchMonitoredChats(token);
+    } else {
+        console.error('No token found');
+    }
+}
+
+//================================
+
 function fetchMonitoredChats(token) {
     const now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const interval = `${yesterday.toISOString()}/${now.toISOString()}`;
 
     const body = {
+        paging: {
+            "pageSize": 100,
+            "pageNumber": 1
+        },
         conversationFilters: [
             {
                 clauses: [
