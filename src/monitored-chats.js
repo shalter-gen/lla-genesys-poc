@@ -214,7 +214,7 @@ function customMonitorShareData(handle, conversationId, token) {
     // Use a timeout to ensure the window has time to load
     setTimeout(() => {
         handle.postMessage({ conversationId, token }, '*');
-    }, 1500);
+    }, 4000);
 }
 
 function customMonitor(conversationId, token) {
