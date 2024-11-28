@@ -22,8 +22,9 @@ function refreshTable() {
     }
 }
 
-
 //================================
+
+let currentSearchValue = '';  // Store the current search value
 
 function fetchMonitoredChats(token) {
     const now = new Date();
@@ -84,12 +85,19 @@ function fetchMonitoredChats(token) {
     })
         .then(response => response.json())
         .then(data => processConversations(data.conversations, token))
+        .then(() => {
+            console.log('Conversations fetched and processed');
+            if (currentSearchValue) {
+                const searchBox = document.getElementById('searchBox');
+                searchBox.value = currentSearchValue;
+                filterTable({ target: searchBox });
+            }
+        })
         .catch(error => console.error('Error:', error));
 }
 
 function getQueueName(conversation) {
     const acdParticipant = conversation.participants.find(p => p.purpose === 'acd');
-    // return acdParticipant ? acdParticipant.sessions[0].flow.flowName : 'N/A';
     return acdParticipant ? acdParticipant.participantName : 'N/A';
 }
 
@@ -99,7 +107,7 @@ function getParticipantNames(conversation) {
         .map(p => p.participantName)
         .join(', ');
 }
-//conversation.participants[5].sessions[0].segments[1].segmentType
+
 function getMessageType(conversation) {
     const customerSession = conversation.participants.find(p => p.purpose === 'customer').sessions[0];
     const type = customerSession.messageType || customerSession.mediaType || 'N/A';
@@ -127,10 +135,16 @@ function processConversations(conversations, token) {
             )
         );
 
-        // if (monitoringParticipant) {
         const row = tableBody.insertRow();
-        // Add cells
-        row.insertCell().textContent = new Date(conversation.conversationStart).toLocaleString();
+        row.insertCell().textContent = new Date(conversation.conversationStart).toLocaleString('en-AU', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
         row.insertCell().textContent = getQueueName(conversation);
         row.insertCell().textContent = getMessageType(conversation);
         row.insertCell().textContent = conversation.conversationId;
@@ -190,10 +204,6 @@ function customMonitorPopup(conversationId, token) {
     const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, popupName, 'width=800,height=500');
     if (popupWindow) {
         customMonitorShareData(popupWindow, conversationId, token);
-        // // Use a timeout to ensure the window has time to load
-        // setTimeout(() => {
-        //     popupWindow.postMessage({ conversationId, token }, '*');
-        // }, 800);
     } else {
         console.error('Popup window could not be opened. Please check your popup blocker settings.');
     }
@@ -229,22 +239,7 @@ function customMonitor(conversationId, token) {
     } else {
         console.error('Popup window could not be opened. Please check your popup blocker settings.');
     }
-    // if (popupWindow) {
-    //     const storageKey = `transcript_${conversationId}`;
-    //     localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
-    //   } else {
-    //     console.error('Popup window could not be opened. Please check your popup blocker settings.');
-    //   }    
 }
-
-//   function customMonitor(conversationId, token) {
-//     const popupName = `transcript_${conversationId}`;
-//     const popupWindow = window.open('CustomMonitoring.html', popupName, 'width=600,height=400');
-//     popupWindow.onload = function() {
-//       popupWindow.postMessage({ conversationId, token }, '*');
-//     };
-//   }
-
 
 function confirmStopMonitoring(conversationId, participantId, token, button) {
     if (confirm("Please confirm you want to terminate the monitoring")) {
@@ -274,9 +269,10 @@ function stopMonitoring(conversationId, participantId, token, button) {
         .then(data => {
             console.log('Monitoring stopped:', data);
             // Refresh the table or remove the row
-            refreshTable();
             alert('Monitoring has been successfully stopped.');
-
+            setTimeout(() => {
+                refreshTable()
+            }, 2000);
         })
         .catch(error => {
             console.error('Error stopping monitoring:', error);
@@ -297,7 +293,16 @@ function getMonitoringStartTime(participant) {
         const monitoringSegment = monitoringSession.segments.find(seg =>
             seg.segmentType === 'monitoring' && !seg.disconnectType
         );
-        return new Date(monitoringSegment.segmentStart).toLocaleString();
+        // return new Date(monitoringSegment.segmentStart).toLocaleString();
+        return new Date(monitoringSegment.segmentStart).toLocaleString('en-AU', {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
     }
     return 'N/A';
 }
@@ -322,8 +327,11 @@ function initializeTableFeatures() {
         header.classList.add('sortable');
     });
 
-    // Add search functionality
-    document.getElementById('searchBox').addEventListener('input', filterTable);
+    // Modify the search input event listener to store the value
+    document.getElementById('searchBox').addEventListener('input', function (e) {
+        currentSearchValue = e.target.value;
+        filterTable(e);
+    });
 }
 
 function sortTable(columnIndex) {
