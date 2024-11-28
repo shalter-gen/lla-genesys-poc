@@ -173,7 +173,10 @@ function displayTranscript(messagesDetails) {
         const messageElement = document.createElement('div');
         const isInbound = message.direction === 'inbound';
         messageElement.className = `message ${isInbound ? 'inbound' : 'outbound'}`;
-
+//message.normalizedMessage.type==='Event'
+        if (message.normalizedMessage?.type === 'Event') {
+            messageElement.classList.add('event');
+        }
         const time = new Date(message.messageTime || message.timestamp).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -218,7 +221,10 @@ function displayTranscript(messagesDetails) {
 
         const initials = participantName?.split(' ').map(n => n[0]).join('').toUpperCase();
 
-        messageElement.innerHTML = `
+        // message.normalizedMessage.type=Text or Event
+        // message.normalizedMessage.events[0].presence.type=Clear/Join
+        if (message.normalizedMessage.type==='Text') {
+            messageElement.innerHTML = `
             <div class="message-header">
                 <span>${participantName}</span>
                 <span class="time">
@@ -228,6 +234,19 @@ function displayTranscript(messagesDetails) {
             </div>
             <div class="message-content">${message.textBody || 'No message content'}</div>
         `;
+
+        } else if (message.normalizedMessage.type==='Event') {
+            messageElement.innerHTML = `
+            <div class="message-header">
+                <span>${participantName}</span>
+                <span class="time">
+                    ${time} ${!isInbound ? getStatusIcon(message.status) : ''}
+                </span>
+                ${!isInbound ? `<div class="user-initials">${initials}</div>` : ''}
+            </div>
+            <div class="message-content">Event: ${message.normalizedMessage.events[0].presence.type}</div>
+        `;
+        }
 
         transcriptDiv.appendChild(messageElement);
         displayedMessageIds.add(message.id);

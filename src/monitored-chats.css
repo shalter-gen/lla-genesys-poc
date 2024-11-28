@@ -53,3 +53,41 @@ body {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+#searchBox {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+}
+
+.sortable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px;
+}
+
+.sortable:hover {
+    background-color: #f5f5f5;
+}
+
+.sort-asc::after {
+    content: "▲";
+    position: absolute;
+    right: 5px;
+}
+
+.sort-desc::after {
+    content: "▼";
+    position: absolute;
+    right: 5px;
+}
+
+#monitoredChatsTable th {
+    background-color: #f5f5f5;
+    padding: 10px;
+    text-align: left;
+}

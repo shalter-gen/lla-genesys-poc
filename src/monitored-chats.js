@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const token = getToken();
     if (token) {
+        initializeTableFeatures();
         fetchMonitoredChats(token);
     } else {
         console.error('No token found');
@@ -94,11 +95,11 @@ function getQueueName(conversation) {
 
 function getParticipantNames(conversation) {
     return conversation.participants
-        .filter(p => p.purpose === 'agent' || p.purpose === 'customer')
+        .filter(p => p.purpose === 'agent' && p.sessions.some(s => s.segments.some(seg => seg.segmentType === 'interact') ))//|| p.purpose === 'customer')
         .map(p => p.participantName)
         .join(', ');
 }
-
+//conversation.participants[5].sessions[0].segments[1].segmentType
 function getMessageType(conversation) {
     const customerSession = conversation.participants.find(p => p.purpose === 'customer').sessions[0];
     const type = customerSession.messageType || customerSession.mediaType || 'N/A';
@@ -152,30 +153,6 @@ function processConversations(conversations, token) {
             row.insertCell();
             row.insertCell();
         }
-        // Add Peak button
-        // const peakCell = row.insertCell();
-        // const peakButton = document.createElement('button');
-        // peakButton.textContent = 'Peak';
-        // peakButton.onclick = () => peakChat(conversation.conversationId, token, peakButton);
-        // peakCell.appendChild(peakButton);
-
-        // const customMonitorCell = row.insertCell();
-        // const customMonitorButton = document.createElement('button');
-        // customMonitorButton.textContent = 'Custom Monitor';
-        // customMonitorButton.onclick = () => customMonitor(conversation.conversationId, token);
-        // customMonitorCell.appendChild(customMonitorButton);
-
-        // const actionCell = row.insertCell();
-        // const dropdownHtml = `
-        //         <div class="dropdown">
-        //             <button class="dropbtn">Monitor</button>
-        //             <div class="dropdown-content">
-        //                 <a href="#" onclick="customMonitorTab('${conversation.conversationId}', token)">In new tab</a>
-        //                 <a href="#" onclick="customMonitorPopup('${conversation.conversationId}', token)">In new popup</a>
-        //             </div>
-        //         </div>
-        //     `;
-        // actionCell.innerHTML = dropdownHtml;
 
         const actionCell = row.insertCell();
         const dropdownDiv = document.createElement('div');
@@ -183,17 +160,17 @@ function processConversations(conversations, token) {
         
         const mainButton = document.createElement('button');
         mainButton.className = 'dropbtn';
-        mainButton.textContent = 'Custom Monitor';
+        mainButton.textContent = 'Monitor';
         
         const dropdownContent = document.createElement('div');
         dropdownContent.className = 'dropdown-content';
         
         const tabLink = document.createElement('a');
-        tabLink.textContent = 'In new tab';
+        tabLink.textContent = 'New tab';
         tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, token));
         
         const popupLink = document.createElement('a');
-        popupLink.textContent = 'In new popup';
+        popupLink.textContent = 'Popup';
         popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, token));
         
         dropdownContent.appendChild(tabLink);
@@ -325,92 +302,62 @@ function getMonitoringStartTime(participant) {
     return 'N/A';
 }
 
-function confirmPeakChat(conversationId, participantId, token, button) {
-    if (confirm("Are you sure you want to transfer this chat to yourself?")) {
-        peakChat(conversationId, participantId, token, button);
-    }
+// Add search input above the table
+function addSearchBox() {
+    const searchBox = document.createElement('input');
+    searchBox.type = 'text';
+    searchBox.id = 'searchBox';
+    searchBox.placeholder = 'Search chats...';
+    document.getElementById('monitoredChatsTable').before(searchBox);
 }
 
-function peakChat(conversationId, token, button) {
-    button.disabled = true;
-    button.textContent = 'Loading...';
-
-    fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${conversationId}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            const participants = data.participants;
-            return Promise.all(participants.map(participant =>
-                Promise.all(participant.messages.map(message =>
-                    fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${message.messageId}/details`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }).then(response => response.json())
-                ))
-            )).then(participantMessages => ({
-                participants: participants,
-                messages: participantMessages.flat()
-            }));
-        })
-        .then(messagesDetails => {
-            displayTranscript(messagesDetails);
-        })
-        .catch(error => {
-            console.error('Error fetching conversation details:', error);
-            alert('Failed to fetch conversation details. Please try again.');
-        })
-        .finally(() => {
-            button.disabled = false;
-            button.textContent = 'Peak';
-        });
-}
-
-function displayTranscript(conversationData) {
-    const transcriptDiv = document.getElementById('transcriptDiv') || createTranscriptDiv();
-    transcriptDiv.innerHTML = ''; // Clear previous content
-
-    const participantMap = new Map();
-    conversationData.participants.forEach(participant => {
-        const address = participant.fromAddress?.addressNormalized || participant.toAddress?.addressNormalized;
-        if (address) {
-            participantMap.set(address, {
-                name: participant.purpose === 'customer' ? participant.attributes?.HSName : participant.name,
-                purpose: participant.purpose
-            });
-        }
+// Initialize sorting and searching
+function initializeTableFeatures() {
+    addSearchBox();
+    
+    // Add sorting to headers
+    const headers = document.querySelectorAll('#monitoredChatsTable th');
+    headers.forEach((header, index) => {
+        header.addEventListener('click', () => sortTable(index));
+        header.classList.add('sortable');
     });
 
-    conversationData.messages.forEach(message => {
-        const messageElement = document.createElement('div');
-        messageElement.className = 'message';
+    // Add search functionality
+    document.getElementById('searchBox').addEventListener('input', filterTable);
+}
 
-        const participant = participantMap.get(message.fromAddress) || { name: 'Unknown', purpose: 'unknown' };
-        const isInbound = message.direction === 'inbound';
+function sortTable(columnIndex) {
+    const table = document.getElementById('monitoredChatsTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const header = table.querySelectorAll('th')[columnIndex];
+    const isAscending = !header.classList.contains('sort-asc');
 
-        messageElement.innerHTML = `
-      <p><strong>${participant.name} - ${new Date(message.timestamp).toLocaleString()} - ${message.status}</strong></p>
-      <p>${message.textBody || 'No message content'}</p>
-    `;
+    // Update sort indicators
+    table.querySelectorAll('th').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+    });
+    header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
 
-        messageElement.style.textAlign = isInbound ? 'left' : 'right';
-        messageElement.style.backgroundColor = isInbound ? '#f0f0f0' : '#e6f3ff';
+    // Sort rows
+    rows.sort((a, b) => {
+        const aValue = a.cells[columnIndex].textContent;
+        const bValue = b.cells[columnIndex].textContent;
+        return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+    });
 
-        transcriptDiv.appendChild(messageElement);
+    tbody.append(...rows);
+}
+
+function filterTable(e) {
+    const searchText = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#monitoredChatsTable tbody tr');
+
+    rows.forEach(row => {
+        const text = Array.from(row.cells)
+            .map(cell => cell.textContent.toLowerCase())
+            .join(' ');
+        row.style.display = text.includes(searchText) ? '' : 'none';
     });
 }
 
-function createTranscriptDiv() {
-    const transcriptDiv = document.createElement('div');
-    transcriptDiv.id = 'transcriptDiv';
-    transcriptDiv.style.marginTop = '20px';
-    transcriptDiv.style.border = '1px solid #ccc';
-    transcriptDiv.style.padding = '10px';
-    document.body.appendChild(transcriptDiv);
-    return transcriptDiv;
-}
