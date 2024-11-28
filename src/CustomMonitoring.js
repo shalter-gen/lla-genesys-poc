@@ -144,7 +144,7 @@ function getStatusIcon(status) {
 function updatePopupTitle(messagesDetails) {
     const customer = messagesDetails.participants.find(p => p.purpose === 'customer');
     const customerName = customer?.attributes?.HSName || 'Unknown Customer';
-    
+
     const headerElement = document.querySelector('h1');
     if (headerElement) {
         headerElement.textContent = `Custom Monitoring of "${customerName}"`;
@@ -169,11 +169,17 @@ function displayTranscript(messagesDetails) {
         new Date(a.messageTime || a.timestamp) - new Date(b.messageTime || b.timestamp)
     );
 
+    // If there are new messages, play the notification sound
+    if (newMessages.length > 0) {
+        document.getElementById('chatNotification').play()
+            .catch(error => console.log('Error playing notification sound:', error));
+    }
+
     newMessages.forEach(message => {
         const messageElement = document.createElement('div');
         const isInbound = message.direction === 'inbound';
         messageElement.className = `message ${isInbound ? 'inbound' : 'outbound'}`;
-//message.normalizedMessage.type==='Event'
+        //message.normalizedMessage.type==='Event'
         if (message.normalizedMessage?.type === 'Event') {
             messageElement.classList.add('event');
         }
@@ -207,14 +213,14 @@ function displayTranscript(messagesDetails) {
                     participant.fromAddress?.name ||                // Flow
                     participant.name;                               // Flow
             }
-        // } else if (message.fromAddress && message.purpose !== 'customer') {
-        //     // Flow
-        //     const participant = messagesDetails.participants.find(p =>
-        //         p.fromAddress?.addressNormalized === message.fromAddress
-        //     );
-        //     if (participant) {
-        //         participantName = participant.fromAddress?.name || participant.name;
-        //     }
+            // } else if (message.fromAddress && message.purpose !== 'customer') {
+            //     // Flow
+            //     const participant = messagesDetails.participants.find(p =>
+            //         p.fromAddress?.addressNormalized === message.fromAddress
+            //     );
+            //     if (participant) {
+            //         participantName = participant.fromAddress?.name || participant.name;
+            //     }
         } else {
             participantName = 'Un-known';
         }
@@ -223,7 +229,7 @@ function displayTranscript(messagesDetails) {
 
         // message.normalizedMessage.type=Text or Event
         // message.normalizedMessage.events[0].presence.type=Clear/Join
-        if (message.normalizedMessage.type==='Text') {
+        if (message.normalizedMessage.type === 'Text') {
             messageElement.innerHTML = `
             <div class="message-header">
                 <span>${participantName}</span>
@@ -235,7 +241,7 @@ function displayTranscript(messagesDetails) {
             <div class="message-content">${message.textBody || 'No message content'}</div>
         `;
 
-        } else if (message.normalizedMessage.type==='Event') {
+        } else if (message.normalizedMessage.type === 'Event') {
             messageElement.innerHTML = `
             <div class="message-header">
                 <span>${participantName}</span>
@@ -290,8 +296,8 @@ function displayConversationAttributes(messagesDetails) {
         </thead>
         <tbody>
             ${Object.entries(allAttributes)
-                .filter(([key]) => !['name', 'HSName', 'messageId'].includes(key))
-                .map(([key, value]) => `
+            .filter(([key]) => !['name', 'HSName', 'messageId'].includes(key))
+            .map(([key, value]) => `
                     <tr>
                         <td>${key}</td>
                         <td>${value || 'N/A'}</td>
