@@ -290,7 +290,7 @@ function displayConversationAttributes(messagesDetails) {
         </thead>
         <tbody>
             ${Object.entries(allAttributes)
-                .filter(([key]) => !['name', 'HSName'].includes(key))
+                .filter(([key]) => !['name', 'HSName', 'messageId'].includes(key))
                 .map(([key, value]) => `
                     <tr>
                         <td>${key}</td>
