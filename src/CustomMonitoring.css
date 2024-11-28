@@ -22,6 +22,14 @@
     margin-left: auto;
 }
 
+.message.inbound.event {
+    background-color: rgb(219, 237, 176);;
+}
+
+.message.outbound.message.event {
+    background-color: rgb(42, 42, 46);;
+}
+
 .message-header {
     display: flex;
     justify-content: space-between;
