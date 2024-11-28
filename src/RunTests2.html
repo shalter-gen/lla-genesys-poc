@@ -106,7 +106,7 @@
             // Operating system
             operatingSystems: {
                 windows: 7,
-                mac: 10.15,
+                mac: 10,
             },
             // Network Speed Test
             networkSpeedTestConfig: {
@@ -131,10 +131,10 @@
         checkNetworkButton.onclick = () => checkNetwork();
         controlEl.appendChild(checkNetworkButton);
 
-        document.getElementById('buttonZscalerStartTest').onclick = () => { runTest(1); }
-        document.getElementById('buttonNetworkSpeed').onclick = () => { runTest(2); }
-        document.getElementById('buttonBrowserCheck').onclick = () => { runTest(3); }
-        document.getElementById('buttonComputerCheck').onclick = () => { runTest(4); }
+        document.getElementById('buttonZscalerStartTest').onclick = () => {runTest(1);}
+        document.getElementById('buttonNetworkSpeed').onclick = () => {runTest(2);}
+        document.getElementById('buttonBrowserCheck').onclick = () => {runTest(3);}
+        document.getElementById('buttonComputerCheck').onclick = () => {runTest(4);}
 
         const speedCheckButton = document.createElement('button');
         speedCheckButton.textContent = "Start Speed Test";
@@ -331,7 +331,7 @@
                 status = 'OK';
                 description = 'Network speed is good';
             }
-            return ({ result: status, description: description, details: JSON.stringify(details) });
+            return({ result: status, description: description, details: JSON.stringify(details) });
         }
 
         async function checkBrowser() {
@@ -362,16 +362,9 @@
             const browser = bowser.getParser(window.navigator.userAgent);
 
             let extractVersion = function (str) {
-                // Match the first segment and subsequent segments, ignoring non-digit endings
-                const match = str.match(/^(\d+)(\.\d+)*\b/);
-                if (!match) return null;
-
-                // Split the matched part by dots and filter out non-digit parts
-                const parts = match[0].split('.').filter(part => /^\d+$/.test(part));
-
-                // Concatenate all parts into a single string with the first dot preserved
-                return parts.length > 1 ? `${parts[0]}.${parts.slice(1).join('')}` : parts[0];
-            };
+                const match = str.match(/\d+/);
+                return match ? parseInt(match[0]) : null;
+            }
             // Get the operating system name and version
             const osName = browser.getOSName(true); // 'windows', 'macos', etc.
             const osVersion = browser.getOS().version; // e.g., '10.15.7'
@@ -452,7 +445,7 @@
                 // Set up the callback to handle results
                 speedTestEngine.onFinish = results => {
                     // Resolve the promise with the results once the test is complete
-                    resolve({ testType: "Network Speed", ...analyzeSpeedTest(results) });
+                    resolve({testType: "Network Speed",...analyzeSpeedTest(results)});
                 };
 
                 // Start the speed test
