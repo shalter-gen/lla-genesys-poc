@@ -1,3 +1,5 @@
+const REFRESH_INTERVAL=10000; // 10 seconds
+
 let token, previousData;
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -126,7 +128,7 @@ function fetchTranscript(retryCount = 0, delay = 2000) {
             alert('Failed to fetch conversation details. Please try again.');
         })
         .finally(() => {
-            setTimeout(fetchTranscript, 5000);
+            setTimeout(fetchTranscript, REFRESH_INTERVAL);
         });
 }
 function getStatusIcon(status) {
