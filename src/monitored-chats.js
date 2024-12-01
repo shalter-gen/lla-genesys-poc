@@ -70,12 +70,28 @@ function fetchMonitoredChats(token) {
         //         ]
         //     }
         // ],
+
+        "segmentFilters": [
+            {
+                "type": "and",
+                "predicates": [
+                    {
+                        "dimension": "mediaType",
+                        "value": "message"
+                    },
+                    {
+                        "dimension": "direction",
+                        "value": "inbound"
+                    },
+                ]
+            },
+        ],
         interval: interval,
         order: "desc",
         orderBy: "conversationStart"
     };
 
-    fetch('https://api.mypurecloud.com.au/api/v2/analytics/conversations/details/query', {
+    fetch('https://api.mypurecloud.com.au/api/v2/analytics/conversations/details/query?pageSize=100', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -103,7 +119,7 @@ function getQueueName(conversation) {
 
 function getParticipantNames(conversation) {
     return conversation.participants
-        .filter(p => p.purpose === 'agent' && p.sessions.some(s => s.segments.some(seg => seg.segmentType === 'interact') ))//|| p.purpose === 'customer')
+        .filter(p => p.purpose === 'agent' && p.sessions.some(s => s.segments.some(seg => seg.segmentType === 'interact')))//|| p.purpose === 'customer')
         .map(p => p.participantName)
         .join(', ');
 }
@@ -149,7 +165,7 @@ function processConversations(conversations, token) {
         row.insertCell().textContent = getMessageType(conversation);
         row.insertCell().textContent = conversation.conversationId;
         row.insertCell().textContent = conversation.externalTag || 'N/A';
-        row.insertCell().textContent = getParticipantNames(conversation);
+        row.insertCell().textContent = getParticipantNames(conversation);   // CSes (Agents)
 
 
         if (monitoringParticipant) {
@@ -171,22 +187,22 @@ function processConversations(conversations, token) {
         const actionCell = row.insertCell();
         const dropdownDiv = document.createElement('div');
         dropdownDiv.className = 'dropdown';
-        
+
         const mainButton = document.createElement('button');
         mainButton.className = 'dropbtn';
         mainButton.textContent = 'Monitor';
-        
+
         const dropdownContent = document.createElement('div');
         dropdownContent.className = 'dropdown-content';
-        
+
         const tabLink = document.createElement('a');
         tabLink.textContent = 'New tab';
         tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, token));
-        
+
         const popupLink = document.createElement('a');
         popupLink.textContent = 'Popup';
         popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, token));
-        
+
         dropdownContent.appendChild(tabLink);
         dropdownContent.appendChild(popupLink);
         dropdownDiv.appendChild(mainButton);
@@ -319,7 +335,7 @@ function addSearchBox() {
 // Initialize sorting and searching
 function initializeTableFeatures() {
     addSearchBox();
-    
+
     // Add sorting to headers
     const headers = document.querySelectorAll('#monitoredChatsTable th');
     headers.forEach((header, index) => {
