@@ -197,11 +197,11 @@ function processConversations(conversations, token) {
 
         const tabLink = document.createElement('a');
         tabLink.textContent = 'New tab';
-        tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, token));
+        tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
 
         const popupLink = document.createElement('a');
         popupLink.textContent = 'Popup';
-        popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, token));
+        popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
 
         dropdownContent.appendChild(tabLink);
         dropdownContent.appendChild(popupLink);
@@ -215,31 +215,31 @@ function processConversations(conversations, token) {
 }
 
 // Split the customMonitor function into two separate functions
-function customMonitorPopup(conversationId, token) {
+function customMonitorPopup(conversationId, externalTag, token) {
     const popupName = `transcript_${conversationId}`;
     const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, popupName, 'width=800,height=500');
     if (popupWindow) {
-        customMonitorShareData(popupWindow, conversationId, token);
+        customMonitorShareData(popupWindow, conversationId, externalTag, token);
     } else {
         console.error('Popup window could not be opened. Please check your popup blocker settings.');
     }
 }
 
-function customMonitorTab(conversationId, token) {
+function customMonitorTab(conversationId, externalTag, token) {
     const storageKey = `transcript_${conversationId}`;
     localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
     const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, '_blank');
     if (popupWindow) {
-        customMonitorShareData(popupWindow, conversationId, token);
+        customMonitorShareData(popupWindow, conversationId, externalTag, token);
     } else {
         console.error('Popup window could not be opened. Please check your popup blocker settings.');
     }
 }
 
-function customMonitorShareData(handle, conversationId, token) {
+function customMonitorShareData(handle, conversationId, externalTag, token) {
     // Use a timeout to ensure the window has time to load
     setTimeout(() => {
-        handle.postMessage({ conversationId, token }, '*');
+        handle.postMessage({ conversationId, externalTag, token }, '*');
     }, 4000);
 }
 

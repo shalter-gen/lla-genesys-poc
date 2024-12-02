@@ -41,8 +41,8 @@ window.addEventListener('message', function (event) {
 
         localStorage.setItem('access_token', token);
 
-
-        document.title = `Transcript: ${conversationId}`;
+        // document.title = `Transcript: ${conversationId}`;
+        document.title = event.data.externalTag ? `${event.data.externalTag}` : conversationId;
         fetchTranscript();
     } else {
         console.error('Received message with unexpected format');
