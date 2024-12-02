@@ -22,7 +22,8 @@
 //     }
 // }
 
-let token;
+// let token;
+//FIX TOKEN!
 
 function determineEnvironment() {
     return window.location.protocol === 'chrome-extension:';
