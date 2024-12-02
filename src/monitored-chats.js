@@ -1,26 +1,98 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const token = getToken();
+// document.addEventListener('DOMContentLoaded', function () {
+//     const token = getToken();
+//     if (token) {
+//         initializeTableFeatures();
+//         fetchMonitoredChats(token);
+//     } else {
+//         console.error('No token found');
+//     }
+//     document.getElementById('refreshButton').addEventListener('click', refreshTable);
+// });
+
+// function getToken() {
+//     return localStorage.getItem('access_token');
+// }
+
+// function refreshTable() {
+//     const token = getToken();
+//     if (token) {
+//         fetchMonitoredChats(token);
+//     } else {
+//         console.error('No token found');
+//     }
+// }
+
+let token;
+
+function determineEnvironment() {
+    return window.location.protocol === 'chrome-extension:';
+}
+
+async function getToken() {
+    const isExtension = determineEnvironment();
+    // let token;
+
+    if (isExtension) {
+        token = await new Promise(resolve => {
+            chrome.storage.local.get(['access_token'], function (result) {
+                resolve(result.access_token);
+            });
+        });
+    } else {
+        token = localStorage.getItem('access_token');
+    }
+
+    if (!token) {
+        return null;
+    }
+
+    try {
+        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            return token;
+        } else {
+            console.error('Token is invalid or expired');
+            if (isExtension) {
+                chrome.storage.local.remove('access_token');
+            } else {
+                localStorage.removeItem('access_token');
+            }
+            return null;
+        }
+    } catch (error) {
+        console.error('Error checking token validity:', error);
+        return null;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    const token = await getToken();
     if (token) {
         initializeTableFeatures();
         fetchMonitoredChats(token);
     } else {
-        console.error('No token found');
+        console.error('No valid token found');
+        // Handle the case when no valid token is found (e.g., redirect to login)
     }
     document.getElementById('refreshButton').addEventListener('click', refreshTable);
 });
 
-function getToken() {
-    return localStorage.getItem('access_token');
-}
-
-function refreshTable() {
-    const token = getToken();
+async function refreshTable() {
+    const token = await getToken();
     if (token) {
         fetchMonitoredChats(token);
     } else {
-        console.error('No token found');
+        console.error('No valid token found');
+        // Handle the case when no valid token is found (e.g., redirect to login)
     }
 }
+
 
 //================================
 

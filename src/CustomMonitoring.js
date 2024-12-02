@@ -1,72 +1,74 @@
-const REFRESH_INTERVAL=10000; // 10 seconds
+const REFRESH_INTERVAL = 10000; // 10 seconds
 
 let token, previousData;
 
 const urlParams = new URLSearchParams(window.location.search);
 let conversationId = urlParams.get('conversationId');
 
-// let conversationId, token, previousData;
+function showLoading() {
+    document.getElementById('loadingMessage').style.display = 'flex';
+    document.getElementById('content').style.display = 'none';
+}
 
-// window.addEventListener('message', function (event) {
-//     if (event.origin !== window.location.origin) {
-//         console.warn('Received message from unexpected origin:', event.origin);
-//         return;
-//     }
+function hideLoading() {
+    document.getElementById('loadingMessage').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+}
 
-//     // Check if the message has the expected structure
-//     if (event.data && event.data.conversationId && event.data.token) {
-//         conversationId = event.data.conversationId;
-//         token = event.data.token;
+async function checkTokenValidity(token) {
+    try {
+        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('Error checking token validity:', error);
+        return false;
+    }
+}
 
-//         document.title = `Transcript: ${conversationId}`;
-//         fetchTranscript();
-//     } else {
-//         console.error('Received message with unexpected format');
-//     }
-// });
-
-window.addEventListener('message', function (event) {
+window.addEventListener('message', async function (event) {
     if (event.origin !== window.location.origin) {
         console.warn('Received message from unexpected origin:', event.origin);
         return;
     }
 
-    // Check if the message has the expected structure
     if (event.data && event.data.conversationId && event.data.token && conversationId == event.data.conversationId) {
-        // conversationId = event.data.conversationId;
         token = event.data.token;
 
-        // const storageKey = `transcript_${conversationId}`;
-        // localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
-
-        localStorage.setItem('access_token', token);
-
-        // document.title = `Transcript: ${conversationId}`;
-        document.title = event.data.externalTag ? `${event.data.externalTag}` : conversationId;
-        fetchTranscript();
+        if (await checkTokenValidity(token)) {
+            localStorage.setItem('access_token', token);
+            document.title = event.data.externalTag ? `${event.data.externalTag}` : conversationId;
+            hideLoading();
+            fetchTranscript();
+        } else {
+            console.error('Received invalid token');
+            showLoading();
+        }
     } else {
         console.error('Received message with unexpected format');
     }
 });
 
-
-// const storageKey = `transcript_${conversationId}`;
-// const storedData = JSON.parse(localStorage.getItem(storageKey));
-
-// if (storedData) {
-//     ({ conversationId, token } = storedData);
-//     fetchTranscript();
-// } else {
-//     console.error('No stored conversation data found');
-// }
-
-token = localStorage.getItem('access_token');
-if (token) {
-    fetchTranscript();
-} else {
-    console.error('No stored token found');
+async function initializeWithStoredToken() {
+    token = localStorage.getItem('access_token');
+    if (token) {
+        if (await checkTokenValidity(token)) {
+            hideLoading();
+            fetchTranscript();
+        } else {
+            console.error('Stored token is invalid');
+            // localStorage.removeItem('access_token');
+        }
+    } else {
+        console.error('No stored token found');
+    }
 }
 
+initializeWithStoredToken();
 
 function fetchTranscript(retryCount = 0, delay = 2000) {
     fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${conversationId}`, {
