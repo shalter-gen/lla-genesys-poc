@@ -31,7 +31,7 @@ function determineEnvironment() {
 
 async function getToken() {
     const isExtension = determineEnvironment();
-    // let token;
+    let token;
 
     if (isExtension) {
         token = await new Promise(resolve => {
