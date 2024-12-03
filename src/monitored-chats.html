@@ -34,36 +34,19 @@
         </thead>
         <tbody id="monitoredChatsBody"></tbody>
     </table>
-    <script src="monitored-chats.js"></script>
+    <!-- <script src="monitored-chats.js"></script> -->
 
     <script>
-        // // Configuration
-        // const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
-        // const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/custom-monitoring.html';
-
-        // // Initialize the client
-        // const client = platformClient.ApiClient.instance;
-        // client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
-        // client.setPersistSettings(true, 'monitored_chats');
-
-        // // Check if we need to authenticate
-        // if (!client.authData) {
-        //     client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
-        //         .then(() => {
-        //             console.log('Authenticated');
-        //             location.hash = '';
-        //         })
-        //         .catch((err) => {
-        //             console.error('Error during authentication:', err);
-        //         });
-        // }
-        // Configuration
+        // https://mypurecloud.github.io/platform-client-sdk-javascript/
         // https://github.com/MyPureCloud/platform-client-sdk-javascript?tab=readme-ov-file
+
+        // Configuration
         const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
         const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/monitored-chats.html';
 
-        // Fonction pour initialiser le client
-        const platformClient = require('platformClient');
+        // const platformClient = require('platformClient');
+        import platformClient from 'platformClient';
+
         // Initialize the client
         const client = platformClient.ApiClient.instance;
         client.config.logger.log_level = client.config.logger.logLevelEnum.level.LTrace;
@@ -78,29 +61,20 @@
         client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
         client.setPersistSettings(true, 'monitored_chats');
 
-        // Check if we need to authenticate
-        // if (!client.authData) {
         client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: "INITIAL" })
             .then((data) => {
                 console.log('Authenticated:', data);
                 // localStorage.setItem('access_token', data.accessToken);
 
-                // Do authenticated things
+                // load the monitored-chats.js js script here
+                const script = document.createElement('script');
+                script.src = 'monitored-chats.js';
+                document.body.appendChild(script);
             })
             .catch((err) => {
                 // Handle failure response
                 console.error('Error during authentication:', err);
             });
-        // client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
-        //     .then(() => {
-        //         console.log('Authenticated');
-        //         location.hash = '';
-        //     })
-        //     .catch((err) => {
-        //         console.error('Error during authentication:', err);
-        //     });
-        // }
-
     </script>
     <script src="monitored-chats.js"></script>
 </body>
