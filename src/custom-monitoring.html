@@ -61,6 +61,7 @@
 
         // Fonction pour initialiser le client
         function initClient() {
+            const platformClient = require('platformClient');
             // Initialize the client
             const client = platformClient.ApiClient.instance;
             client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
@@ -81,6 +82,7 @@
 
         // Attendre que la bibliothèque PureCloud soit chargée
         document.addEventListener('purecloud-sdk-loaded', initClient);
+        initClient();
 
     </script>
     <script src="monitored-chats.js"></script>
