@@ -60,7 +60,7 @@
         // Configuration
         // https://github.com/MyPureCloud/platform-client-sdk-javascript?tab=readme-ov-file
         const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
-        const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/custom-monitoring.html';
+        const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/monitored-chats.html';
 
         // Fonction pour initialiser le client
         const platformClient = require('platformClient');
@@ -83,7 +83,7 @@
         client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: "INITIAL" })
             .then((data) => {
                 console.log('Authenticated:', data);
-                localStorage.setItem('access_token', data.accessToken);
+                // localStorage.setItem('access_token', data.accessToken);
 
                 // Do authenticated things
             })

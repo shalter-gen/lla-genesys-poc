@@ -40,7 +40,9 @@ async function getToken() {
             });
         });
     } else {
-        token = localStorage.getItem('access_token');
+        // token = localStorage.getItem('access_token');
+        let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
+        token = JSON.parse(monitored_chats_auth_data).accessToken;
     }
 
     if (!token) {
