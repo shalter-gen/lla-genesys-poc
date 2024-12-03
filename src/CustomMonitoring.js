@@ -1,6 +1,9 @@
 const REFRESH_INTERVAL = 10000; // 10 seconds
-
 let token, previousData;
+// Audio context and source setup
+let audioContext;
+const soundCheckbox = document.getElementById('soundEnabler');
+const notificationSound = document.getElementById('chatNotification');
 
 const urlParams = new URLSearchParams(window.location.search);
 let conversationId = urlParams.get('conversationId');
@@ -14,6 +17,35 @@ function hideLoading() {
     document.getElementById('loadingMessage').style.display = 'none';
     document.getElementById('content').style.display = 'block';
 }
+
+// Initialize audio when checkbox is first checked
+soundCheckbox.addEventListener('change', async function () {
+    if (this.checked) {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (error) {
+            console.error('Error initializing audio:', error);
+            this.checked = false;
+        }
+    }
+});
+
+function playNotification() {
+    if (soundCheckbox.checked) {
+        notificationSound.play().catch(error => {
+            console.error('Error playing notification:', error);
+        });
+    }
+}
+
+window.onscroll = function() {
+    const header = document.querySelector('.header-container');
+    if (window.pageYOffset > header.offsetTop) {
+        header.classList.add('fixed');
+    } else {
+        header.classList.remove('fixed');
+    }
+};
 
 async function checkTokenValidity(token) {
     try {
@@ -173,12 +205,16 @@ function displayTranscript(messagesDetails) {
         new Date(a.messageTime || a.timestamp) - new Date(b.messageTime || b.timestamp)
     );
 
-    // If there are new messages, play the notification sound
-    if (newMessages.length > 0) {
-        document.getElementById('chatNotification').play()
-            .catch(error => console.log('Error playing notification sound:', error));
-    }
+    // if (newMessages.length > 0) {
+    //     document.getElementById('chatNotification').play()
+    //         .catch(error => console.log('Error playing notification sound:', error));
+    // }
+    // If there are new messages, try to play the notification sound
 
+    // // If there are new messages, play the notification sound
+    if (newMessages.length > 0) {
+        playNotification();
+    }
     newMessages.forEach(message => {
         const messageElement = document.createElement('div');
         const isInbound = message.direction === 'inbound';

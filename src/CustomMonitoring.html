@@ -1,36 +1,28 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="title">Custom Monitoring</title>
-  <link rel="stylesheet" type="text/css" href="CustomMonitoring.css">
-
-</head>
-<body>
-  <h1>Custom Monitoring</h1>
-  <div id="transcript"></div>
-  <audio id="chatNotification" src="chat-notification.mp3"></audio>
-  <script src="CustomMonitoring.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="title">Custom Monitoring</title>
     <link rel="stylesheet" type="text/css" href="CustomMonitoring.css">
 </head>
+
 <body>
     <div id="loadingMessage">Loading...</div>
     <div id="content">
-        <!-- Your existing content here -->
-        <h1>Custom Monitoring</h1>
+        <div class="header-container">
+            <!-- Your existing content here -->
+            <h1>Custom Monitoring</h1>
+            <div class="sound-control">
+                <input type="checkbox" id="soundEnabler">
+                <label for="soundEnabler">Enable Sound Notifications</label>
+            </div>
+        </div>
         <div id="transcript"></div>
         <audio id="chatNotification" src="chat-notification.mp3"></audio>
     </div>
     <script src="CustomMonitoring.js"></script>
 </body>
+
 </html>
