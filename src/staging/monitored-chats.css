@@ -1,0 +1,93 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #f5f5f5;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+#searchBox {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+}
+
+.sortable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px;
+}
+
+.sortable:hover {
+    background-color: #f5f5f5;
+}
+
+.sort-asc::after {
+    content: "▲";
+    position: absolute;
+    right: 5px;
+}
+
+.sort-desc::after {
+    content: "▼";
+    position: absolute;
+    right: 5px;
+}
+
+#monitoredChatsTable th {
+    background-color: #f5f5f5;
+    padding: 10px;
+    text-align: left;
+}
