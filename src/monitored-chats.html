@@ -7,6 +7,7 @@
     <title>List of Monitored Chats</title>
     <link rel="stylesheet" href="monitored-chats.css">
     <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js"></script> -->
 
     <!-- <script>
         console.log('SDK loaded:', !!platformClient);
@@ -44,8 +45,13 @@
         const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
         const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/monitored-chats.html';
 
-        // const platformClient = require('platformClient');
-        import platformClient from 'platformClient';
+        const platformClient = require('platformClient');
+
+        // Obtain a reference to the platformClient object
+        // requirejs(['https://sdk-cdn.mypurecloud.com/javascript/amd/latest/purecloud-platform-client-v2.min.js'], (platformClient) => {
+            console.log('SDK loaded: ',platformClient);
+
+        // import platformClient from 'platformClient';
 
         // Initialize the client
         const client = platformClient.ApiClient.instance;
@@ -75,6 +81,8 @@
                 // Handle failure response
                 console.error('Error during authentication:', err);
             });
+        // });
+
     </script>
     <script src="monitored-chats.js"></script>
 </body>
