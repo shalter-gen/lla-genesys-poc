@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,11 +8,12 @@
     <link rel="stylesheet" href="monitored-chats.css">
     <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
 
-    <script>
+    <!-- <script>
         console.log('SDK loaded:', !!platformClient);
-    </script>
-        
+    </script> -->
+
 </head>
+
 <body>
     <h1>List of Active Conversations</h1>
     <button id="refreshButton">Refresh</button>
@@ -33,27 +35,55 @@
         <tbody id="monitoredChatsBody"></tbody>
     </table>
     <script>
+        // // Configuration
+        // const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
+        // const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/custom-monitoring.html';
+
+        // // Initialize the client
+        // const client = platformClient.ApiClient.instance;
+        // client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
+        // client.setPersistSettings(true, 'monitored_chats');
+
+        // // Check if we need to authenticate
+        // if (!client.authData) {
+        //     client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
+        //         .then(() => {
+        //             console.log('Authenticated');
+        //             location.hash = '';
+        //         })
+        //         .catch((err) => {
+        //             console.error('Error during authentication:', err);
+        //         });
+        // }
         // Configuration
         const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
         const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/custom-monitoring.html';
-        
-        // Initialize the client
-        const client = platformClient.ApiClient.instance;
-        client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
-        client.setPersistSettings(true, 'monitored_chats');
 
-        // Check if we need to authenticate
-        if (!client.authData) {
-            client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
-                .then(() => {
-                    console.log('Authenticated');
-                    location.hash = '';
-                })
-                .catch((err) => {
-                    console.error('Error during authentication:', err);
-                });
+        // Fonction pour initialiser le client
+        function initClient() {
+            // Initialize the client
+            const client = platformClient.ApiClient.instance;
+            client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
+            client.setPersistSettings(true, 'monitored_chats');
+
+            // Check if we need to authenticate
+            if (!client.authData) {
+                client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
+                    .then(() => {
+                        console.log('Authenticated');
+                        location.hash = '';
+                    })
+                    .catch((err) => {
+                        console.error('Error during authentication:', err);
+                    });
+            }
         }
+
+        // Attendre que la bibliothèque PureCloud soit chargée
+        document.addEventListener('purecloud-sdk-loaded', initClient);
+
     </script>
     <script src="monitored-chats.js"></script>
 </body>
+
 </html>
