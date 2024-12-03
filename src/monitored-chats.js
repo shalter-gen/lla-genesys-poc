@@ -25,6 +25,9 @@
 // let token;
 //FIX TOKEN!
 
+let currentSearchValue = '';  // Store the current search value
+
+
 function determineEnvironment() {
     return window.location.protocol === 'chrome-extension:';
 }
@@ -40,9 +43,11 @@ async function getToken() {
             });
         });
     } else {
-        // token = localStorage.getItem('access_token');
-        let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
-        token = JSON.parse(monitored_chats_auth_data).accessToken;
+        token = localStorage.getItem('access_token');
+        if (!token) {
+            let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
+            token = JSON.parse(monitored_chats_auth_data).accessToken;    
+        }
     }
 
     if (!token) {
@@ -99,7 +104,6 @@ async function refreshTable() {
 
 //================================
 
-let currentSearchValue = '';  // Store the current search value
 
 function fetchMonitoredChats(token) {
     const now = new Date();
