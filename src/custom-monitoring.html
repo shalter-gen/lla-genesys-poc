@@ -68,24 +68,24 @@
 
         // Check if we need to authenticate
         // if (!client.authData) {
-            client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: state })
-                .then((data) => {
-                    console.log('Authenticated:',data);
-                    // Do authenticated things
-                })
-                .catch((err) => {
-                    // Handle failure response
-                    console.error('Error during authentication:', err);
-        // });
-            // client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
-            //     .then(() => {
-            //         console.log('Authenticated');
-            //         location.hash = '';
-            //     })
-            //     .catch((err) => {
-            //         console.error('Error during authentication:', err);
-            //     });
-        }
+        client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: state })
+            .then((data) => {
+                console.log('Authenticated:', data);
+                // Do authenticated things
+            })
+            .catch((err) => {
+                // Handle failure response
+                console.error('Error during authentication:', err);
+            });
+        // client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
+        //     .then(() => {
+        //         console.log('Authenticated');
+        //         location.hash = '';
+        //     })
+        //     .catch((err) => {
+        //         console.error('Error during authentication:', err);
+        //     });
+        // }
 
     </script>
     <script src="monitored-chats.js"></script>
