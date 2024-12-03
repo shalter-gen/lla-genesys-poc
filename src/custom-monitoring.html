@@ -34,6 +34,8 @@
         </thead>
         <tbody id="monitoredChatsBody"></tbody>
     </table>
+    <script src="monitored-chats.js"></script>
+
     <script>
         // // Configuration
         // const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
@@ -81,6 +83,8 @@
         client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: "INITIAL" })
             .then((data) => {
                 console.log('Authenticated:', data);
+                localStorage.setItem('access_token', data.accessToken);
+
                 // Do authenticated things
             })
             .catch((err) => {
