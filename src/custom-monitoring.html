@@ -60,29 +60,32 @@
         const REDIRECT_URI = 'https://white-rock-014490f00.4.azurestaticapps.net/custom-monitoring.html';
 
         // Fonction pour initialiser le client
-        function initClient() {
-            const platformClient = require('platformClient');
-            // Initialize the client
-            const client = platformClient.ApiClient.instance;
-            client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
-            client.setPersistSettings(true, 'monitored_chats');
+        const platformClient = require('platformClient');
+        // Initialize the client
+        const client = platformClient.ApiClient.instance;
+        client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
+        client.setPersistSettings(true, 'monitored_chats');
 
-            // Check if we need to authenticate
-            if (!client.authData) {
-                client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
-                    .then(() => {
-                        console.log('Authenticated');
-                        location.hash = '';
-                    })
-                    .catch((err) => {
-                        console.error('Error during authentication:', err);
-                    });
-            }
+        // Check if we need to authenticate
+        if (!client.authData) {
+            client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: state })
+                .then((data) => {
+                    console.log('Authenticated:',data);
+                    // Do authenticated things
+                })
+                .catch((err) => {
+                    // Handle failure response
+                    console.error('Error during authentication:', err);
+        });
+            // client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI)
+            //     .then(() => {
+            //         console.log('Authenticated');
+            //         location.hash = '';
+            //     })
+            //     .catch((err) => {
+            //         console.error('Error during authentication:', err);
+            //     });
         }
-
-        // Attendre que la bibliothèque PureCloud soit chargée
-        document.addEventListener('purecloud-sdk-loaded', initClient);
-        initClient();
 
     </script>
     <script src="monitored-chats.js"></script>
