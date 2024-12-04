@@ -10,8 +10,14 @@
 </head>
 
 <body>
+  <div class="header-container">
     <h1>List of Active Conversations</h1>
     <button id="refreshButton">Refresh</button>
+    <div class="filter-controls">
+      <input type="checkbox" id="prodOnlyCheckbox" checked>
+      <label for="prodOnlyCheckbox">Show only Production</label>
+    </div>
+  </div>
     <table id="monitoredChatsTable">
         <thead>
             <tr>
