@@ -196,13 +196,6 @@ function displayTranscript(messagesDetails) {
         new Date(a.messageTime || a.timestamp) - new Date(b.messageTime || b.timestamp)
     );
 
-    // if (newMessages.length > 0) {
-    //     document.getElementById('chatNotification').play()
-    //         .catch(error => console.log('Error playing notification sound:', error));
-    // }
-    // If there are new messages, try to play the notification sound
-
-    // // If there are new messages, play the notification sound
     if (newMessages.length > 0) {
         playNotification();
     }
@@ -244,14 +237,6 @@ function displayTranscript(messagesDetails) {
                     participant.fromAddress?.name ||                // Flow
                     participant.name;                               // Flow
             }
-            // } else if (message.fromAddress && message.purpose !== 'customer') {
-            //     // Flow
-            //     const participant = messagesDetails.participants.find(p =>
-            //         p.fromAddress?.addressNormalized === message.fromAddress
-            //     );
-            //     if (participant) {
-            //         participantName = participant.fromAddress?.name || participant.name;
-            //     }
         } else {
             participantName = 'Un-known';
         }

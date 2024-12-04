@@ -1,31 +1,8 @@
-// document.addEventListener('DOMContentLoaded', function () {
-//     const token = getToken();
-//     if (token) {
-//         initializeTableFeatures();
-//         fetchMonitoredChats(token);
-//     } else {
-//         console.error('No token found');
-//     }
-//     document.getElementById('refreshButton').addEventListener('click', refreshTable);
-// });
+let currentSortColumn = 0; // Default to first column (date)
+let currentSortDirection = 'desc'; // Default to descending
 
-// function getToken() {
-//     return localStorage.getItem('access_token');
-// }
-
-// function refreshTable() {
-//     const token = getToken();
-//     if (token) {
-//         fetchMonitoredChats(token);
-//     } else {
-//         console.error('No token found');
-//     }
-// }
-
-// let token;
-//FIX TOKEN!
-
-let currentSearchValue = '';  // Store the current search value
+const MAX_RELOADS = 5;
+const RELOAD_DELAY = 2000; // 2 seconds in milliseconds
 
 function determineEnvironment() {
     return window.location.protocol === 'chrome-extension:';
@@ -79,31 +56,64 @@ async function getToken() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
+async function getReloadAttempts() {
+    const isExtension = determineEnvironment();
+    if (isExtension) {
+        return new Promise(resolve => {
+            chrome.storage.local.get(['reloadAttempts'], function (result) {
+                resolve(result.reloadAttempts || 0);
+            });
+        });
+    } else {
+        return parseInt(localStorage.getItem('reloadAttempts') || '0');
+    }
+}
+
+async function setReloadAttempts(count) {
+    const isExtension = determineEnvironment();
+    if (isExtension) {
+        await chrome.storage.local.set({ reloadAttempts: count });
+    } else {
+        localStorage.setItem('reloadAttempts', count.toString());
+    }
+}
+
+async function handleTokenCheck(initializeFeatures = false) {
     const token = await getToken();
     if (token) {
-        initializeTableFeatures();
+        await setReloadAttempts(0); // Reset counter on successful token
+        if (initializeFeatures) {
+            initializeTableFeatures();
+        }
         fetchMonitoredChats(token);
     } else {
         console.error('No valid token found');
-        // Handle the case when no valid token is found (e.g., redirect to login)
+        const attempts = await getReloadAttempts();
+        if (attempts < MAX_RELOADS) {
+            await setReloadAttempts(attempts + 1);
+            console.log(`Reload attempt ${attempts + 1} of ${MAX_RELOADS}`);
+            setTimeout(() => {
+                window.location.reload();
+            }, RELOAD_DELAY);
+        } else {
+            console.error('Max reload attempts reached');
+            await setReloadAttempts(0); // Reset counter on successful token
+        }
     }
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    await handleTokenCheck(true);
     document.getElementById('refreshButton').addEventListener('click', refreshTable);
 });
 
 async function refreshTable() {
-    const token = await getToken();
-    if (token) {
-        fetchMonitoredChats(token);
-    } else {
-        console.error('No valid token found');
-        // Handle the case when no valid token is found (e.g., redirect to login)
-    }
+    await handleTokenCheck(false);
 }
-
 
 //================================
 
+let currentSearchValue = '';  // Store the current search value
 
 function fetchMonitoredChats(token) {
     const now = new Date();
@@ -186,6 +196,8 @@ function fetchMonitoredChats(token) {
                 const searchBox = document.getElementById('searchBox');
                 searchBox.value = currentSearchValue;
                 filterTable({ target: searchBox });
+            } else {
+                filterTable({})
             }
         })
         .catch(error => console.error('Error:', error));
@@ -367,7 +379,7 @@ function stopMonitoring(conversationId, participantId, token, button) {
             alert('Monitoring has been successfully stopped.');
             setTimeout(() => {
                 refreshTable()
-            }, 2000);
+            }, 4000);
         })
         .catch(error => {
             console.error('Error stopping monitoring:', error);
@@ -427,6 +439,8 @@ function initializeTableFeatures() {
         currentSearchValue = e.target.value;
         filterTable(e);
     });
+    // Add event listeners for checkboxes
+    document.getElementById('prodOnlyCheckbox').addEventListener('change', () => filterTable({}));
 }
 
 function sortTable(columnIndex) {
@@ -452,15 +466,38 @@ function sortTable(columnIndex) {
     tbody.append(...rows);
 }
 
-function filterTable(e) {
+function filterTable_old(e) {
     const searchText = e.target.value.toLowerCase();
     const rows = document.querySelectorAll('#monitoredChatsTable tbody tr');
+
 
     rows.forEach(row => {
         const text = Array.from(row.cells)
             .map(cell => cell.textContent.toLowerCase())
             .join(' ');
         row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+}
+
+function filterTable(e) {
+    const searchText = e.target ? e.target.value.toLowerCase() : '';
+    const prodOnly = document.getElementById('prodOnlyCheckbox').checked;
+    const rows = document.querySelectorAll('#monitoredChatsTable tbody tr');
+
+    rows.forEach(row => {
+        const text = Array.from(row.cells)
+            .map(cell => cell.textContent.toLowerCase())
+            .join(' ');
+        const queueCell = row.cells[1].textContent; // Queue is in second column
+
+        let showRow = text.includes(searchText);
+
+        // Apply Prod only filter
+        if (prodOnly) {
+            showRow = showRow && queueCell.includes('LLA_Digital PROD');
+        }
+
+        row.style.display = showRow ? '' : 'none';
     });
 }
 

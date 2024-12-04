@@ -38,15 +38,6 @@ function playNotification() {
     }
 }
 
-window.onscroll = function() {
-    const header = document.querySelector('.header-container');
-    if (window.pageYOffset > header.offsetTop) {
-        header.classList.add('fixed');
-    } else {
-        header.classList.remove('fixed');
-    }
-};
-
 async function checkTokenValidity(token) {
     try {
         const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {

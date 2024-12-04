@@ -91,3 +91,25 @@ body {
     padding: 10px;
     text-align: left;
 }
+
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.header-container h1 {
+    margin: 0;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#refreshButton {
+    padding: 5px 15px;
+    height: fit-content;
+}
