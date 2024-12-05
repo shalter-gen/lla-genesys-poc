@@ -124,7 +124,7 @@
 .sound-control label {
     margin-left: 5px;
     font-family: "Noto Sans", sans-serif;
-    font-size: 0.9em
+    font-size: 1em
 }
 
 .header-container {
@@ -134,7 +134,7 @@
     padding: 10px;
 }
 
-.header-container .h1 {
+.header-container h1 {
     font-family: "Noto Sans", sans-serif;
-    font-size: 1.9em;
+    font-size: 1.6em;
 }
