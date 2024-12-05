@@ -123,6 +123,8 @@
 
 .sound-control label {
     margin-left: 5px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 0.9em
 }
 
 .header-container {
@@ -130,4 +132,9 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+}
+
+.header-container .h1 {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 1.9em;
 }
