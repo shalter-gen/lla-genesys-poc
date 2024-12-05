@@ -118,7 +118,6 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    margin-left: auto;
 }
 
 .sound-control label {
@@ -132,9 +131,28 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    background-color: rgb(209 215 249);
+    /* position: sticky; */
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #eee;
 }
 
 .header-container h1 {
-    font-family: "Noto Sans", sans-serif;
-    font-size: 1.6em;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    font-size: 1.5em;
+    white-space: nowrap;
+}
+
+.logo-title-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    height: 40px; 
+    width: auto;
+    object-fit: contain;
 }
