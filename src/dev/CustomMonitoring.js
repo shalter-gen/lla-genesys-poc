@@ -245,7 +245,7 @@ function displayTranscript(messagesDetails) {
 
         // message.normalizedMessage.type=Text or Event
         // message.normalizedMessage.events[0].presence.type=Clear/Join
-        if (message.normalizedMessage.type === 'Text') {
+        if (message.normalizedMessage.type === 'Text' || message.normalizedMessage.type === 'Structured') {
             messageElement.innerHTML = `
             <div class="message-header">
                 <span>${participantName}</span>

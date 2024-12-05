@@ -36,6 +36,7 @@
     align-items: center;
     color: rgb(42, 42, 46);
     margin-bottom: 4px;
+    gap: 10px;
 }
 
 .message-content {
@@ -117,11 +118,12 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    margin-left: auto;
 }
 
 .sound-control label {
     margin-left: 5px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 1em
 }
 
 .header-container {
@@ -129,4 +131,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    background-color: rgb(209 215 249);
+    /* position: sticky; */
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #eee;
+}
+
+.header-container h1 {
+    margin: 0;
+    font-size: 1.5em;
+    white-space: nowrap;
+}
+
+.logo-title-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    height: 40px; 
+    width: auto;
+    object-fit: contain;
 }
