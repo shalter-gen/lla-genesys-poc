@@ -1,42 +1,4 @@
-const REFRESH_INTERVAL = 10000; // 10 seconds
-let token, previousData;
-// Audio context and source setup
-let audioContext;
-const soundCheckbox = document.getElementById('soundEnabler');
-const notificationSound = document.getElementById('chatNotification');
-
-const urlParams = new URLSearchParams(window.location.search);
-let conversationId = urlParams.get('conversationId');
-
-function showLoading() {
-    document.getElementById('loadingMessage').style.display = 'flex';
-    document.getElementById('content').style.display = 'none';
-}
-
-function hideLoading() {
-    document.getElementById('loadingMessage').style.display = 'none';
-    document.getElementById('content').style.display = 'block';
-}
-
-// Initialize audio when checkbox is first checked
-soundCheckbox.addEventListener('change', async function () {
-    if (this.checked) {
-        try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (error) {
-            console.error('Error initializing audio:', error);
-            this.checked = false;
-        }
-    }
-});
-
-function playNotification() {
-    if (soundCheckbox.checked) {
-        notificationSound.play().catch(error => {
-            console.error('Error playing notification:', error);
-        });
-    }
-}
+let token;
 
 async function checkTokenValidity(token) {
     try {
@@ -91,7 +53,49 @@ async function initializeWithStoredToken() {
     }
 }
 
+function showLoading() {
+    document.getElementById('loadingMessage').style.display = 'flex';
+    document.getElementById('content').style.display = 'none';
+}
+
+function hideLoading() {
+    document.getElementById('loadingMessage').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+}
+
 initializeWithStoredToken();
+
+/*=---------------------------------------------------------=*/
+
+const REFRESH_INTERVAL = 10000; // 10 seconds
+let previousData;
+// Audio context and source setup
+let audioContext;
+const soundCheckbox = document.getElementById('soundEnabler');
+const notificationSound = document.getElementById('chatNotification');
+
+const urlParams = new URLSearchParams(window.location.search);
+let conversationId = urlParams.get('conversationId');
+
+// Initialize audio when checkbox is first checked
+soundCheckbox.addEventListener('change', async function () {
+    if (this.checked) {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (error) {
+            console.error('Error initializing audio:', error);
+            this.checked = false;
+        }
+    }
+});
+
+function playNotification() {
+    if (soundCheckbox.checked) {
+        notificationSound.play().catch(error => {
+            console.error('Error playing notification:', error);
+        });
+    }
+}
 
 function fetchTranscript(retryCount = 0, delay = 2000) {
     fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${conversationId}`, {

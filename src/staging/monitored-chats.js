@@ -1,5 +1,6 @@
 let currentSortColumn = 0; // Default to first column (date)
 let currentSortDirection = 'desc'; // Default to descending
+let currentUserhasIssRole = false;
 
 const MAX_RELOADS = 5;
 const RELOAD_DELAY = 2000; // 2 seconds in milliseconds
@@ -23,7 +24,7 @@ async function getToken() {
         if (!token) {
             let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
             if (monitored_chats_auth_data)
-                token = JSON.parse(monitored_chats_auth_data)?.accessToken;    
+                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
         }
     }
 
@@ -32,7 +33,7 @@ async function getToken() {
     }
 
     try {
-        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
+        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me?expand=authorization', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -40,6 +41,8 @@ async function getToken() {
         });
 
         if (response.ok) {
+            const userData = await response.json();
+            currentUserhasIssRole = userData.authorization.roles.some(role => ['LLA_ISS_DIGITAL', 'LLA_LEAD_ISS'].includes(role.name));
             return token;
         } else {
             console.error('Token is invalid or expired');
@@ -267,6 +270,10 @@ function processConversations(conversations, token) {
             const stopCell = row.insertCell();
             const stopButton = document.createElement('button');
             stopButton.textContent = 'Stop Monitoring';
+
+            // Enable or disable the "Stop monitoring" button based on roles
+            stopButton.disabled = currentUserhasIssRole ? false : true;
+
             stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
             stopCell.appendChild(stopButton);
         } else {
