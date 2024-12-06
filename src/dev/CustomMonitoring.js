@@ -40,6 +40,10 @@ window.addEventListener('message', async function (event) {
 
 async function initializeWithStoredToken() {
     token = localStorage.getItem('access_token');
+    if (!token) {
+        let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
+        token = JSON.parse(monitored_chats_auth_data).accessToken;    
+    }
     if (token) {
         if (await checkTokenValidity(token)) {
             hideLoading();

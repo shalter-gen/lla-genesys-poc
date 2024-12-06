@@ -106,17 +106,6 @@ function initializeTableFeatures() {
             selectAllCheckbox.checked = allChecked;
         });
     });
-
-
-    // Add event listeners for buttons
-    document.getElementById('refreshButton').addEventListener('click', async () => {
-        showLoading();
-        await fetchData();
-        hideLoading();
-    } );
-    document.getElementById('activateProdButton').addEventListener('click', () => updateQueueMembers('prod'));
-    document.getElementById('activateTrainingButton').addEventListener('click', () => updateQueueMembers('training'));
-    
 }
 
 async function fetchAllPages(initialUrl) {
@@ -354,4 +343,14 @@ document.addEventListener('DOMContentLoaded', () => {
             adminMenu.style.display = 'none';
         }
     });
+    
+    // Add event listeners for buttons
+    document.getElementById('refreshButton').addEventListener('click', async () => {
+        showLoading();
+        await fetchData();
+        hideLoading();
+    } );
+    document.getElementById('activateProdButton').addEventListener('click', async () => updateQueueMembers('prod'));
+    document.getElementById('activateTrainingButton').addEventListener('click', async () => updateQueueMembers('training'));
+    
 });
