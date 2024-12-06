@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users currently active on Production and Training Queues</title>
+  <link rel="stylesheet" href="users_queues.css">
+</head>
+
+<body>
+  <div id="loadingMessage">Loading...</div>
+  <div id="content">
+    <div class="header-container">
+      <div class="logo-title-group">
+        <img src="LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo" id="adminLogo">
+        <div id="adminMenu" class="admin-menu">
+          <ul>
+            <li data-page="users_queues.html">Check Users Queues</li>
+            <li data-page="monitored-chats.html">Live Conversations</li>
+          </ul>
+        </div>
+
+        <h1>Users currently active on Production and Training Queues</h1>
+      </div>
+    </div>
+    <div class="button-container">
+      <div class="button-container">
+        <button id="refreshButton">Refresh Data</button>
+        <button id="activateProdButton">Activate Prod / Deactivate Training</button>
+        <button id="activateTrainingButton">Deactivate Prod / Activate Training</button>
+      </div>
+      <table id="usersQueuesTable">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="selectAll">Select All</th>
+            <th>Email</th>
+            <th>Production Interactions</th>
+            <th>Training Interactions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table rows will be dynamically populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+    <script src="users_queues.js"></script>
+</body>
+
+</html>
