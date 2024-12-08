@@ -310,6 +310,11 @@ function processConversations(conversations, token) {
 
         // }
     });
+
+    // After populating the table, reapply the current sort
+    const headers = document.querySelectorAll('#monitoredChatsTable th');
+    headers[currentSortColumn].classList.add(`sort-${currentSortDirection}`);
+    sortTable(currentSortColumn);
 }
 
 // Split the customMonitor function into two separate functions
@@ -437,9 +442,14 @@ function initializeTableFeatures() {
     // Add sorting to headers
     const headers = document.querySelectorAll('#monitoredChatsTable th');
     headers.forEach((header, index) => {
-        header.addEventListener('click', () => sortTable(index));
+        header.addEventListener('click', () => sortTable(index, true));
         header.classList.add('sortable');
     });
+
+    // Add default sort by date (first column)
+    const dateHeader = headers[0];
+    dateHeader.classList.add('sort-desc');
+    sortTable(0);
 
     // Modify the search input event listener to store the value
     document.getElementById('searchBox').addEventListener('input', function (e) {
@@ -450,18 +460,25 @@ function initializeTableFeatures() {
     document.getElementById('prodOnlyCheckbox').addEventListener('change', () => filterTable({}));
 }
 
-function sortTable(columnIndex) {
+function sortTable(columnIndex, invertSort=false) {
     const table = document.getElementById('monitoredChatsTable');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
     const header = table.querySelectorAll('th')[columnIndex];
-    const isAscending = !header.classList.contains('sort-asc');
+    let isAscending = header.classList.contains('sort-asc');
 
     // Update sort indicators
     table.querySelectorAll('th').forEach(th => {
         th.classList.remove('sort-asc', 'sort-desc');
     });
+    if (invertSort) {
+        isAscending = !isAscending;
+    }
     header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+
+    // Remember sort direction
+    currentSortColumn = columnIndex;
+    currentSortDirection = isAscending ? 'asc' : 'desc';
 
     // Sort rows
     rows.sort((a, b) => {
