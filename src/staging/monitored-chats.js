@@ -231,6 +231,33 @@ function getMessageType(conversation) {
     }
 }
 
+const createMonitorDropdown = (conversation, token) => {
+    const container = document.createElement('div');
+    container.className = 'monitor-dropdown';
+
+    const mainButton = document.createElement('button');
+    mainButton.className = 'monitor-btn';
+    mainButton.textContent = 'Monitor';
+
+    const dropdownContent = document.createElement('div');
+    dropdownContent.className = 'dropdown-content';
+
+    const tabLink = document.createElement('div');
+    tabLink.textContent = 'New tab';
+    tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
+
+    const popupLink = document.createElement('div');
+    popupLink.textContent = 'Popup';
+    popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
+
+    dropdownContent.appendChild(tabLink);
+    dropdownContent.appendChild(popupLink);
+    container.appendChild(mainButton);
+    container.appendChild(dropdownContent);
+
+    return container;
+}
+
 function processConversations(conversations, token) {
     const tableBody = document.getElementById('monitoredChatsBody');
     tableBody.innerHTML = '';
@@ -269,6 +296,7 @@ function processConversations(conversations, token) {
             // Add Stop Monitoring button
             const stopCell = row.insertCell();
             const stopButton = document.createElement('button');
+            stopButton.className = 'monitor-btn';
             stopButton.textContent = 'Stop Monitoring';
 
             // Enable or disable the "Stop monitoring" button based on roles
@@ -283,32 +311,9 @@ function processConversations(conversations, token) {
         }
 
         const actionCell = row.insertCell();
-        const dropdownDiv = document.createElement('div');
-        dropdownDiv.className = 'dropdown';
-
-        const mainButton = document.createElement('button');
-        mainButton.className = 'dropbtn';
-        mainButton.textContent = 'Monitor';
-
-        const dropdownContent = document.createElement('div');
-        dropdownContent.className = 'dropdown-content';
-
-        const tabLink = document.createElement('a');
-        tabLink.textContent = 'New tab';
-        tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
-
-        const popupLink = document.createElement('a');
-        popupLink.textContent = 'Popup';
-        popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
-
-        dropdownContent.appendChild(tabLink);
-        dropdownContent.appendChild(popupLink);
-        dropdownDiv.appendChild(mainButton);
-        dropdownDiv.appendChild(dropdownContent);
+        const dropdownDiv = createMonitorDropdown(conversation, token);
         actionCell.appendChild(dropdownDiv);
 
-
-        // }
     });
 
     // After populating the table, reapply the current sort
@@ -460,7 +465,7 @@ function initializeTableFeatures() {
     document.getElementById('prodOnlyCheckbox').addEventListener('change', () => filterTable({}));
 }
 
-function sortTable(columnIndex, invertSort=false) {
+function sortTable(columnIndex, invertSort = false) {
     const table = document.getElementById('monitoredChatsTable');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));

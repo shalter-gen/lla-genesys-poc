@@ -16,44 +16,6 @@ body {
     font-weight: 400;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropbtn {
-    background-color: #f5f5f5;
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #fff;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 4px;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
 #searchBox {
     width: 100%;
     padding: 8px;
@@ -99,7 +61,6 @@ body {
 
 .header-container {
     display: flex;
-    /* justify-content: space-between; */
     justify-content: space-between;
     align-items: center;
     padding: 10px;
@@ -135,4 +96,59 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+
+.monitor-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.monitor-btn {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    width: 100%;
+    right: -75px; /* Change from left:0 to right:0 to prevent horizontal scroll */
+    top: 0;
+    white-space: nowrap;
+    font-size: 0.9em;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.dropdown-content div {
+    float: left;
+    width: 50%;
+    padding: 5px 0;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.dropdown-content div:first-child {
+    border-right: 1px solid #ccc;
+}
+
+.dropdown-content div:hover {
+    background-color: #f1f1f1;
+}
+
+.monitor-dropdown:hover .dropdown-content {
+    display: flex;
+}
+
+.monitor-dropdown:hover .monitor-btn {
+    visibility: hidden; /* Change from display:none to keep the space */
 }
