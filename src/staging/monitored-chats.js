@@ -2,8 +2,9 @@ let currentSortColumn = 0; // Default to first column (date)
 let currentSortDirection = 'desc'; // Default to descending
 let currentUserhasIssRole = false;
 
-const MAX_RELOADS = 5;
-const RELOAD_DELAY = 2000; // 2 seconds in milliseconds
+const MAX_PAGE_RELOADS_FOR_TOKEN = 5;
+const TOKEN_RELOAD_DELAY = 2000; // 2 seconds in milliseconds
+const GC_ROLES_STOP_MONITORING = ['LLA_ISS_DIGITAL', 'LLA_LEAD_ISS', 'LLA_SERVICE_LEAD'];
 
 function determineEnvironment() {
     return window.location.protocol === 'chrome-extension:';
@@ -42,7 +43,7 @@ async function getToken() {
 
         if (response.ok) {
             const userData = await response.json();
-            currentUserhasIssRole = userData.authorization.roles.some(role => ['LLA_ISS_DIGITAL', 'LLA_LEAD_ISS'].includes(role.name));
+            currentUserhasIssRole = userData.authorization.roles.some(role => GC_ROLES_STOP_MONITORING.includes(role.name));
             return token;
         } else {
             console.error('Token is invalid or expired');
@@ -92,12 +93,12 @@ async function handleTokenCheck(initializeFeatures = false) {
     } else {
         console.error('No valid token found');
         const attempts = await getReloadAttempts();
-        if (attempts < MAX_RELOADS) {
+        if (attempts < MAX_PAGE_RELOADS_FOR_TOKEN) {
             await setReloadAttempts(attempts + 1);
-            console.log(`Reload attempt ${attempts + 1} of ${MAX_RELOADS}`);
+            console.log(`Reload attempt ${attempts + 1} of ${MAX_PAGE_RELOADS_FOR_TOKEN}`);
             setTimeout(() => {
                 window.location.reload();
-            }, RELOAD_DELAY);
+            }, TOKEN_RELOAD_DELAY);
         } else {
             console.error('Max reload attempts reached');
             await setReloadAttempts(0); // Reset counter on successful token
@@ -259,6 +260,15 @@ const createMonitorDropdown = (conversation, token) => {
 }
 
 function processConversations(conversations, token) {
+    // Add Genesys Monitoring column to header if user has permission
+    const headerRow = document.querySelector('#monitoredChatsTable thead tr');
+    if (currentUserhasIssRole) {
+        const genesysMonitoringHeader = document.createElement('th');
+        genesysMonitoringHeader.textContent = 'Genesys Monitoring';
+        // Insert before the last column (Custom Monitoring)
+        headerRow.insertBefore(genesysMonitoringHeader, headerRow.lastElementChild);
+    }
+
     const tableBody = document.getElementById('monitoredChatsBody');
     tableBody.innerHTML = '';
 
@@ -294,20 +304,24 @@ function processConversations(conversations, token) {
             row.insertCell().textContent = monitoringParticipant.participantName;
 
             // Add Stop Monitoring button
-            const stopCell = row.insertCell();
-            const stopButton = document.createElement('button');
-            stopButton.className = 'monitor-btn';
-            stopButton.textContent = 'Stop Monitoring';
-
-            // Enable or disable the "Stop monitoring" button based on roles
-            stopButton.disabled = currentUserhasIssRole ? false : true;
-
-            stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
-            stopCell.appendChild(stopButton);
+            if (currentUserhasIssRole) {
+                const stopCell = row.insertCell();
+                const stopButton = document.createElement('button');
+                stopButton.className = 'monitor-btn';
+                stopButton.textContent = 'Stop Monitoring';
+    
+                // Enable or disable the "Stop monitoring" button based on roles
+                stopButton.disabled = currentUserhasIssRole ? false : true;
+    
+                stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
+                stopCell.appendChild(stopButton);
+            }         
         } else {
             row.insertCell();
             row.insertCell();
-            row.insertCell();
+            if (currentUserhasIssRole) {
+                row.insertCell();
+            }        
         }
 
         const actionCell = row.insertCell();

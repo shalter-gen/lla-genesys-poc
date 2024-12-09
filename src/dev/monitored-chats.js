@@ -1,5 +1,6 @@
 let currentSortColumn = 0; // Default to first column (date)
 let currentSortDirection = 'desc'; // Default to descending
+let currentUserhasIssRole = false;
 
 const MAX_RELOADS = 5;
 const RELOAD_DELAY = 2000; // 2 seconds in milliseconds
@@ -23,7 +24,7 @@ async function getToken() {
         if (!token) {
             let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
             if (monitored_chats_auth_data)
-                token = JSON.parse(monitored_chats_auth_data)?.accessToken;    
+                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
         }
     }
 
@@ -32,7 +33,7 @@ async function getToken() {
     }
 
     try {
-        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
+        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me?expand=authorization', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -40,6 +41,8 @@ async function getToken() {
         });
 
         if (response.ok) {
+            const userData = await response.json();
+            currentUserhasIssRole = userData.authorization.roles.some(role => ['LLA_ISS_DIGITAL', 'LLA_LEAD_ISS'].includes(role.name));
             return token;
         } else {
             console.error('Token is invalid or expired');
@@ -228,6 +231,33 @@ function getMessageType(conversation) {
     }
 }
 
+const createMonitorDropdown = (conversation, token) => {
+    const container = document.createElement('div');
+    container.className = 'monitor-dropdown';
+
+    const mainButton = document.createElement('button');
+    mainButton.className = 'monitor-btn';
+    mainButton.textContent = 'Monitor';
+
+    const dropdownContent = document.createElement('div');
+    dropdownContent.className = 'dropdown-content';
+
+    const tabLink = document.createElement('div');
+    tabLink.textContent = 'New tab';
+    tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
+
+    const popupLink = document.createElement('div');
+    popupLink.textContent = 'Popup';
+    popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
+
+    dropdownContent.appendChild(tabLink);
+    dropdownContent.appendChild(popupLink);
+    container.appendChild(mainButton);
+    container.appendChild(dropdownContent);
+
+    return container;
+}
+
 function processConversations(conversations, token) {
     const tableBody = document.getElementById('monitoredChatsBody');
     tableBody.innerHTML = '';
@@ -266,7 +296,12 @@ function processConversations(conversations, token) {
             // Add Stop Monitoring button
             const stopCell = row.insertCell();
             const stopButton = document.createElement('button');
+            stopButton.className = 'monitor-btn';
             stopButton.textContent = 'Stop Monitoring';
+
+            // Enable or disable the "Stop monitoring" button based on roles
+            stopButton.disabled = currentUserhasIssRole ? false : true;
+
             stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
             stopCell.appendChild(stopButton);
         } else {
@@ -276,33 +311,15 @@ function processConversations(conversations, token) {
         }
 
         const actionCell = row.insertCell();
-        const dropdownDiv = document.createElement('div');
-        dropdownDiv.className = 'dropdown';
-
-        const mainButton = document.createElement('button');
-        mainButton.className = 'dropbtn';
-        mainButton.textContent = 'Monitor';
-
-        const dropdownContent = document.createElement('div');
-        dropdownContent.className = 'dropdown-content';
-
-        const tabLink = document.createElement('a');
-        tabLink.textContent = 'New tab';
-        tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
-
-        const popupLink = document.createElement('a');
-        popupLink.textContent = 'Popup';
-        popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
-
-        dropdownContent.appendChild(tabLink);
-        dropdownContent.appendChild(popupLink);
-        dropdownDiv.appendChild(mainButton);
-        dropdownDiv.appendChild(dropdownContent);
+        const dropdownDiv = createMonitorDropdown(conversation, token);
         actionCell.appendChild(dropdownDiv);
 
-
-        // }
     });
+
+    // After populating the table, reapply the current sort
+    const headers = document.querySelectorAll('#monitoredChatsTable th');
+    headers[currentSortColumn].classList.add(`sort-${currentSortDirection}`);
+    sortTable(currentSortColumn);
 }
 
 // Split the customMonitor function into two separate functions
@@ -430,9 +447,14 @@ function initializeTableFeatures() {
     // Add sorting to headers
     const headers = document.querySelectorAll('#monitoredChatsTable th');
     headers.forEach((header, index) => {
-        header.addEventListener('click', () => sortTable(index));
+        header.addEventListener('click', () => sortTable(index, true));
         header.classList.add('sortable');
     });
+
+    // Add default sort by date (first column)
+    const dateHeader = headers[0];
+    dateHeader.classList.add('sort-desc');
+    sortTable(0);
 
     // Modify the search input event listener to store the value
     document.getElementById('searchBox').addEventListener('input', function (e) {
@@ -443,18 +465,25 @@ function initializeTableFeatures() {
     document.getElementById('prodOnlyCheckbox').addEventListener('change', () => filterTable({}));
 }
 
-function sortTable(columnIndex) {
+function sortTable(columnIndex, invertSort = false) {
     const table = document.getElementById('monitoredChatsTable');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
     const header = table.querySelectorAll('th')[columnIndex];
-    const isAscending = !header.classList.contains('sort-asc');
+    let isAscending = header.classList.contains('sort-asc');
 
     // Update sort indicators
     table.querySelectorAll('th').forEach(th => {
         th.classList.remove('sort-asc', 'sort-desc');
     });
+    if (invertSort) {
+        isAscending = !isAscending;
+    }
     header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+
+    // Remember sort direction
+    currentSortColumn = columnIndex;
+    currentSortDirection = isAscending ? 'asc' : 'desc';
 
     // Sort rows
     rows.sort((a, b) => {
