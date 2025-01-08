@@ -1,63 +1,225 @@
 let token;
 
+/**
+ * Helper function to handle API requests, including automatic retries in case of rate limiting (HTTP 429)
+ * Async function that makes an API request with exponential backoff in case of rate limit (429) errors.
+ * It takes two parameters: requestFunction (the function that makes the API request) and maxRetries
+ * (the maximum number of retries to attempt before giving up). The function will retry the request if it encounters
+ * a rate limit error (429), waiting for a specified amount of time before retrying. If the maximum retries are reached,
+ * it will throw an error.
+ * @param {function} requestFunction - The function that makes the API request
+ * @param {number} [maxRetries=6] - The maximum number of retries to attempt
+ * 
+ * @returns {Promise<Object>} - A promise that resolves to the JSON response from the API
+ * @throws {Error} - If the request fails after the maximum number of retries
+ */
+async function handleApiRequest(requestFunction, maxRetries = 6) {
+    let retryCount = 0;
+
+    while (retryCount <= maxRetries) {
+        try {
+            const response = await requestFunction();
+
+            if (response.status === 429) {
+                const errorData = await response.json();
+                const retryAfterMatch = errorData.message.match(/\[(\d+)\]/);
+                const retryAfterSeconds = retryAfterMatch ? parseInt(retryAfterMatch[1]) : 30;
+
+                if (retryCount === maxRetries) {
+                    throw new Error(`Max retries (${maxRetries}) reached after rate limit`);
+                }
+
+                console.log(`Rate limit hit. Waiting ${retryAfterSeconds} seconds before retry ${retryCount + 1}/${maxRetries}`);
+                await new Promise(resolve => setTimeout(resolve, retryAfterSeconds * 1000));
+                retryCount++;
+                continue;
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (error.message.includes('429') && retryCount < maxRetries) {
+                retryCount++;
+                continue;
+            }
+            throw error;
+        }
+    }
+}
+
+/**
+ * Checks if a given token is valid by performing a simple request to the Genesys Cloud API.
+ * Checks if a given token is valid by making a request to the Genesys Cloud API.
+ * If the request is successful, it returns true, indicating the token is valid.
+ * If the request fails, it returns false. The request is made using the handleApiRequest function,
+ * which handles retries in case of rate limiting errors.
+ * @param {string} token - The token to check
+ * @returns {Promise<boolean>} - A promise that resolves to true if the token is valid or false if it is not
+ * @throws {Error} - If the request fails after the maximum number of retries
+ */
 async function checkTokenValidity(token) {
-    try {
+    const makeRequest = async () => {
         const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        return response.ok;
+        return response;
+    };
+
+    try {
+        const data = await handleApiRequest(makeRequest);
+        return true;
     } catch (error) {
         console.error('Error checking token validity:', error);
         return false;
     }
 }
 
-window.addEventListener('message', async function (event) {
-    if (event.origin !== window.location.origin) {
-        console.warn('Received message from unexpected origin:', event.origin);
-        return;
+let isTranscriptInitialized = false;
+
+/**
+ * Initializes the transcript by fetching the chat transcript for the given conversation
+ * and token. This function is idempotent, meaning it will only fetch the transcript once
+ * and subsequent calls will do nothing.
+ * @returns {Promise<void>} - A promise that resolves when the transcript is initialized
+ */
+async function initializeTranscript() {
+    if (isTranscriptInitialized) return;
+    isTranscriptInitialized = true;
+    await fetchTranscript();
+}
+
+// window.addEventListener('message', async function (event) {
+//     if (event.origin !== window.location.origin) {
+//         console.warn('Received message from unexpected origin:', event.origin);
+//         return;
+//     }
+
+//     if (event.data && event.data.conversationId && event.data.token && conversationId == event.data.conversationId) {
+//         token = event.data.token;
+
+//         if (await checkTokenValidity(token)) {
+//             localStorage.setItem('access_token', token);
+//             document.title = event.data.externalTag ? `${event.data.externalTag}` : conversationId;
+//             await initializeTranscript();
+//             hideLoading();
+//         } else {
+//             console.error('Received invalid token');
+//             showLoading();
+//         }
+//     } else {
+//         console.error('Received message with unexpected format');
+//     }
+// });
+
+function COMMON_determineEnvironment() {
+    return window.location.protocol === 'chrome-extension:';
+}
+
+async function COMMON_getToken() {
+    console.log('COMMON_getToken: Checking for stored access token');
+    const isExtension = COMMON_determineEnvironment();
+    let token;
+
+    if (isExtension) {
+        console.log('getToken: Getting stored token from Chrome extension storage');
+        token = await new Promise(resolve => {
+            chrome.storage.local.get(['access_token'], function (result) {
+                resolve(result.access_token);
+            });
+        });
+    } else {
+        console.log('getToken: Getting stored token from browser storage');
+        token = localStorage.getItem('access_token');   // Backward compatibility!
+        if (!token) {
+            console.log('getToken: Checking for backward compatibility');
+            let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
+            if (monitored_chats_auth_data) {
+                console.log('getToken: Found backward compatibility data');
+                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
+            }
+        }
     }
 
-    if (event.data && event.data.conversationId && event.data.token && conversationId == event.data.conversationId) {
-        token = event.data.token;
-
-        if (await checkTokenValidity(token)) {
-            localStorage.setItem('access_token', token);
-            document.title = event.data.externalTag ? `${event.data.externalTag}` : conversationId;
-            hideLoading();
-            fetchTranscript();
-        } else {
-            console.error('Received invalid token');
-            showLoading();
-        }
-    } else {
-        console.error('Received message with unexpected format');
+    if (!token) {
+        console.log('getToken: No stored token found');
+        return null;
     }
-});
 
-async function initializeWithStoredToken() {
-    token = localStorage.getItem('access_token');
-    if (token) {
-        if (await checkTokenValidity(token)) {
-            hideLoading();
-            fetchTranscript();
+    console.log('getToken: Checking token validity');
+    try {
+        const makeRequest = () => fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const userData = await handleApiRequest(makeRequest);
+        console.log('getToken: Token validity check successful');
+        return token;
+    } catch (error) {
+        console.error('getToken: Error checking token validity:', error);
+        if (isExtension) {
+            console.log('getToken: Removing stored token from Chrome extension storage');
+            chrome.storage.local.remove('access_token');
         } else {
-            console.error('Stored token is invalid');
-            // localStorage.removeItem('access_token');
+            console.log('getToken: Removing stored token from browser storage');
+            localStorage.removeItem('access_token');
         }
-    } else {
-        console.error('No stored token found');
+        return null;
     }
 }
 
+
+/**
+ * Initializes the app with a stored token. If the token is valid, it will
+ * fetch the chat transcript and hide the loading message. If the token is
+ * invalid, it will log an error message. If no token is found, it will also
+ * log an error message.
+ * @returns {Promise<void>} - A promise that resolves when the app is initialized
+ */
+async function initializeWithStoredToken() {
+    // token = localStorage.getItem('access_token');
+    // if (token) {
+    //     if (await checkTokenValidity(token)) {
+    //         await initializeTranscript();
+    //         hideLoading();
+    //     } else {
+    //         console.error('Stored token is invalid');
+    //         // localStorage.removeItem('access_token');
+    //     }
+    // } else {
+    //     console.error('No stored token found');
+    // }
+
+    token = await COMMON_getToken();
+    if (token) {
+            await initializeTranscript();
+            hideLoading();
+    } else {
+        console.error('No valid stored token found');
+    }
+}
+
+/**
+ * Shows the loading message and hides the content section.
+ */
 function showLoading() {
     document.getElementById('loadingMessage').style.display = 'flex';
     document.getElementById('content').style.display = 'none';
 }
 
+/**
+ * Hides the loading message and shows the content section.
+ * This is called when the app is fully initialized with a valid token.
+ */
 function hideLoading() {
     document.getElementById('loadingMessage').style.display = 'none';
     document.getElementById('content').style.display = 'block';
@@ -76,6 +238,7 @@ const notificationSound = document.getElementById('chatNotification');
 
 const urlParams = new URLSearchParams(window.location.search);
 let conversationId = urlParams.get('conversationId');
+let noRefresh = urlParams.get('noRefresh');
 
 // Initialize audio when checkbox is first checked
 soundCheckbox.addEventListener('change', async function () {
@@ -89,6 +252,10 @@ soundCheckbox.addEventListener('change', async function () {
     }
 });
 
+/**
+ * Plays the notification sound if the checkbox is checked. If there is an error
+ * playing the sound, it will log the error to the console.
+ */
 function playNotification() {
     if (soundCheckbox.checked) {
         notificationSound.play().catch(error => {
@@ -97,69 +264,79 @@ function playNotification() {
     }
 }
 
-function fetchTranscript(retryCount = 0, delay = 2000) {
-    fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${conversationId}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    })
-        .then(response => {
-            if (response.status === 429) {
-                if (retryCount < 15) {
-                    console.log(`Rate limited. Retrying in ${delay}ms...`);
-                    setTimeout(() => fetchTranscript(retryCount + 1, delay * 2), delay);
-                } else {
-                    throw new Error('Max retries reached for rate limit');
-                }
-            } else if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            } else {
-                return response.json();
+/**
+ * Fetches the conversation transcript and displays it in the UI.
+ * 
+ * This code fetches a conversation transcript from an API,
+ * filters out already displayed messages, fetches details for new messages,
+ * and displays the updated transcript in the UI. It repeats this process every
+ * 10 seconds (REFRESH_INTERVAL) and handles errors by logging and alerting the user.
+ *
+ * @throws {Error} If there is an error fetching the conversation details.
+ */
+async function fetchTranscript() {
+    try {
+        // First API call to get conversation
+        const makeConversationRequest = () => fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${conversationId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-        })
-        .then(data => {
-            if (JSON.stringify(data) !== JSON.stringify(previousData)) {
-                previousData = data;
-
-                // Filter out messages we've already displayed
-                const newMessages = data.participants.flatMap(participant =>
-                    // participant.messages.filter(message => !displayedMessageIds.has(message.id))
-                    participant.messages.filter(message => !displayedMessageIds.has(message.messageId))
-                );
-
-                if (newMessages.length === 0) return null;
-
-                // Only fetch details for new messages
-                return Promise.all(newMessages.map(message =>
-                    // fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${message.id}/details`, {
-                    fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${message.messageId}/details`, {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }).then(response => response.json())
-                )).then(messageDetails => ({
-                    participants: data.participants,
-                    messages: messageDetails
-                }));
-            } else {
-                return null;
-            }
-        })
-        .then(messagesDetails => {
-            if (messagesDetails) {
-                displayTranscript(messagesDetails);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching conversation details:', error);
-            alert('Failed to fetch conversation details. Please try again.');
-        })
-        .finally(() => {
-            setTimeout(fetchTranscript, REFRESH_INTERVAL);
         });
+
+        const data = await handleApiRequest(makeConversationRequest);
+
+        if (JSON.stringify(data) === JSON.stringify(previousData)) {
+            return;
+        }
+
+        previousData = data;
+
+        // Filter out messages we've already displayed
+        const newMessages = data.participants.flatMap(participant =>
+            participant.messages.filter(message => !displayedMessageIds.has(message.messageId))
+        );
+
+        if (newMessages.length === 0) {
+            return;
+        }
+
+        // Second API call to get message details
+        const messageDetailsPromises = newMessages.map(message => {
+            const makeDetailsRequest = () => fetch(`https://api.mypurecloud.com.au/api/v2/conversations/messages/${message.messageId}/details`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return handleApiRequest(makeDetailsRequest);
+        });
+
+        const messageDetails = await Promise.all(messageDetailsPromises);
+        const messagesDetails = {
+            participants: data.participants,
+            messages: messageDetails
+        };
+
+        displayTranscript(messagesDetails);
+    } catch (error) {
+        console.error('Error fetching conversation details:', error);
+        alert('Failed to fetch conversation details. Please try again.');
+    } finally {
+        if (noRefresh === "") {
+            return;
+        } else {
+            setTimeout(fetchTranscript, REFRESH_INTERVAL);
+        }
+    }
 }
+
+
+/**
+ * Returns an SVG string representing the status icon for a message
+ * @param {string} status - The status of the message
+ * @returns {string} - The SVG string for the status icon
+ */
 function getStatusIcon(status) {
     const iconColor = 'rgb(42, 42, 46)';
     if (status === 'received' || status === 'delivery-success') {
@@ -172,6 +349,10 @@ function getStatusIcon(status) {
     </svg>`;
 }
 
+/**
+ * Updates the title of the popup based on the customer's name in the conversation.
+ * @param {Object} messagesDetails - The conversation details object from the Genesys API.
+ */
 function updatePopupTitle(messagesDetails) {
     const customer = messagesDetails.participants.find(p => p.purpose === 'customer');
     const customerName = customer?.attributes?.HSName || 'Unknown Customer';
@@ -189,6 +370,19 @@ function updatePopupTitle(messagesDetails) {
 
 let displayedMessageIds = new Set();
 
+/**
+ * Displays the conversation transcript in the UI.
+ * 
+ * This function updates the popup title and conversation attributes based on the
+ * provided message details. It sorts new messages by timestamp, triggers a 
+ * notification sound if new messages are present, and appends each message to the 
+ * transcript section in the UI. Each message is displayed with a header containing 
+ * the participant's name, timestamp, and status icon, and a content section with 
+ * the message text or event details.
+ * 
+ * @param {Object} messagesDetails - The conversation details object containing 
+ * participants and messages from the Genesys API.
+ */
 function displayTranscript(messagesDetails) {
     updatePopupTitle(messagesDetails);
     displayConversationAttributes(messagesDetails);
@@ -282,6 +476,18 @@ function displayTranscript(messagesDetails) {
     // }
 }
 
+/**
+ * Displays the conversation attributes in a table below the transcript.
+ * 
+ * It takes an object messagesDetails as an argument. The function creates
+ * a table in the HTML document with the ID attributesTable if it doesn't already exist.
+ * It then populates the table with attributes related to a conversation, such as the
+ * conversation ID, customer attributes, and other metadata. The function is designed
+ * to display conversation attributes in a user interface, likely as part of a chat or
+ * messaging application.
+ * 
+ * @param {Object} messagesDetails - The conversation details object from the Genesys API.
+ */
 function displayConversationAttributes(messagesDetails) {
     // Create table if it doesn't exist
     let attributesTable = document.getElementById('attributesTable');
