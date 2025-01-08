@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequent Chat Users</title>
+    <link rel="stylesheet" href="frequent-chat-users.css">
+</head>
+<body>
+    <div id="loadingMessage">Loading...</div>
+    <div id="content">
+        <div class="header-container">
+            <div class="logo-title-group">
+                <!-- <img src="path/to/your/logo.png" alt="Logo" class="header-logo"> -->
+                <h1>Frequent Chat Users</h1>
+            </div>
+        </div>
+        <div class="button-container">
+            <button id="refreshButton">Refresh</button>
+        </div>
+        <!-- <input type="text" id="searchBox" placeholder="Search users..."> -->
+        <table id="frequentUsersTable">
+            <thead>
+                <tr>
+                    <!-- Group 1 -->
+                    <th>Device Category</th>
+                    <th>Device Type</th>
+                    <th>Browser Family</th>
+                    <th>Browser Version</th>
+                    <!-- <th>Country</th> -->
+                    <th>Locality</th>
+                    <th>Region</th>
+                    <!-- <th>Geolocation Source</th> -->
+                    <th>IP Organization</th>
+                    <!-- <th>Customer ID Type</th> -->
+                    <!-- Group 2 -->
+                    <th>Oldest Chat</th>
+                    <th>Most Recent Chat</th>
+                    <th>Avg/day</th>
+                    <th>Total Chats</th>
+                    <th>Total Timedout</th>
+                    <th>Total SDB Chats</th>
+                    <th>Total Queued Chats</th>
+                    <th>Total Answered</th>
+                    <th>Total Abandoned</th>
+                    <!-- Group 3 -->
+                    <th>Today's Chats</th>
+                    <th>Today's Timedout</th>
+                    <th>Today's SDB Chats</th>
+                    <th>Today's Queued Chats</th>
+                    <th>Today's Answered</th>
+                    <th>Today's Abandoned</th>
+                </tr>
+            </thead>
+            <tbody id="frequentUsersBody"></tbody>
+        </table>
+    </div>
+    <script src="Common/token.js"></script>
+    <script src="frequent-chat-users.js"></script>
+</body>
+</html>

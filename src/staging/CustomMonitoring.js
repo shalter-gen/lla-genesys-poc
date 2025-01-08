@@ -1,87 +1,24 @@
 let token;
-
-/**
- * Helper function to handle API requests, including automatic retries in case of rate limiting (HTTP 429)
- * Async function that makes an API request with exponential backoff in case of rate limit (429) errors.
- * It takes two parameters: requestFunction (the function that makes the API request) and maxRetries
- * (the maximum number of retries to attempt before giving up). The function will retry the request if it encounters
- * a rate limit error (429), waiting for a specified amount of time before retrying. If the maximum retries are reached,
- * it will throw an error.
- * @param {function} requestFunction - The function that makes the API request
- * @param {number} [maxRetries=6] - The maximum number of retries to attempt
- * 
- * @returns {Promise<Object>} - A promise that resolves to the JSON response from the API
- * @throws {Error} - If the request fails after the maximum number of retries
- */
-async function handleApiRequest(requestFunction, maxRetries = 6) {
-    let retryCount = 0;
-
-    while (retryCount <= maxRetries) {
-        try {
-            const response = await requestFunction();
-
-            if (response.status === 429) {
-                const errorData = await response.json();
-                const retryAfterMatch = errorData.message.match(/\[(\d+)\]/);
-                const retryAfterSeconds = retryAfterMatch ? parseInt(retryAfterMatch[1]) : 30;
-
-                if (retryCount === maxRetries) {
-                    throw new Error(`Max retries (${maxRetries}) reached after rate limit`);
-                }
-
-                console.log(`Rate limit hit. Waiting ${retryAfterSeconds} seconds before retry ${retryCount + 1}/${maxRetries}`);
-                await new Promise(resolve => setTimeout(resolve, retryAfterSeconds * 1000));
-                retryCount++;
-                continue;
-            }
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            if (error.message.includes('429') && retryCount < maxRetries) {
-                retryCount++;
-                continue;
-            }
-            throw error;
-        }
-    }
-}
-
-/**
- * Checks if a given token is valid by performing a simple request to the Genesys Cloud API.
- * Checks if a given token is valid by making a request to the Genesys Cloud API.
- * If the request is successful, it returns true, indicating the token is valid.
- * If the request fails, it returns false. The request is made using the handleApiRequest function,
- * which handles retries in case of rate limiting errors.
- * @param {string} token - The token to check
- * @returns {Promise<boolean>} - A promise that resolves to true if the token is valid or false if it is not
- * @throws {Error} - If the request fails after the maximum number of retries
- */
-async function checkTokenValidity(token) {
-    const makeRequest = async () => {
-        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        return response;
-    };
-
-    try {
-        const data = await handleApiRequest(makeRequest);
-        return true;
-    } catch (error) {
-        console.error('Error checking token validity:', error);
-        return false;
-    }
-}
-
 let isTranscriptInitialized = false;
+
+/**
+ * Initializes the app with a stored token. If the token is valid, it will
+ * fetch the chat transcript and hide the loading message. If the token is
+ * invalid, it will log an error message. If no token is found, it will also
+ * log an error message.
+ * @returns {Promise<void>} - A promise that resolves when the app is initialized
+ */
+async function initializeWithStoredToken() {
+    token = await getToken();
+    if (token) {
+        await initializeTranscript();
+        hideLoading();
+    } else {
+        console.error('No valid stored token found');
+    }
+}
+
+initializeWithStoredToken();
 
 /**
  * Initializes the transcript by fetching the chat transcript for the given conversation
@@ -93,119 +30,6 @@ async function initializeTranscript() {
     if (isTranscriptInitialized) return;
     isTranscriptInitialized = true;
     await fetchTranscript();
-}
-
-// window.addEventListener('message', async function (event) {
-//     if (event.origin !== window.location.origin) {
-//         console.warn('Received message from unexpected origin:', event.origin);
-//         return;
-//     }
-
-//     if (event.data && event.data.conversationId && event.data.token && conversationId == event.data.conversationId) {
-//         token = event.data.token;
-
-//         if (await checkTokenValidity(token)) {
-//             localStorage.setItem('access_token', token);
-//             document.title = event.data.externalTag ? `${event.data.externalTag}` : conversationId;
-//             await initializeTranscript();
-//             hideLoading();
-//         } else {
-//             console.error('Received invalid token');
-//             showLoading();
-//         }
-//     } else {
-//         console.error('Received message with unexpected format');
-//     }
-// });
-
-function COMMON_determineEnvironment() {
-    return window.location.protocol === 'chrome-extension:';
-}
-
-async function COMMON_getToken() {
-    console.log('COMMON_getToken: Checking for stored access token');
-    const isExtension = COMMON_determineEnvironment();
-    let token;
-
-    if (isExtension) {
-        console.log('getToken: Getting stored token from Chrome extension storage');
-        token = await new Promise(resolve => {
-            chrome.storage.local.get(['access_token'], function (result) {
-                resolve(result.access_token);
-            });
-        });
-    } else {
-        console.log('getToken: Getting stored token from browser storage');
-        token = localStorage.getItem('access_token');   // Backward compatibility!
-        if (!token) {
-            console.log('getToken: Checking for backward compatibility');
-            let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
-            if (monitored_chats_auth_data) {
-                console.log('getToken: Found backward compatibility data');
-                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
-            }
-        }
-    }
-
-    if (!token) {
-        console.log('getToken: No stored token found');
-        return null;
-    }
-
-    console.log('getToken: Checking token validity');
-    try {
-        const makeRequest = () => fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const userData = await handleApiRequest(makeRequest);
-        console.log('getToken: Token validity check successful');
-        return token;
-    } catch (error) {
-        console.error('getToken: Error checking token validity:', error);
-        if (isExtension) {
-            console.log('getToken: Removing stored token from Chrome extension storage');
-            chrome.storage.local.remove('access_token');
-        } else {
-            console.log('getToken: Removing stored token from browser storage');
-            localStorage.removeItem('access_token');
-        }
-        return null;
-    }
-}
-
-
-/**
- * Initializes the app with a stored token. If the token is valid, it will
- * fetch the chat transcript and hide the loading message. If the token is
- * invalid, it will log an error message. If no token is found, it will also
- * log an error message.
- * @returns {Promise<void>} - A promise that resolves when the app is initialized
- */
-async function initializeWithStoredToken() {
-    // token = localStorage.getItem('access_token');
-    // if (token) {
-    //     if (await checkTokenValidity(token)) {
-    //         await initializeTranscript();
-    //         hideLoading();
-    //     } else {
-    //         console.error('Stored token is invalid');
-    //         // localStorage.removeItem('access_token');
-    //     }
-    // } else {
-    //     console.error('No stored token found');
-    // }
-
-    token = await COMMON_getToken();
-    if (token) {
-            await initializeTranscript();
-            hideLoading();
-    } else {
-        console.error('No valid stored token found');
-    }
 }
 
 /**
@@ -224,8 +48,6 @@ function hideLoading() {
     document.getElementById('loadingMessage').style.display = 'none';
     document.getElementById('content').style.display = 'block';
 }
-
-initializeWithStoredToken();
 
 /*=---------------------------------------------------------=*/
 
