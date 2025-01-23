@@ -37,10 +37,43 @@ async function throttleRequests(requests, maxRequestsPerSecond = 10) {
 async function fetchFrequentUsers(token) {
     console.log('Fetching frequent users...');
     const startTime = Date.now(); // Get the current time in milliseconds
-    const now = new Date();
+    // const now = new Date();
     // const startPeriod = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));  // 3 days
-    const startPeriod = new Date(now.getTime() - (3 * 60 * 60 * 1000));  // 3 hours
-    const interval = `${startPeriod.toISOString()}/${now.toISOString()}`;
+    // const startPeriod = new Date(now.getTime() - (3 * 60 * 60 * 1000));  // 3 hours
+
+
+    const timeframe = document.getElementById('timeframe').value;
+    const endDate = new Date();
+    let startDate;
+
+    switch (timeframe) {
+        case '3hours':
+            startDate = new Date(endDate.getTime() - 3 * 60 * 60 * 1000);
+            break;
+        case '6hours':
+            startDate = new Date(endDate.getTime() - 6 * 60 * 60 * 1000);
+            break;
+        case '12hours':
+            startDate = new Date(endDate.getTime() - 12 * 60 * 60 * 1000);
+            break;
+        case '24hours':
+            startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
+            break;
+        case '48hours':
+            startDate = new Date(endDate.getTime() - 48 * 60 * 60 * 1000);
+            break;
+        case '72hours':
+            startDate = new Date(endDate.getTime() - 72 * 60 * 60 * 1000);
+            break;
+        case '7days':
+            startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+        case '30days':
+            startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+    }
+
+    const interval = `${startDate.toISOString()}/${endDate.toISOString()}`;
     const userMap = new Map();
 
     const body = {
@@ -157,19 +190,34 @@ async function fetchFrequentUsers(token) {
         // userMap.get(extId).push(convId);
 
 
-        // Fetch journey data for each user
-        const journeyRequests = Array.from(userMap.entries()).map(([contactId, conversationIds]) => {
+        // // Fetch journey data for each user
+        // const journeyRequests = Array.from(userMap.entries()).map(([contactId, conversationIds]) => {
+        //     return async () => {
+        //         console.log(`Fetching journey data for contact ${contactId}...`);
+        //         const entities = await fetchAllJourneyPages(contactId, token);
+        //         return processUserJourneyData(contactId, entities, conversationIds);
+        //     };
+        // });
+
+        // Fetch journey data for each user with 20 or more conversations
+        const journeyRequests = Array.from(userMap.entries())
+        // .filter(([_, conversationIds]) => conversationIds.length >= 20)
+        .map(([contactId, conversationIds]) => {
             return async () => {
                 console.log(`Fetching journey data for contact ${contactId}...`);
                 const entities = await fetchAllJourneyPages(contactId, token);
-                return processUserJourneyData(contactId, entities, conversationIds);
+                if (entities.filter(entity => entity.type === 'conversation').length >= 20) {
+                    return processUserJourneyData(contactId, entities, conversationIds);
+                }
+                return null; // Return null for users with less than 20 conversations
             };
         });
-
         console.log(`Journey requests prepared: ${journeyRequests.length} users`);
 
         // Execute journey requests with throttling
-        const userData = await throttleRequests(journeyRequests, 10);
+        // const userData = await throttleRequests(journeyRequests, 10);
+        const userData = (await throttleRequests(journeyRequests, 10)).filter(data => data !== null);
+
         console.log(`Journey requests finished: ${userData.length} users`);
         const endTime = Date.now(); // Get the current time in milliseconds
         const totalTimeTaken = (endTime - startTime) / 1000; // Calculate the total time taken in seconds
@@ -310,6 +358,10 @@ function processUserJourneyData(contactId, journeys) {
     console.log(`Found ${webSessions.length} web sessions and ${chatSessions.length} chat sessions for contactId: ${contactId}`);
     const firstWebSession = webSessions[0];
 
+    // Calculate number of unique IP addresses
+    const uniqueIPs = new Set(webSessions.map(session => session.ipAddress));
+    const numberOfIPs = uniqueIPs.size;
+    
     if (!firstWebSession) {
         console.log(`No web sessions found for contactId: ${contactId}`);
         return {
@@ -327,7 +379,8 @@ function processUserJourneyData(contactId, journeys) {
                 customerIdType: 'N/A'
             },
             totalStats: calculateStats(chatSessions, null),
-            todayStats: calculateStats(chatSessions, today)
+            // todayStats: calculateStats(chatSessions, today)
+            numberOfIPs: numberOfIPs
         };
     } else {
         console.log(`Using first web session data for contactId: ${contactId}`);
@@ -346,9 +399,17 @@ function processUserJourneyData(contactId, journeys) {
                 customerIdType: firstWebSession.customerIdType || 'N/A'
             },
             totalStats: calculateStats(chatSessions, null),
-            todayStats: calculateStats(chatSessions, today)
+            // todayStats: calculateStats(chatSessions, today)
+            numberOfIPs: numberOfIPs
         };
     }
+}
+
+function formatDuration(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
 function calculateStats(journeys, dateFilter) {
@@ -359,13 +420,28 @@ function calculateStats(journeys, dateFilter) {
         const oldestChat = new Date(Math.min(...filteredJourneys.map(j => new Date(j.createdDate))));
         const mostRecentChat = new Date(Math.max(...filteredJourneys.map(j => new Date(j.createdDate))));
         const totalChats = filteredJourneys.length;    
-        // Calculate average chats per day
-        const daysDiff = Math.max(1, (mostRecentChat - oldestChat) / (1000 * 60 * 60 * 24));
-        const avgPerDay = totalChats / daysDiff;
+    
+        // Calculate activity period in days
+        const activityPeriod = (mostRecentChat - oldestChat) / (1000 * 60 * 60 * 24);
 
+        // // Calculate average chats per day
+        // const daysDiff = Math.max(1, (mostRecentChat - oldestChat) / (1000 * 60 * 60 * 24));
+        // const avgPerDay = totalChats / daysDiff;
+
+        // Calculate average chats per day
+        const avgPerDay = totalChats / Math.max(1, activityPeriod);
+
+        const answeredChats = filteredJourneys.filter(j => j.lastAcdOutcome === 'Answered');
+        const totalAnswered = answeredChats.length;
+        const answeredAvgPerDay = totalAnswered / Math.max(1, activityPeriod);
+
+        // Calculate average duration for answered chats
+        const totalDuration = answeredChats.reduce((sum, chat) => sum + (chat.durationInSeconds || 0), 0);
+        const avgDuration = totalAnswered > 0 ? totalDuration / totalAnswered : 0;
+        
     return {
-        oldestChat: new Date(Math.min(...filteredJourneys.map(j => new Date(j.createdDate)))),
-        mostRecentChat: new Date(Math.max(...filteredJourneys.map(j => new Date(j.createdDate)))),
+        oldestChat: oldestChat,
+        mostRecentChat: mostRecentChat,
         avgPerDay: avgPerDay.toFixed(2),
         totalChats: totalChats,
         totalSDBChats: filteredJourneys.filter(j => j.lastConnectedQueue?.id === SDB_QUEUE_ID).length,
@@ -375,11 +451,11 @@ function calculateStats(journeys, dateFilter) {
             // j.lastConnectedQueue?.id === DIGITAL_QUEUE_ID &&
             j.lastAcdOutcome === 'Abandon'
         ).length,
-        totalAnswered: filteredJourneys.filter(j =>
-            // (j.lastConnectedQueue?.id === DIGITAL_QUEUE_ID || j.lastConnectedQueue?.id === SURVEY_QUEUE_ID) &&
-            j.lastAcdOutcome === 'Answered'
-        ).length,
-        totalTimedout: filteredJourneys.filter(j => !j.lastConnectedQueue).length
+        totalAnswered: totalAnswered,
+        totalTimedout: filteredJourneys.filter(j => !j.lastConnectedQueue).length,
+        activityPeriod: activityPeriod.toFixed(1),
+        answeredAvgPerDay: answeredAvgPerDay.toFixed(2),
+        answeredAvgDuration: formatDuration(avgDuration)
     };
 }
 
@@ -418,27 +494,37 @@ function displayUserData(userData) {
                 // user.deviceInfo.country,
                 user.deviceInfo.locality,
                 user.deviceInfo.region,
-                // user.deviceInfo.geoSource,
                 user.deviceInfo.ipOrg,
-                // user.deviceInfo.customerIdType,
+                user.numberOfIPs,
                 // Group 2
                 user.totalStats.oldestChat.toLocaleString(),
                 user.totalStats.mostRecentChat.toLocaleString(),
-                user.totalStats.avgPerDay,
                 user.totalStats.totalChats,
+                user.totalStats.activityPeriod,
+                user.totalStats.avgPerDay,
                 user.totalStats.totalTimedout,
                 user.totalStats.totalSDBChats,
                 user.totalStats.totalQueuedChats,
-                user.totalStats.totalAnswered,
                 user.totalStats.totalAbandoned,
+                user.totalStats.totalAnswered,
                 // Group 3
-                user.todayStats.totalChats,
-                user.todayStats.totalTimedout,
-                user.todayStats.totalSDBChats,
-                user.todayStats.totalQueuedChats,
-                user.todayStats.totalAnswered,
-                user.todayStats.totalAbandoned,
-            ];
+                user.totalStats.answeredAvgPerDay,
+                user.totalStats.answeredAvgDuration
+
+                // <th>Most Recent Chat</th>
+                // <th>Chats Attempts</th>
+                // <th>Days of Activity</th>
+                // <!-- <th>Avg/day</th> -->
+                // <th>Attempts (avg/day)</th>
+                // <th>Timedout</th>
+                // <th>SDB</th>
+                // <th>Queued Chats</th>
+                // <th>Abandoned</th>
+                // <th>Answered</th>
+                // <!-- Group 3 -->
+                // <th>Answered (avg/day)</th>
+                // <th>Answered average duration</th>
+        ];
 
             cells.forEach(cellData => {
                 const cell = row.insertCell();

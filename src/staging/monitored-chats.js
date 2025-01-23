@@ -18,73 +18,6 @@ function determineEnvironment() {
 }
 
 /**
- * Retrieves the stored access token from either the Chrome extension's local storage
- * or the browser's local storage, depending on the environment. If the token is found,
- * it checks its validity by making an API request to the Genesys Cloud service.
- * If the token is valid, it sets the current user's role information and returns the token.
- * If the token is invalid or an error occurs, it removes the token from storage and returns null.
- * 
- * @returns {Promise<string|null>} - A promise that resolves to the access token if valid,
- * or null if no valid token is found or an error occurs.
- */
-async function getToken() {
-    console.log('getToken: Checking for stored access token');
-    const isExtension = determineEnvironment();
-    let token;
-
-    if (isExtension) {
-        console.log('getToken: Getting stored token from Chrome extension storage');
-        token = await new Promise(resolve => {
-            chrome.storage.local.get(['access_token'], function (result) {
-                resolve(result.access_token);
-            });
-        });
-    } else {
-        console.log('getToken: Getting stored token from browser storage');
-        token = localStorage.getItem('access_token');   // Backward compatibility!
-        if (!token) {
-            console.log('getToken: Checking for backward compatibility');
-            let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
-            if (monitored_chats_auth_data) {
-                console.log('getToken: Found backward compatibility data');
-                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
-            }
-        }
-    }
-
-    if (!token) {
-        console.log('getToken: No stored token found');
-        return null;
-    }
-
-    console.log('getToken: Checking token validity');
-    try {
-        const makeRequest = () => fetch('https://api.mypurecloud.com.au/api/v2/users/me?expand=authorization', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const userData = await handleApiRequest(makeRequest);
-        console.log('getToken: Token validity check successful');
-        currentUserhasIssRole = userData.authorization.roles.some(role => GC_ROLES_STOP_MONITORING.includes(role.name));
-        return token;
-    } catch (error) {
-        console.error('getToken: Error checking token validity:', error);
-        if (isExtension) {
-            console.log('getToken: Removing stored token from Chrome extension storage');
-            chrome.storage.local.remove('access_token');
-        } else {
-            console.log('getToken: Removing stored token from browser storage');
-            localStorage.removeItem('access_token');
-        }
-        return null;
-    }
-}
-
-
-/**
  * Retrieves the stored number of reload attempts from either the Chrome extension's
  * local storage or the browser's local storage, depending on the environment.
  * If the value is found, it is parsed as an integer and returned as a promise.
@@ -142,6 +75,7 @@ async function setReloadAttempts(count) {
 
 async function handleTokenCheck(initializeFeatures = false) {
     const token = await getToken();
+
     console.log('Token:', token);
     if (token) {
         console.log('Valid token found');
@@ -149,6 +83,18 @@ async function handleTokenCheck(initializeFeatures = false) {
         if (initializeFeatures) {
             initializeTableFeatures();
         }
+        console.log('Reading user permissions');
+        const makeRequest = () => fetch('https://api.mypurecloud.com.au/api/v2/users/me?expand=authorization', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    
+        const userData = await handleApiRequest(makeRequest);
+        console.log('getToken: Token validity check successful');
+        currentUserhasIssRole = userData.authorization.roles.some(role => GC_ROLES_STOP_MONITORING.includes(role.name));
+    
         fetchMonitoredChats(token);
     } else {
         console.error('No valid token found');
@@ -622,8 +568,6 @@ function customMonitorPopup(conversationId, externalTag, token) {
  * @param {string} token - The access token to use for the monitoring.
  */
 function customMonitorTab(conversationId, externalTag, token) {
-    const storageKey = `transcript_${conversationId}`;
-    localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
     const popupWindow = window.open(`CustomMonitoring.html?conversationId=${conversationId}`, '_blank');
 
     if (popupWindow) {
@@ -642,6 +586,8 @@ function customMonitorTab(conversationId, externalTag, token) {
  * @param {string} token - The access token to use for the monitoring.
  */
 function customMonitorShareData(handle, conversationId, externalTag, token) {
+    const storageKey = `transcript_${conversationId}`;
+    localStorage.setItem(storageKey, JSON.stringify({ conversationId, token }));
     // Use a timeout to ensure the window has time to load
     // setTimeout(() => {
     //     handle.postMessage({ conversationId, externalTag, token }, '*');
@@ -866,52 +812,3 @@ function filterTable(e) {
         row.style.display = showRow ? '' : 'none';
     });
 }
-
-// Admin Menu
-document.addEventListener('DOMContentLoaded', () => {
-    const adminLogo = document.getElementById('adminLogo');
-    const adminMenu = document.getElementById('adminMenu');
-    const currentPage = window.location.pathname.split('/').pop();
-
-    // Prevent default context menu on logo
-    adminLogo.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-
-        // Position menu at click coordinates
-        adminMenu.style.display = 'block';
-        adminMenu.style.left = `${e.pageX}px`;
-        adminMenu.style.top = `${e.pageY}px`;
-
-        // Disable current page in menu
-        const menuItems = adminMenu.querySelectorAll('li');
-        menuItems.forEach(item => {
-            if (item.dataset.page === currentPage) {
-                item.classList.add('disabled');
-            } else {
-                item.classList.remove('disabled');
-            }
-        });
-    });
-
-    // Handle menu item clicks
-    adminMenu.addEventListener('click', (e) => {
-        const menuItem = e.target;
-        if (menuItem.tagName === 'LI' && !menuItem.classList.contains('disabled')) {
-            window.location.href = menuItem.dataset.page;
-        }
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!adminMenu.contains(e.target) && e.target !== adminLogo) {
-            adminMenu.style.display = 'none';
-        }
-    });
-
-    // Close menu when pressing Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            adminMenu.style.display = 'none';
-        }
-    });
-});

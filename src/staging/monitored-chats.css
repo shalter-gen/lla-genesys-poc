@@ -1,3 +1,5 @@
+@import url('Common/admin-menu.css');
+
 table {
     border-collapse: collapse;
     width: 100%;
@@ -57,6 +59,11 @@ body {
 #refreshButton {
     padding: 5px 15px;
     height: fit-content;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .header-container {
@@ -152,3 +159,4 @@ body {
 .monitor-dropdown:hover .monitor-btn {
     visibility: hidden; /* Change from display:none to keep the space */
 }
+

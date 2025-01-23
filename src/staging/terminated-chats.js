@@ -10,12 +10,46 @@ async function initializeWithStoredToken() {
     }
 }
 
+function initializeDateControls() {
+    const fromNowCheckbox = document.getElementById('fromNowCheckbox');
+    const endDatePicker = document.getElementById('endDatePicker');
+
+    fromNowCheckbox.addEventListener('change', function() {
+        endDatePicker.disabled = this.checked;
+        if (this.checked) {
+            endDatePicker.value = '';
+        }
+    });
+
+    endDatePicker.addEventListener('change', function() {
+        fetchTerminatedChats();
+    });
+
+    endDatePicker.valueAsDate = new Date();
+}
+
+function getEndDate() {
+    const fromNowCheckbox = document.getElementById('fromNowCheckbox');
+    const endDatePicker = document.getElementById('endDatePicker');
+
+    if (fromNowCheckbox.checked) {
+        return new Date();
+    } else {
+        const selectedDate = new Date(endDatePicker.value);
+        selectedDate.setHours(23, 59, 59, 999);
+        return selectedDate;
+    }
+}
+
 async function fetchTerminatedChats() {
     const timeframe = document.getElementById('timeframe').value;
-    const endDate = new Date();
+    const endDate = getEndDate();
     let startDate;
 
     switch (timeframe) {
+        case '3hours':
+            startDate = new Date(endDate.getTime() - 3 * 60 * 60 * 1000);
+            break;
         case '6hours':
             startDate = new Date(endDate.getTime() - 6 * 60 * 60 * 1000);
             break;
@@ -25,14 +59,17 @@ async function fetchTerminatedChats() {
         case '24hours':
             startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000);
             break;
-        // case 'day':
-        //     startDate = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-        //     break;
-        case 'week':
+        case '48hours':
+            startDate = new Date(endDate.getTime() - 48 * 60 * 60 * 1000);
+            break;
+        case '72hours':
+            startDate = new Date(endDate.getTime() - 72 * 60 * 60 * 1000);
+            break;
+        case '7days':
             startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000);
             break;
-        case 'month':
-            startDate = new Date(endDate.getFullYear(), endDate.getMonth() - 1, endDate.getDate());
+        case '30days':
+            startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
             break;
     }
 
@@ -213,7 +250,7 @@ async function processConversations(conversations) {
                     p.purpose !== "agent"
                 )
                 .flatMap(p => p.messages.filter(m => m.messageStatus === "delivery-failed" && m.messageMetadata.type !== 'Event'));
-            const unattendedBotTime = unattendedBotMessages.length >= 4 ?
+            const unattendedBotTime = unattendedBotMessages.length >= 2 ?
                 new Date(Math.max(...unattendedBotMessages.map(m => new Date(m.messageTime)))) -
                 new Date(Math.min(...unattendedBotMessages.map(m => new Date(m.messageTime)))) :
                 0;
@@ -222,8 +259,8 @@ async function processConversations(conversations) {
                 .filter(p => 
                     p.purpose === "agent"
                 )
-                .flatMap(p => p.messages.filter(m => m.messageStatus === "delivery-failed" && m.messageMetadata.type !== 'Event'));
-            const unattendedAgentTime = unattendedBotMessages.length >= 4 ?
+                .flatMap(p => p.messages.filter(m => m.messageStatus === "delivery-failed"));
+            const unattendedAgentTime = unattendedAgentMessages.length >= 2 ?
                 new Date(Math.max(...unattendedAgentMessages.map(m => new Date(m.messageTime)))) -
                 new Date(Math.min(...unattendedAgentMessages.map(m => new Date(m.messageTime)))) :
                 0;
@@ -312,13 +349,9 @@ function displayUnattendedChatsSummary(unattendedChats) {
         row.insertCell().textContent = formatDuration(chat.unattendedAgentTime);
 
         const monitorCell = row.insertCell();
-        // const monitorButton = document.createElement('button');
-        // monitorButton.textContent = 'Transcript';
-        // monitorButton.onclick = () => window.open(`CustomMonitoring.html?conversationId=${chat.conversationId}&noRefresh`, '_blank');
-        // monitorCell.appendChild(monitorButton);
         const transcriptLink = document.createElement('a');
         transcriptLink.textContent = 'Transcript';
-        transcriptLink.href = `CustomMonitoring.html?conversationId=${chat.conversationId}&noRefresh`;
+        transcriptLink.href = `CustomMonitoring.html?conversationId=${chat.conversationId}`;
         transcriptLink.target = '_blank';
         transcriptLink.rel = 'noopener noreferrer';
         monitorCell.appendChild(transcriptLink);
@@ -335,5 +368,6 @@ function formatDuration(milliseconds) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeWithStoredToken();
+    initializeDateControls();
     document.getElementById('timeframe').addEventListener('change', fetchTerminatedChats);
 });

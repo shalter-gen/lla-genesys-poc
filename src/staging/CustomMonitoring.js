@@ -15,6 +15,12 @@ async function initializeWithStoredToken() {
         hideLoading();
     } else {
         console.error('No valid stored token found');
+        const cookieValue = getCookie('token_new');
+        if (cookieValue) {
+            console.log('"token_new" Cookie value:', cookieValue);
+        } else {
+            console.log('"token_new" Cookie not found');
+        }
     }
 }
 
@@ -52,6 +58,7 @@ function hideLoading() {
 /*=---------------------------------------------------------=*/
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
+let isLive = false;
 let previousData;
 // Audio context and source setup
 let audioContext;
@@ -60,7 +67,6 @@ const notificationSound = document.getElementById('chatNotification');
 
 const urlParams = new URLSearchParams(window.location.search);
 let conversationId = urlParams.get('conversationId');
-let noRefresh = urlParams.get('noRefresh');
 
 // Initialize audio when checkbox is first checked
 soundCheckbox.addEventListener('change', async function () {
@@ -114,6 +120,11 @@ async function fetchTranscript() {
 
         previousData = data;
 
+        isLive = !data.participants[0]?.endTime;
+        if (!isLive) {            
+            document.getElementById('soundControl').style.visibility  = 'hidden';
+        }
+
         // Filter out messages we've already displayed
         const newMessages = data.participants.flatMap(participant =>
             participant.messages.filter(message => !displayedMessageIds.has(message.messageId))
@@ -145,9 +156,7 @@ async function fetchTranscript() {
         console.error('Error fetching conversation details:', error);
         alert('Failed to fetch conversation details. Please try again.');
     } finally {
-        if (noRefresh === "") {
-            return;
-        } else {
+        if (isLive) {
             setTimeout(fetchTranscript, REFRESH_INTERVAL);
         }
     }
@@ -181,7 +190,11 @@ function updatePopupTitle(messagesDetails) {
 
     const headerElement = document.querySelector('h1');
     if (headerElement) {
-        headerElement.textContent = `Custom Monitoring of "${customerName}"`;
+        if (isLive) {
+            headerElement.textContent = `Custom Monitoring of "${customerName}"`;
+        } else {
+            headerElement.textContent = `Transcript of "${customerName}"`;
+        }
     }
     const titleElement = document.querySelector('title');
     if (titleElement) {
