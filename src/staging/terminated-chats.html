@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terminated Web Chats</title>
-    <link rel="stylesheet" href="frequent-chat-users.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminated Web Chats</title>
+  <link rel="stylesheet" href="frequent-chat-users.css">
 </head>
+
 <body>
-    <div id="content">
+  <div id="content">
 
     <div class="header-container">
       <div class="logo-title-group">
@@ -27,66 +29,70 @@
     </div>
 
     <div class="timeframe-container">
-        <div class="timeframe-select">
-          <label for="timeframe">Select Timeframe:</label>
-          <select id="timeframe">
-            <option value="3hours">Past 3 Hours</option>
-            <option value="6hours">Past 6 Hours</option>
-            <option value="12hours">Past 12 Hours</option>
-            <option value="24hours">Past 24 Hours</option>
-            <option value="48hours">Past 48 Hours</option>
-            <option value="72hours">Past 72 Hours</option>
-            <option value="7days">Past 7 Days</option>
-            <option value="30days">Past 30 Days</option>
-          </select>
-        </div>
-        <div class="from-now-container">
-          <input type="checkbox" id="fromNowCheckbox" checked>
-          <label for="fromNowCheckbox">End date is now</label>
-        </div>
-        <div class="date-picker-container">
-          <label for="endDatePicker">End Date:</label>
-          <input type="date" id="endDatePicker" disabled>
-        </div>
+      <div class="timeframe-select">
+        <label for="timeframe">Select Timeframe:</label>
+        <select id="timeframe">
+          <option value="3hours">Past 3 Hours</option>
+          <option value="6hours">Past 6 Hours</option>
+          <option value="12hours">Past 12 Hours</option>
+          <option value="24hours">Past 24 Hours</option>
+          <option value="48hours">Past 48 Hours</option>
+          <option value="72hours">Past 72 Hours</option>
+          <option value="7days">Past 7 Days</option>
+          <option value="30days">Past 30 Days</option>
+        </select>
       </div>
-      
+      <div class="from-now-container">
+        <input type="checkbox" id="fromNowCheckbox" checked>
+        <label for="fromNowCheckbox">End date is now</label>
+      </div>
+      <div class="date-picker-container">
+        <label for="endDatePicker">End Date:</label>
+        <input type="date" id="endDatePicker" disabled>
+      </div>
+    </div>
+
 
     <table id="terminatedChatsTable">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Total Chats</th>
-                <th>Attended Chats</th>
-                <th>Unattended Chats</th>
-                <th>Unattended Ratio (%)</th>
-            </tr>
-        </thead>
-        <tbody id="terminatedChatsBody"></tbody>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Total Chats</th>
+          <th>Attended Chats</th>
+          <th>Unattended Chats</th>
+          <th>Unattended Ratio (%)</th>
+        </tr>
+      </thead>
+      <tbody id="terminatedChatsBody"></tbody>
     </table>
-    
+
     <h2>Unattended Chats</h2>
     <table id="unattendedChatsTable">
-        <thead>
-            <tr>
-                <th>Chat Start Date</th>
-                <th>Queue</th>
-                <th>Message Type</th>
-                <th>Device</th>
-                <th>Conversation ID</th>
-                <th>External Tag</th>
-                <th>Interacting User(s)</th>
-                <th>Duration</th>
-                <th>Time in Queue</th>
-                <th>Unattended Time with Bot</th>
-                <th>Unattended Time with Human</th>
-                <th>Transcript</th>
-            </tr>
-        </thead>
-        <tbody id="unattendedChatsBody"></tbody>
+      <thead>
+        <tr>
+          <th>Chat Start Date</th>
+          <th>Queue</th>
+          <th>Message Type</th>
+          <th>Device</th>
+          <th>Conversation ID</th>
+          <th>External Tag</th>
+          <th>Interacting User(s)</th>
+          <th>Duration</th>
+          <th>Time in Queue</th>
+          <th>Unattended Time with Bot</th>
+          <th>Unattended Time with Human</th>
+          <th>Transcript</th>
+        </tr>
+      </thead>
+      <tbody id="unattendedChatsBody"></tbody>
     </table>
-    </div>
-    <script src="Common/token.js"></script>
-    <script src="terminated-chats.js"></script>
-    <script src="Common/admin-menu.js"></script>
+  </div>
+  <script>
+    const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+  </script>
+  <script src="Common/token.js"></script>
+  <script src="terminated-chats.js"></script>
+  <script src="Common/admin-menu.js"></script>
 </body>
+
 </html>

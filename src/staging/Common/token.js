@@ -5,10 +5,10 @@ function determineEnvironment() {
 function getCookie(storageKey) {
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
-      const [key, value] = cookie.split('=');
-      if (key === storageKey) {
-        return decodeURIComponent(value);
-      }
+        const [key, value] = cookie.split('=');
+        if (key === storageKey) {
+            return decodeURIComponent(value);
+        }
     }
     return null;
 }
@@ -19,30 +19,20 @@ async function getToken() {
     let token;
 
     if (isExtension) {
-        console.log('getToken: Getting stored token from Chrome extension storage');
+        console.log(`getToken: Getting stored token from Chrome extension storage`);
         token = await new Promise(resolve => {
             chrome.storage.local.get(['access_token'], function (result) {
                 resolve(result.access_token);
             });
         });
     } else {
-        // console.log('getToken: Getting stored token from browser storage');
-        // token = localStorage.getItem('access_token');   // Backward compatibility!
-        // if (!token) {
-        //     console.log('getToken: Checking for backward compatibility');
-        //     let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
-        //     if (monitored_chats_auth_data) {
-        //         console.log('getToken: Found backward compatibility data');
-        //         token = JSON.parse(monitored_chats_auth_data)?.accessToken;
-        //     }
-        // }
-        console.log('getToken: Getting stored token from Cookies');
-        const cookieValue = getCookie('access_token');
+        console.log(`getToken: Getting stored token (${TOKEN_KEY_NAME}) from Cookies`);
+        const cookieValue = getCookie(TOKEN_KEY_NAME);
         if (cookieValue) {
             token = cookieValue;
-            console.log('"access_token" Cookie value:', cookieValue);
+            console.log(`"${TOKEN_KEY_NAME}" Cookie value: ${cookieValue}`);
         } else {
-            console.log('"access_token" Cookie not found');
+            console.log(`"${TOKEN_KEY_NAME}" Cookie not found.`);
         }
     }
 
@@ -69,8 +59,8 @@ async function getToken() {
             console.log('getToken: Removing stored token from Chrome extension storage');
             chrome.storage.local.remove('access_token');
         } else {
-            console.log('getToken: Removing stored token from browser storage');
-            localStorage.removeItem('access_token');
+            console.log(`getToken: Removing stored token (${TOKEN_KEY_NAME}) from cookie`);
+            document.cookie = `${TOKEN_KEY_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure`;
         }
         return null;
     }

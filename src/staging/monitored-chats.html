@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Monitored Chats</title>
-    <link rel="stylesheet" href="monitored-chats.css">
-    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List of Monitored Chats</title>
+  <link rel="stylesheet" href="monitored-chats.css">
+  <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
 </head>
 
 <body>
@@ -31,28 +31,31 @@
       <label for="prodOnlyCheckbox">Show only Production</label>
     </div>
   </div>
-    <table id="monitoredChatsTable">
-        <thead>
-            <tr>
-                <th>Chat Start Date</th>
-                <th>Queue</th>
-                <th>Message Type</th>
-                <th>Conversation ID</th>
-                <th>External Tag</th>
-                <th>Interacting User(s)</th>
-                <th>Monitor Start Date</th>
-                <th>Monitoring User</th>
-                <!-- <th>Genesys Monitoring</th> -->
-                <th>Custom Monitoring</th>
-            </tr>
-        </thead>
-        <tbody id="monitoredChatsBody"></tbody>
-    </table>
-    <script>const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';</script>
-    <script src="Common/authentication.js"></script>
-    <script src="Common/token.js"></script>
-    <script src="monitored-chats.js"></script>
-    <script src="Common/admin-menu.js"></script>
+  <table id="monitoredChatsTable">
+    <thead>
+      <tr>
+        <th>Chat Start Date</th>
+        <th>Queue</th>
+        <th>Message Type</th>
+        <th>Conversation ID</th>
+        <th>External Tag</th>
+        <th>Interacting User(s)</th>
+        <th>Monitor Start Date</th>
+        <th>Monitoring User</th>
+        <!-- <th>Genesys Monitoring</th> -->
+        <th>Custom Monitoring</th>
+      </tr>
+    </thead>
+    <tbody id="monitoredChatsBody"></tbody>
+  </table>
+  <script>
+    const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
+    const TOKEN_KEY_NAME = 'LLA_Sup_Assist_Access_Token';
+  </script>
+  <script src="Common/authentication.js"></script>
+  <script src="Common/token.js"></script>
+  <script src="monitored-chats.js"></script>
+  <script src="Common/admin-menu.js"></script>
 </body>
 
 </html>
