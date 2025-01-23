@@ -62,7 +62,7 @@ async function setReloadAttempts(count) {
  */
 
 async function handleTokenCheck() {
-    const token = await getToken();
+    token = await getToken();
 
     console.log('Token:', token);
     showLoading();
