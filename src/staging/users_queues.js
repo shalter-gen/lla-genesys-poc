@@ -1,14 +1,126 @@
+const MAX_PAGE_RELOADS_FOR_TOKEN = 5;
+const TOKEN_RELOAD_DELAY = 2000; // 2 seconds in milliseconds
+
 let token;
 
-async function initializeWithStoredToken() {
-    token = await getToken();
-    if (token) {
-        await fetchData();
-        hideLoading();
+
+
+/**
+ * Retrieves the stored number of reload attempts from either the Chrome extension's
+ * local storage or the browser's local storage, depending on the environment.
+ * If the value is found, it is parsed as an integer and returned as a promise.
+ * If the value is not found or is invalid, the promise resolves to 0.
+ *
+ * @returns {Promise<number>} - A promise that resolves to the number of reload attempts
+ */
+async function getReloadAttempts() {
+    const isExtension = determineEnvironment();
+    if (isExtension) {
+        return new Promise(resolve => {
+            chrome.storage.local.get(['reloadAttempts'], function (result) {
+                resolve(result.reloadAttempts || 0);
+            });
+        });
     } else {
-        console.error('No valid stored token found');
+        return parseInt(localStorage.getItem('reloadAttempts') || '0');
     }
 }
+
+/**
+ * Sets the number of reload attempts to the given value in either the Chrome
+ * extension's local storage or the browser's local storage, depending on the
+ * environment.
+ *
+ * @param {number} count - The number of reload attempts to set
+ * @returns {Promise<void>} - A promise that resolves when the value is set
+ */
+async function setReloadAttempts(count) {
+    const isExtension = determineEnvironment();
+    if (isExtension) {
+        await chrome.storage.local.set({ reloadAttempts: count });
+    } else {
+        localStorage.setItem('reloadAttempts', count.toString());
+    }
+}
+
+/**
+ * Handles the process of checking the validity of a stored token
+ * and manages features initialization and reload attempts.
+ * 
+ * If a valid token is found, it resets the reload attempts counter
+ * and optionally initializes table features before fetching monitored chats.
+ * If no valid token is found, it logs an error and checks the number of
+ * reload attempts. If the attempts are below the maximum allowed, it
+ * increments the attempts counter and reloads the page after a delay.
+ * If the maximum reload attempts is reached, it logs an error and resets
+ * the attempts counter.
+ * 
+ * @param {boolean} initializeFeatures - A flag indicating whether to
+ * initialize table features upon successful token retrieval.
+ * @returns {Promise<void>} - A promise that resolves when the token
+ * check process is complete.
+ */
+
+async function handleTokenCheck() {
+    const token = await getToken();
+
+    console.log('Token:', token);
+    showLoading();
+    if (token) {
+        console.log('Valid token found');
+        await setReloadAttempts(0); // Reset counter on successful token
+    
+        await fetchData();
+        hideLoading();
+
+    } else {
+        console.error('No valid token found');
+        const attempts = await getReloadAttempts();
+        console.log(`Current reload attempts: ${attempts}`);
+        if (attempts < MAX_PAGE_RELOADS_FOR_TOKEN) {
+            console.log(`Reload attempt ${attempts + 1} of ${MAX_PAGE_RELOADS_FOR_TOKEN}`);
+            await setReloadAttempts(attempts + 1);
+            setTimeout(() => {
+                console.log('Reloading page...');
+                window.location.reload();
+            }, TOKEN_RELOAD_DELAY);
+        } else {
+            console.error('Max reload attempts reached');
+            await setReloadAttempts(0); // Reset counter on successful token
+        }
+    }
+}
+
+// document.addEventListener('DOMContentLoaded', async function () {
+//     await handleTokenCheck();
+//     document.getElementById('refreshButton').addEventListener('click', refreshTable);
+// });
+
+
+document.addEventListener('DOMContentLoaded', async () => {    
+    await handleTokenCheck();
+    // Add event listeners for buttons
+    document.getElementById('refreshButton').addEventListener('click', async () => {
+        showLoading();
+        await fetchData();
+        hideLoading();
+    } );
+    document.getElementById('activateProdButton').addEventListener('click', async () => updateQueueMembers('prod'));
+    document.getElementById('activateTrainingButton').addEventListener('click', async () => updateQueueMembers('training'));
+    
+});
+
+
+
+// async function initializeWithStoredToken() {
+//     token = await getToken();
+//     if (token) {
+//         await fetchData();
+//         hideLoading();
+//     } else {
+//         console.error('No valid stored token found');
+//     }
+// }
 
 function showLoading() {
     document.getElementById('loadingMessage').style.display = 'flex';
@@ -20,7 +132,7 @@ function hideLoading() {
     document.getElementById('content').style.display = 'block';
 }
 
-initializeWithStoredToken();
+// initializeWithStoredToken();
 
 /*=---------------------------------------------------------=*/
 
@@ -248,16 +360,3 @@ function filterTableData() {
         row.style.display = showRow ? '' : 'none';
     });
 }
-
-
-document.addEventListener('DOMContentLoaded', () => {    
-    // Add event listeners for buttons
-    document.getElementById('refreshButton').addEventListener('click', async () => {
-        showLoading();
-        await fetchData();
-        hideLoading();
-    } );
-    document.getElementById('activateProdButton').addEventListener('click', async () => updateQueueMembers('prod'));
-    document.getElementById('activateTrainingButton').addEventListener('click', async () => updateQueueMembers('training'));
-    
-});
