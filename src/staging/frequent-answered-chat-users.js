@@ -57,8 +57,6 @@ async function setReloadAttempts(count) {
  * If the maximum reload attempts is reached, it logs an error and resets
  * the attempts counter.
  * 
- * @param {boolean} initializeFeatures - A flag indicating whether to
- * initialize table features upon successful token retrieval.
  * @returns {Promise<void>} - A promise that resolves when the token
  * check process is complete.
  */
@@ -67,13 +65,15 @@ async function handleTokenCheck() {
     token = await getToken();
 
     console.log('Token:', token);
-    showLoading();
+    // showLoading();
     if (token) {
         console.log('Valid token found');
         await setReloadAttempts(0); // Reset counter on successful token
     
-        await fetchData();
-        hideLoading();
+        // await fetchData();
+        await fetchFrequentAnsweredUsers(token);
+
+        // hideLoading();
 
     } else {
         console.error('No valid token found');
