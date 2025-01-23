@@ -24,6 +24,9 @@ client.setPersistSettings(true, 'monitored_chats');
 client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: "INITIAL" })
     .then((data) => {
         console.log('Authenticated:', data);
+        document.cookie = `access_token=${data.accessToken}; SameSite=None; Secure`;
+        console.log('Saved access_token:', data.accessToken);
+
         // localStorage.setItem('access_token', data.accessToken);
 
         // load the monitored-chats.js js script here

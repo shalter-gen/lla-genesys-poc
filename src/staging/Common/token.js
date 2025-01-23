@@ -2,6 +2,17 @@ function determineEnvironment() {
     return window.location.protocol === 'chrome-extension:';
 }
 
+function getCookie(storageKey) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      const [key, value] = cookie.split('=');
+      if (key === storageKey) {
+        return decodeURIComponent(value);
+      }
+    }
+    return null;
+}
+
 async function getToken() {
     console.log('getToken: Checking for stored access token');
     const isExtension = determineEnvironment();
@@ -15,15 +26,23 @@ async function getToken() {
             });
         });
     } else {
-        console.log('getToken: Getting stored token from browser storage');
-        token = localStorage.getItem('access_token');   // Backward compatibility!
-        if (!token) {
-            console.log('getToken: Checking for backward compatibility');
-            let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
-            if (monitored_chats_auth_data) {
-                console.log('getToken: Found backward compatibility data');
-                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
-            }
+        // console.log('getToken: Getting stored token from browser storage');
+        // token = localStorage.getItem('access_token');   // Backward compatibility!
+        // if (!token) {
+        //     console.log('getToken: Checking for backward compatibility');
+        //     let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
+        //     if (monitored_chats_auth_data) {
+        //         console.log('getToken: Found backward compatibility data');
+        //         token = JSON.parse(monitored_chats_auth_data)?.accessToken;
+        //     }
+        // }
+        console.log('getToken: Getting stored token from Cookies');
+        const cookieValue = getCookie('access_token');
+        if (cookieValue) {
+            token = cookieValue;
+            console.log('"access_token" Cookie value:', cookieValue);
+        } else {
+            console.log('"access_token" Cookie not found');
         }
     }
 
