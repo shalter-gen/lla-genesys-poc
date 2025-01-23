@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frequent Answered Chat Users</title>
     <link rel="stylesheet" href="frequent-chat-users.css">
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
 </head>
 
 <body>
@@ -75,6 +76,11 @@
             </thead>
             <tbody id="frequentUsersBody"></tbody>
         </table>
+        <script>
+            const CLIENT_ID = '9275dd2a-53a5-474d-b794-92ba5670917a';
+            const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+        </script>
+        <script src="Common/authentication.js"></script>
         <script src="Common/token.js"></script>
         <script src="frequent-answered-chat-users.js"></script>
         <script src="Common/admin-menu.js"></script>
