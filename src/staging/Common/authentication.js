@@ -19,7 +19,8 @@ client.config.logger.log_to_console = true;
 client.config.logger.setLogger(); // To apply above changes
 
 client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
-client.setPersistSettings(true, 'monitored_chats');
+// client.setPersistSettings(true, 'monitored_chats');
+client.setPersistSettings(true, TOKEN_KEY_NAME);
 
 client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: "INITIAL" })
     .then((data) => {
