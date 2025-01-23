@@ -55,8 +55,6 @@ async function setReloadAttempts(count) {
  * If the maximum reload attempts is reached, it logs an error and resets
  * the attempts counter.
  * 
- * @param {boolean} initializeFeatures - A flag indicating whether to
- * initialize table features upon successful token retrieval.
  * @returns {Promise<void>} - A promise that resolves when the token
  * check process is complete.
  */
