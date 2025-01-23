@@ -2,7 +2,6 @@
 // https://github.com/MyPureCloud/platform-client-sdk-javascript?tab=readme-ov-file
 
 // Configuration
-const CLIENT_ID = '90a3b83c-a180-4667-abc3-bedf68ba86ae';
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 
 const platformClient = require('platformClient');
