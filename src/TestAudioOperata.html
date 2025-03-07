@@ -3,573 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Device Selector and Tester</title>
+    <title>Operata Detector & Audio Device Tester</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            line-height: 1.6;
-            color: #333;
-        }
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
+            text-align: center;
         }
-        h2 {
-            color: #3498db;
-            margin-top: 0;
-        }
-        select, button { 
-            margin: 10px 0; 
-            padding: 8px 12px;
-            border-radius: 4px;
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
             border: 1px solid #ccc;
-            font-size: 14px;
-            width: 100%;
+            border-radius: 5px;
         }
         button {
-            background-color: #3498db;
-            color: white;
-            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #2980b9;
+        select {
+            margin: 10px 0;
+            padding: 5px;
         }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-        #results { 
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-        }
-        canvas { 
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-            height: 150px;
-            margin-top: 15px;
-            background-color: #f8f9fa;
-        }
-        .error {
-            color: #e74c3c;
-            border-left: 4px solid #e74c3c;
-        }
-        .success {
-            color: #27ae60;
-            border-left: 4px solid #27ae60;
-        }
-        .meter-container {
-            width: 100%;
-            height: 30px;
-            background-color: #ecf0f1;
-            border-radius: 4px;
-            position: relative;
-            margin: 15px 0;
-        }
-        .meter-level {
-            height: 100%;
-            background-color: #2ecc71;
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.1s ease;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .controls > div {
-            flex: 1;
-            margin-right: 10px;
-        }
-        .controls > div:last-child {
-            margin-right: 0;
-        }
-        @media (max-width: 600px) {
-            .controls {
-                flex-direction: column;
-            }
-            .controls > div {
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
+        #visualizer {
+            display: block;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
-    <h1>Audio Device Selector and Tester</h1>
-    
-    <div class="card">
-        <h2>Step 1: Device Setup</h2>
+    <h1>Operata Detector & Audio Device Tester</h1>
+
+    <div class="section">
+        <h2>Operata Extension Detector</h2>
+        <button id="checkOperata">Check Operata</button>
+        <div id="operataResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>Audio Device Selector and Tester</h2>
         <button id="requestPermissions">Request Audio Permissions</button>
-        <div id="permissionStatus"></div>
-    </div>
-
-    <div class="card">
-        <h2>Step 2: Select Devices</h2>
-        <div class="controls">
-            <div>
-                <label for="audioInputSelect">Input Device:</label>
-                <select id="audioInputSelect" disabled></select>
-            </div>
-            <div>
-                <label for="audioOutputSelect">Output Device:</label>
-                <select id="audioOutputSelect" disabled></select>
-            </div>
+        <div id="deviceSelectors" style="display:none;">
+            <h3>Input Devices</h3>
+            <select id="inputDevices"></select>
+            <button id="testInput">Test Input Device</button>
+            <h3>Output Devices</h3>
+            <select id="outputDevices"></select>
+            <button id="testOutput">Test Output Device</button>
         </div>
-        <div>
-            <button id="refreshDevices" disabled>Refresh Device List</button>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Step 3: Test Devices</h2>
-        <div class="controls">
-            <div>
-                <button id="toggleInputTest" disabled>Test Input Device</button>
-                <div class="meter-container">
-                    <div id="inputMeter" class="meter-level"></div>
-                </div>
-            </div>
-            <div>
-                <button id="toggleOutputTest" disabled>Test Output Device</button>
-                <div>
-                    <label for="volumeControl">Volume:</label>
-                    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.5" disabled>
-                </div>
-            </div>
-        </div>
-        <div id="results">Select and test your audio devices</div>
-        <canvas id="visualizer" width="600" height="150"></canvas>
+        <canvas id="visualizer" width="300" height="150"></canvas>
     </div>
 
     <script>
-        let audioContext;
-        let analyser;
-        let microphone;
-        let audioElement;
-        let isTestingInput = false;
-        let isTestingOutput = false;
+        // Operata Detection Logic
+        const checkButton = document.getElementById('checkOperata');
+        const resultDiv = document.getElementById('operataResult');
+
+        checkButton.addEventListener('click', () => {
+            let installLink;
+            let scriptSrc;
+
+            if (navigator.userAgent.includes('Edg')) {
+                installLink = 'https://microsoftedge.microsoft.com/addons/detail/operata-collector/ghgkknhlginpepabafckbejbpfmdppjk';
+                scriptSrc = 'chrome-extension://ghgkknhlginpepabafckbejbpfmdppjk/pc-override.js';
+            } else if (navigator.userAgent.includes('Chrome')) {
+                installLink = 'https://chromewebstore.google.com/detail/operata-collector/efhlocglafmcfhkpojjbckpbonbfbgdb?hl=en';
+                scriptSrc = 'chrome-extension://efhlocglafmcfhkpojjbckpbonbfbgdb/pc-override.js';
+            } else {
+                resultDiv.innerHTML = 'Unsupported browser';
+                return;
+            }
+
+            const scriptElement = document.querySelector(`script[src="${scriptSrc}"]`);
+
+            if (scriptElement) {
+                resultDiv.innerHTML = 'Operata extension installed';
+            } else {
+                resultDiv.innerHTML = `Operata needs to be installed. <a href="${installLink}" target="_blank">Install now</a>`;
+            }
+        });
+
+        // Audio Device Testing Logic
         let animationFrameId;
-        let volumeAverage = 0;
-        
-        // DOM elements
-        const requestPermissionsButton = document.getElementById('requestPermissions');
-        const permissionStatus = document.getElementById('permissionStatus');
-        const audioInputSelect = document.getElementById('audioInputSelect');
-        const audioOutputSelect = document.getElementById('audioOutputSelect');
-        const refreshDevicesButton = document.getElementById('refreshDevices');
-        const toggleInputTestButton = document.getElementById('toggleInputTest');
-        const toggleOutputTestButton = document.getElementById('toggleOutputTest');
-        const volumeControl = document.getElementById('volumeControl');
-        const inputMeter = document.getElementById('inputMeter');
-        const results = document.getElementById('results');
-        const canvas = document.getElementById('visualizer');
-        const canvasCtx = canvas.getContext('2d');
+        let analyser;
 
-        console.log('Script started');
-
-        // Check browser support
-        function checkBrowserSupport() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                updateStatus('error', 'Your browser does not support audio input device access. Please use a modern browser like Chrome, Firefox, or Edge.');
-                requestPermissionsButton.disabled = true;
-                return false;
-            }
-            
-            const outputSupported = 'setSinkId' in HTMLAudioElement.prototype;
-            if (!outputSupported) {
-                updateStatus('warning', 'Your browser does not fully support audio output device selection. Input testing will work, but output device selection may not work.');
-            }
-            
-            return true;
-        }
-
-        // Update status message
-        function updateStatus(type, message) {
-            if (type === 'error') {
-                permissionStatus.innerHTML = `<div class="error">${message}</div>`;
-                results.innerHTML = message;
-                results.className = 'error';
-            } else if (type === 'success') {
-                permissionStatus.innerHTML = `<div class="success">${message}</div>`;
-                results.innerHTML = message;
-                results.className = 'success';
-            } else if (type === 'warning') {
-                permissionStatus.innerHTML = `<div>${message}</div>`;
-                results.innerHTML = message;
-                results.className = '';
-            } else {
-                permissionStatus.innerHTML = `<div>${message}</div>`;
-                results.innerHTML = message;
-                results.className = '';
-            }
-        }
-
-        // Request permissions
-        async function requestPermissions() {
-            console.log('Requesting permissions...');
-            updateStatus('', 'Requesting microphone access...');
-            requestPermissionsButton.disabled = true;
-            
+        document.getElementById('requestPermissions').addEventListener('click', async function() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                console.log('Microphone permission granted');
-                stream.getTracks().forEach(track => track.stop());
-                
-                const outputSupported = 'setSinkId' in HTMLAudioElement.prototype;
-                if (outputSupported) {
-                    try {
-                        await document.createElement('audio').setSinkId('');
-                        console.log('Output device permission granted');
-                    } catch (err) {
-                        console.log('Output device permission not granted or not needed');
-                    }
-                }
-
-                updateStatus('success', 'Permissions granted. You can now select and test devices.');
-                audioInputSelect.disabled = false;
-                audioOutputSelect.disabled = false;
-                refreshDevicesButton.disabled = false;
-                toggleInputTestButton.disabled = false;
-                toggleOutputTestButton.disabled = false;
-                volumeControl.disabled = false;
-                await enumerateDevices();
-            } catch (error) {
-                console.error('Error requesting permissions:', error);
-                updateStatus('error', 'Failed to get permissions. Please grant microphone access and try again.');
-                requestPermissionsButton.disabled = false;
-            }
-        }
-
-        // Enumerate devices and populate dropdowns
-        async function enumerateDevices() {
-            console.log('Enumerating devices...');
-            try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                console.log('Devices enumerated:', devices);
-                
-                // Clear existing options but keep a default option
-                audioInputSelect.innerHTML = '<option value="default">System Default</option>';
-                audioOutputSelect.innerHTML = '<option value="default">System Default</option>';
-
-                let hasInputs = false;
-                let hasOutputs = false;
-
-                devices.forEach(device => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.text = device.label || `${device.kind} (${device.deviceId.slice(0, 8)}...)`;
-
-                    if (device.kind === 'audioinput') {
-                        audioInputSelect.appendChild(option);
-                        hasInputs = true;
-                    } else if (device.kind === 'audiooutput') {
-                        audioOutputSelect.appendChild(option);
-                        hasOutputs = true;
-                    }
-                });
-                
-                if (!hasInputs) {
-                    updateStatus('error', 'No input devices found. Please connect a microphone and refresh the device list.');
-                    toggleInputTestButton.disabled = true;
-                }
-                
-                if (!hasOutputs) {
-                    console.log('No output devices found or browser does not support enumeration');
-                }
-                
-                console.log('Dropdowns populated');
-            } catch (error) {
-                console.error('Error enumerating devices:', error);
-                updateStatus('error', 'Error listing audio devices. Please check permissions.');
-            }
-        }
-
-        // Toggle input device test
-        async function toggleInputTest() {
-            if (isTestingInput) {
-                stopInputTest();
-            } else {
-                await startInputTest();
-            }
-        }
-
-        // Start input device test
-        async function startInputTest() {
-            console.log('Starting input device test...');
-            if (isTestingOutput) {
-                stopOutputTest();
-            }
-            
-            if (microphone) {
-                console.log('Stopping previous microphone stream');
-                microphone.getTracks().forEach(track => track.stop());
-            }
-
-            const constraints = {
-                audio: { deviceId: audioInputSelect.value !== 'default' ? 
-                    { exact: audioInputSelect.value } : undefined }
-            };
-            console.log('Using constraints:', constraints);
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                console.log('Got media stream:', stream);
-                microphone = stream;
-
-                if (!audioContext) {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 2048;
-                    console.log('Audio context and analyser created');
-                }
-
-                const source = audioContext.createMediaStreamSource(stream);
-                source.connect(analyser);
-                console.log('Source connected to analyser');
-
-                visualize();
-                updateStatus('success', 'Input device is working. Speak to see the visualizer respond.');
-                isTestingInput = true;
-                toggleInputTestButton.textContent = 'Stop Input Test';
-                toggleInputTestButton.classList.add('active');
-                audioInputSelect.disabled = true;
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                document.getElementById('deviceSelectors').style.display = 'block';
+                updateDeviceLists();
             } catch (err) {
-                console.error('Error accessing microphone:', err);
-                updateStatus('error', `Error accessing microphone: ${err.message}`);
+                console.error('Error requesting permissions:', err);
             }
+        });
+
+        async function updateDeviceLists() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const inputSelect = document.getElementById('inputDevices');
+            const outputSelect = document.getElementById('outputDevices');
+            
+            inputSelect.innerHTML = '';
+            outputSelect.innerHTML = '';
+
+            devices.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `${device.kind} (${device.deviceId.slice(0,5)}...)`;
+                
+                if (device.kind === 'audioinput') {
+                    inputSelect.appendChild(option);
+                } else if (device.kind === 'audiooutput') {
+                    outputSelect.appendChild(option);
+                }
+            });
         }
 
-        // Stop input device test
-        function stopInputTest() {
-            console.log('Stopping input device test...');
-            if (microphone) {
-                microphone.getTracks().forEach(track => track.stop());
-                microphone = null;
-            }
+        async function testInputDevice() {
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
             }
-            isTestingInput = false;
-            toggleInputTestButton.textContent = 'Test Input Device';
-            toggleInputTestButton.classList.remove('active');
-            audioInputSelect.disabled = false;
-            updateStatus('', 'Input device test stopped.');
-            // Clear the canvas
-            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-            // Reset input meter
-            inputMeter.style.width = '0%';
-        }
-
-        // Visualize audio input
-        function visualize() {
-            console.log('Starting visualization');
+            
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: { deviceId: document.getElementById('inputDevices').value }
+            });
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            source.connect(analyser);
+            
             const bufferLength = analyser.frequencyBinCount;
             const dataArray = new Uint8Array(bufferLength);
-            const timeDataArray = new Uint8Array(bufferLength);
-
-            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-
+            const canvas = document.getElementById('visualizer');
+            const canvasCtx = canvas.getContext('2d');
+            
             function draw() {
                 animationFrameId = requestAnimationFrame(draw);
-                
-                // Get both frequency and time domain data
-                analyser.getByteFrequencyData(dataArray);
-                analyser.getByteTimeDomainData(timeDataArray);
-                
-                // Calculate volume level for the meter
-                let sum = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                    sum += dataArray[i];
-                }
-                const average = sum / bufferLength;
-                // Smooth the meter a bit
-                volumeAverage = volumeAverage * 0.8 + average * 0.2;
-                const volumePercent = Math.min(100, volumeAverage * 1.5);
-                inputMeter.style.width = `${volumePercent}%`;
-                
-                // Change meter color based on volume
-                if (volumePercent < 30) {
-                    inputMeter.style.backgroundColor = '#2ecc71'; // Green
-                } else if (volumePercent < 80) {
-                    inputMeter.style.backgroundColor = '#f39c12'; // Orange
-                } else {
-                    inputMeter.style.backgroundColor = '#e74c3c'; // Red
-                }
-
-                // Clear canvas
-                canvasCtx.fillStyle = 'rgb(245, 245, 245)';
+                analyser.getByteTimeDomainData(dataArray);
+                canvasCtx.fillStyle = 'rgb(200, 200, 200)';
                 canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Draw frequency bars
-                const barWidth = (canvas.width / (bufferLength / 4)) - 1;
-                let x = 0;
-
-                for (let i = 0; i < bufferLength / 4; i++) {
-                    const barHeight = (dataArray[i] / 255) * canvas.height;
-                    
-                    // Gradient from blue to green to red
-                    const hue = (i / (bufferLength / 4)) * 180;
-                    canvasCtx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-                    
-                    canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                    x += barWidth + 1;
-                }
-                
-                // Draw waveform
-                canvasCtx.beginPath();
                 canvasCtx.lineWidth = 2;
-                canvasCtx.strokeStyle = 'rgba(30, 144, 255, 0.6)';
-                
-                const sliceWidth = canvas.width / bufferLength;
-                x = 0;
-                
+                canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+                canvasCtx.beginPath();
+                const sliceWidth = canvas.width * 1.0 / bufferLength;
+                let x = 0;
                 for (let i = 0; i < bufferLength; i++) {
-                    const v = timeDataArray[i] / 128.0;
+                    const v = dataArray[i] / 128.0;
                     const y = v * canvas.height / 2;
-                    
                     if (i === 0) {
                         canvasCtx.moveTo(x, y);
                     } else {
                         canvasCtx.lineTo(x, y);
                     }
-                    
                     x += sliceWidth;
                 }
-                
                 canvasCtx.lineTo(canvas.width, canvas.height / 2);
                 canvasCtx.stroke();
             }
-
             draw();
         }
 
-        // Toggle output device test
-        function toggleOutputTest() {
-            if (isTestingOutput) {
-                stopOutputTest();
-            } else {
-                startOutputTest();
+        function stopVisualizer() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
         }
 
-        // Start output device test
-        async function startOutputTest() {
-            console.log('Starting output device test...');
-            if (isTestingInput) {
-                stopInputTest();
-            }
-            
-            if (!audioElement) {
-                audioElement = new Audio();
-                // Using a sine wave tone instead of an external MP3
-                if (audioContext) {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // 440 Hz (A4 note)
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    gainNode.gain.value = volumeControl.value;
-                    oscillator.start();
-                    
-                    setTimeout(() => {
-                        oscillator.stop();
-                    }, 2000);
-                } else {
-                    // Fallback to a test tone file
-                    audioElement.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-                    audioElement.loop = true;
-                }
-                console.log('Audio element created');
-            }
-
-            try {
-                if ('setSinkId' in audioElement) {
-                    await audioElement.setSinkId(audioOutputSelect.value);
-                    console.log('Audio sink set to:', audioOutputSelect.value);
-                } else {
-                    console.log('setSinkId not supported, using default output');
-                }
-                
-                audioElement.volume = volumeControl.value;
-                audioElement.play();
-                updateStatus('success', 'Playing test tone through selected output device. Can you hear it?');
-                isTestingOutput = true;
-                toggleOutputTestButton.textContent = 'Stop Output Test';
-                toggleOutputTestButton.classList.add('active');
-                audioOutputSelect.disabled = true;
-            } catch (err) {
-                console.error('Error setting audio output:', err);
-                updateStatus('error', `Error setting audio output: ${err.message}`);
-            }
-        }
-
-        // Stop output device test
-        function stopOutputTest() {
-            console.log('Stopping output device test...');
-            if (audioElement) {
-                audioElement.pause();
-                audioElement.currentTime = 0;
-            }
-            isTestingOutput = false;
-            toggleOutputTestButton.textContent = 'Test Output Device';
-            toggleOutputTestButton.classList.remove('active');
-            audioOutputSelect.disabled = false;
-            updateStatus('', 'Output device test stopped.');
-        }
-
-        // Volume change handler
-        function handleVolumeChange() {
-            if (audioElement) {
-                audioElement.volume = volumeControl.value;
-            }
-        }
-
-        // Handle window resize
-        function handleResize() {
-            // Adjust canvas dimensions to match its display size
-            const displayWidth = canvas.clientWidth;
-            const displayHeight = canvas.clientHeight;
-            
-            if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-                canvas.width = displayWidth;
-                canvas.height = displayHeight;
-            }
-        }
-
-        // Event listeners
-        requestPermissionsButton.addEventListener('click', requestPermissions);
-        refreshDevicesButton.addEventListener('click', enumerateDevices);
-        toggleInputTestButton.addEventListener('click', toggleInputTest);
-        toggleOutputTestButton.addEventListener('click', toggleOutputTest);
-        volumeControl.addEventListener('input', handleVolumeChange);
-        window.addEventListener('resize', handleResize);
-
-        // Initialize
-        console.log('Initializing...');
-        checkBrowserSupport();
-        handleResize();
+        document.getElementById('testInput').addEventListener('click', testInputDevice);
+        document.getElementById('testOutput').addEventListener('click', function() {
+            stopVisualizer();
+            const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+            audio.setSinkId(document.getElementById('outputDevices').value)
+                .then(() => audio.play())
+                .catch(err => console.error('Error testing output:', err));
+        });
     </script>
 </body>
 </html>
