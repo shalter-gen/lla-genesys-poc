@@ -1,188 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operata Detector & Audio Device Tester</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .section {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        select {
-            margin: 10px 0;
-            padding: 5px;
-        }
-        #visualizer {
-            display: block;
-            margin: 20px auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operata Extension Detector and Audio Device Tester</title>
+  <style>
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    select, button { margin: 10px 0; display: block; }
+    #results { margin-top: 20px; }
+    canvas { border: 1px solid #000; }
+  </style>
 </head>
 <body>
-    <h1>Operata Detector & Audio Device Tester</h1>
+  <h1>Operata Extension Detector</h1>
+  <button id="check-button">Check Operata</button>
+  <div id="result"></div>
 
-    <div class="section">
-        <h2>Operata Extension Detector</h2>
-        <button id="checkOperata">Check Operata</button>
-        <div id="operataResult"></div>
-    </div>
+  <h1>Audio Device Selector and Tester</h1>
+  <button id="requestPermissions">Request Audio Permissions</button>
+  <select id="audioInputSelect"></select>
+  <select id="audioOutputSelect"></select>
+  <button id="toggleInputTest">Test Input Device</button>
+  <button id="toggleOutputTest">Test Output Device</button>
+  <div id="results"></div>
+  <canvas id="visualizer" width="300" height="100"></canvas>
 
-    <div class="section">
-        <h2>Audio Device Selector and Tester</h2>
-        <button id="requestPermissions">Request Audio Permissions</button>
-        <div id="deviceSelectors" style="display:none;">
-            <h3>Input Devices</h3>
-            <select id="inputDevices"></select>
-            <button id="testInput">Test Input Device</button>
-            <h3>Output Devices</h3>
-            <select id="outputDevices"></select>
-            <button id="testOutput">Test Output Device</button>
-        </div>
-        <canvas id="visualizer" width="300" height="150"></canvas>
-    </div>
+  <script>
+    // Operata Extension Detector Script
+    const checkButton = document.getElementById('check-button');
+    const resultDiv = document.getElementById('result');
 
-    <script>
-        // Operata Detection Logic
-        const checkButton = document.getElementById('checkOperata');
-        const resultDiv = document.getElementById('operataResult');
+    checkButton.addEventListener('click', () => {
+      let installLink;
+      let scriptSrc;
 
-        checkButton.addEventListener('click', () => {
-            let installLink;
-            let scriptSrc;
+      // Check browser
+      if (navigator.userAgent.includes('Edg')) {
+        // Edge
+        installLink = 'https://microsoftedge.microsoft.com/addons/detail/operata-collector/ghgkknhlginpepabafckbejbpfmdppjk';
+        scriptSrc = 'chrome-extension://ghgkknhlginpepabafckbejbpfmdppjk/pc-override.js';
+      } else if (navigator.userAgent.includes('Chrome')) {
+        // Chrome
+        installLink = 'https://chromewebstore.google.com/detail/operata-collector/efhlocglafmcfhkpojjbckpbonbfbgdb?hl=en';
+        scriptSrc = 'chrome-extension://efhlocglafmcfhkpojjbckpbonbfbgdb/pc-override.js';
+      } else {
+        // Unsupported browser
+        resultDiv.innerHTML = 'Unsupported browser';
+        return;
+      }
 
-            if (navigator.userAgent.includes('Edg')) {
-                installLink = 'https://microsoftedge.microsoft.com/addons/detail/operata-collector/ghgkknhlginpepabafckbejbpfmdppjk';
-                scriptSrc = 'chrome-extension://ghgkknhlginpepabafckbejbpfmdppjk/pc-override.js';
-            } else if (navigator.userAgent.includes('Chrome')) {
-                installLink = 'https://chromewebstore.google.com/detail/operata-collector/efhlocglafmcfhkpojjbckpbonbfbgdb?hl=en';
-                scriptSrc = 'chrome-extension://efhlocglafmcfhkpojjbckpbonbfbgdb/pc-override.js';
-            } else {
-                resultDiv.innerHTML = 'Unsupported browser';
-                return;
-            }
+      const scriptElement = document.querySelector(`script[src="${scriptSrc}"]`);
 
-            const scriptElement = document.querySelector(`script[src="${scriptSrc}"]`);
+      if (scriptElement) {
+        resultDiv.innerHTML = 'Operata extension installed';
+      } else {
+        resultDiv.innerHTML = `Operata needs to be installed. <a href="${installLink}" target="_blank">Install now</a>`;
+      }
+    });
 
-            if (scriptElement) {
-                resultDiv.innerHTML = 'Operata extension installed';
-            } else {
-                resultDiv.innerHTML = `Operata needs to be installed. <a href="${installLink}" target="_blank">Install now</a>`;
-            }
-        });
+    // Audio Device Selector and Tester Script
+    let audioContext;
+    let analyser;
+    let microphone;
+    let audioElement;
+    let isTestingInput = false;
+    let isTestingOutput = false;
+    let animationFrameId;
 
-        // Audio Device Testing Logic
-        let animationFrameId;
-        let analyser;
+    const requestPermissionsButton = document.getElementById('requestPermissions');
+    const audioInputSelect = document.getElementById('audioInputSelect');
+    const audioOutputSelect = document.getElementById('audioOutputSelect');
+    const toggleInputTestButton = document.getElementById('toggleInputTest');
+    const toggleOutputTestButton = document.getElementById('toggleOutputTest');
+    const results = document.getElementById('results');
+    const canvas = document.getElementById('visualizer');
+    const canvasCtx = canvas.getContext('2d');
 
-        document.getElementById('requestPermissions').addEventListener('click', async function() {
-            try {
-                await navigator.mediaDevices.getUserMedia({ audio: true });
-                document.getElementById('deviceSelectors').style.display = 'block';
-                updateDeviceLists();
-            } catch (err) {
-                console.error('Error requesting permissions:', err);
-            }
-        });
+    console.log('Script started');
 
-        async function updateDeviceLists() {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const inputSelect = document.getElementById('inputDevices');
-            const outputSelect = document.getElementById('outputDevices');
-            
-            inputSelect.innerHTML = '';
-            outputSelect.innerHTML = '';
-
-            devices.forEach(device => {
-                const option = document.createElement('option');
-                option.value = device.deviceId;
-                option.text = device.label || `${device.kind} (${device.deviceId.slice(0,5)}...)`;
-                
-                if (device.kind === 'audioinput') {
-                    inputSelect.appendChild(option);
-                } else if (device.kind === 'audiooutput') {
-                    outputSelect.appendChild(option);
-                }
-            });
+    // Request permissions
+    async function requestPermissions() {
+      console.log('Requesting permissions...');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('Microphone permission granted');
+        stream.getTracks().forEach(track => track.stop());
+        
+        if ('setSinkId' in HTMLAudioElement.prototype) {
+          await document.createElement('audio').setSinkId('');
+          console.log('Output device permission granted');
+        } else {
+          console.log('setSinkId not supported, skipping output device permission');
         }
 
-        async function testInputDevice() {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-            
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: { deviceId: document.getElementById('inputDevices').value }
-            });
-            
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioContext.createMediaStreamSource(stream);
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 2048;
-            source.connect(analyser);
-            
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            const canvas = document.getElementById('visualizer');
-            const canvasCtx = canvas.getContext('2d');
-            
-            function draw() {
-                animationFrameId = requestAnimationFrame(draw);
-                analyser.getByteTimeDomainData(dataArray);
-                canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-                canvasCtx.lineWidth = 2;
-                canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-                canvasCtx.beginPath();
-                const sliceWidth = canvas.width * 1.0 / bufferLength;
-                let x = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                    const v = dataArray[i] / 128.0;
-                    const y = v * canvas.height / 2;
-                    if (i === 0) {
-                        canvasCtx.moveTo(x, y);
-                    } else {
-                        canvasCtx.lineTo(x, y);
-                    }
-                    x += sliceWidth;
-                }
-                canvasCtx.lineTo(canvas.width, canvas.height / 2);
-                canvasCtx.stroke();
-            }
-            draw();
-        }
+        results.innerHTML = 'Permissions granted. You can now select and test devices.';
+        await enumerateDevices();
+      } catch (error) {
+        console.error('Error requesting permissions:', error);
+        results.innerHTML = 'Failed to get permissions. Please grant microphone access and try again.';
+      }
+    }
 
-        function stopVisualizer() {
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
-            }
-        }
+    // Enumerate devices and populate dropdowns
+    async function enumerateDevices() {
+      console.log('Enumerating devices...');
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log('Devices enumerated:', devices);
+        audioInputSelect.innerHTML = '';
+        audioOutputSelect.innerHTML = '';
 
-        document.getElementById('testInput').addEventListener('click', testInputDevice);
-        document.getElementById('testOutput').addEventListener('click', function() {
-            stopVisualizer();
-            const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-            audio.setSinkId(document.getElementById('outputDevices').value)
-                .then(() => audio.play())
-                .catch(err => console.error('Error testing output:', err));
+        devices.forEach(device => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.text = device.label || `${device.kind} (${device.deviceId})`;
+
+          if (device.kind === 'audioinput') {
+            audioInputSelect.appendChild(option);
+          } else if (device.kind === 'audiooutput') {
+            audioOutputSelect.appendChild(option);
+          }
         });
-    </script>
+        console.log('Dropdowns populated');
+      } catch (error) {
+        console.error('Error enumerating devices:', error);
+      }
+    }
+
+    // Toggle input device test
+    async function toggleInputTest() {
+      if (isTestingInput) {
+        stopInputTest();
+      } else {
+        await startInputTest();
+      }
+    }
+
+    // Start input device test
+    async function startInputTest() {
+      console.log('Starting input device test...');
+      if (microphone) {
+        console.log('Stopping previous microphone stream');
+        microphone.getTracks().forEach(track => track.stop());
+      }
+
+      const constraints = {
+        audio: { deviceId: { exact: audioInputSelect.value } }
+      };
+      console.log('Using constraints:', constraints);
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log('Got media stream:', stream);
+        microphone = stream;
+
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          analyser.fftSize = 256;
+          console.log('Audio context and analyser created');
+        }
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        console.log('Source connected to analyser');
+
+        visualize();
+        results.innerHTML = 'Input device is working. Check the visualizer below.';
+        isTestingInput = true;
+        toggleInputTestButton.textContent = 'Stop Input Test';
+        audioInputSelect.disabled = true;
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
+        results.innerHTML = 'Error accessing microphone. Please check permissions.';
+      }
+    }
+
+    // Stop input device test
+    function stopInputTest() {
+      console.log('Stopping input device test...');
+      if (microphone) {
+        microphone.getTracks().forEach(track => track.stop());
+        microphone = null;
+      }
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      isTestingInput = false;
+      toggleInputTestButton.textContent = 'Test Input Device';
+      audioInputSelect.disabled = false;
+      results.innerHTML = 'Input device test stopped.';
+      // Clear the canvas
+      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Visualize audio input
+    function visualize() {
+      console.log('Starting visualization');
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function draw() {
+        animationFrameId = requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
+
+        canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = dataArray[i] / 2;
+          canvasCtx.fillStyle = `rgb(50, ${barHeight + 100}, 50)`;
+          canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+          x += barWidth + 1;
+        }
+      }
+
+      draw();
+    }
+
+    // Toggle output device test
+    function toggleOutputTest() {
+      if (isTestingOutput) {
+        stopOutputTest();
+      } else {
+        startOutputTest();
+      }
+    }
+
+    // Start output device test
+    async function startOutputTest() {
+      console.log('Starting output device test...');
+      if (!audioElement) {
+        audioElement = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+        console.log('Audio element created');
+      }
+
+      try {
+        if ('setSinkId' in audioElement) {
+          await audioElement.setSinkId(audioOutputSelect.value);
+          console.log('Audio sink set to:', audioOutputSelect.value);
+        } else {
+          console.log('setSinkId not supported, using default output');
+        }
+        audioElement.loop = true;
+        audioElement.play();
+        results.innerHTML = 'Playing audio through selected output device. Can you hear it?';
+        isTestingOutput = true;
+        toggleOutputTestButton.textContent = 'Stop Output Test';
+        audioOutputSelect.disabled = true;
+      } catch (err) {
+        console.error('Error setting audio output:', err);
+        results.innerHTML = 'Error setting audio output. This browser might not support output device selection.';
+      }
+    }
+
+    // Stop output device test
+    function stopOutputTest() {
+      console.log('Stopping output device test...');
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+      }
+      isTestingOutput = false;
+      toggleOutputTestButton.textContent = 'Test Output Device';
+      audioOutputSelect.disabled = false;
+      results.innerHTML = 'Output device test stopped.';
+    }
+
+    // Event listeners
+    requestPermissionsButton.addEventListener('click', requestPermissions);
+    toggleInputTestButton.addEventListener('click', toggleInputTest);
+    toggleOutputTestButton.addEventListener('click', toggleOutputTest);
+
+    // Initialize
+    console.log('Initializing...');
+    requestPermissionsButton.click(); // Automatically request permissions on page load
+  </script>
 </body>
 </html>
