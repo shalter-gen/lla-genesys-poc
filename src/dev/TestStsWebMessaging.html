@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>STS Web Messaging Test Page</title>
+</head>
+<body>
+    <h1>STS Web Messaging Test Page</h1>
+
+    <script type="text/javascript" charset="utf-8">
+        (function (g, e, n, es, ys) {
+            g['_genesysJs'] = e;
+            g[e] = g[e] || function () {
+                (g[e].q = g[e].q || []).push(arguments)
+            };
+            g[e].t = 1 * new Date();
+            g[e].c = es;
+            ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+        })(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
+            environment: 'prod-apse2',
+            deploymentId: '6c93352c-ae5e-438b-8ff9-44d23ce05dc0'
+        });
+    </script>
+</body>
+</html>
