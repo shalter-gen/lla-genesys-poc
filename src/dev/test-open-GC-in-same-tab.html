@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesys Cloud Interaction Launcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .call-section {
+            text-align: center;
+        }
+        
+        .clickable-link {
+            display: inline-block;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .clickable-link:hover {
+            transform: scale(1.05);
+            border-color: #007bff;
+        }
+        
+        .clickable-image {
+            cursor: pointer;
+            display: block;
+        }
+        
+        .call-label {
+            margin-top: 10px;
+            color: #333;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .toggle-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
+        
+        .source-code {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .source-code h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .source-code pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .source-code code {
+            font-family: 'Courier New', Consolas, monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Genesys Cloud Interaction Launcher</h1>
+        
+        <div class="image-container">
+            <div class="call-section">
+                <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/f3967904-0e2e-44d5-8f51-cb41f1db19f1/admin/details?tabId=0" 
+                   class="clickable-link" 
+                   data-sid="GenesysCall">
+                    <img 
+                        src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
+                        alt="Genesys Cloud Call 1" 
+                        class="clickable-image"
+                        width="100" 
+                        height="100"
+                    />
+                </a>
+                <div class="call-label">Call 1</div>
+            </div>
+            
+            <div class="call-section">
+                <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/671cd238-01d6-4f36-923c-6f802acac782/admin/details?tabId=0" 
+                   class="clickable-link" 
+                   data-sid="GenesysCall">
+                    <img 
+                        src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
+                        alt="Genesys Cloud Call 2" 
+                        class="clickable-image"
+                        width="100" 
+                        height="100"
+                    />
+                </a>
+                <div class="call-label">Call 2</div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="toggle-button" onclick="toggleSourceCode()">Show Source Code</button>
+    
+    <div class="source-code" id="sourceCode">
+        <h2>Key Code Components</h2>
+        <pre><code id="sourceDisplay"></code></pre>
+    </div>
+
+    <script>
+        // Your provided onClick function
+        const onClick = (e) => {
+            e.preventDefault();
+            const href = e.currentTarget.href;
+            const sid = e.currentTarget.dataset.sid;
+            window.open(href, sid)?.focus();
+        };
+
+        // Add click handlers to both links
+        document.querySelectorAll('.clickable-link').forEach(link => {
+            link.addEventListener('click', onClick);
+        });
+        
+        // Toggle source code display
+        function toggleSourceCode() {
+            const sourceDiv = document.getElementById('sourceCode');
+            const button = document.querySelector('.toggle-button');
+            const sourceDisplay = document.getElementById('sourceDisplay');
+            
+            if (sourceDiv.style.display === 'none' || sourceDiv.style.display === '') {
+                // Show source code
+                sourceDiv.style.display = 'block';
+                button.textContent = 'Hide Source Code';
+                
+                // Static code display with comments
+                const codeContent = `<!-- HTML Structure: Two clickable sections with identical data-sid -->
+<!-- This ensures both images open in the same browser tab -->
+
+            <div class="call-section">
+                <!-- Anchor tag with href (URL) and data-sid (tab name) attributes -->
+                <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/f3967904-0e2e-44d5-8f51-cb41f1db19f1/admin/details?tabId=0" 
+                   class="clickable-link" 
+                   data-sid="GenesysCall">
+                    <!-- Clickable image inside the anchor -->
+                    <img 
+                        src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
+                        alt="Genesys Cloud Call 1" 
+                        class="clickable-image"
+                        width="100" 
+                        height="100"
+                    />
+                </a>
+                <div class="call-label">Call 1</div>
+            </div>
+
+            <div class="call-section">
+                <!-- Second anchor with different href but SAME data-sid -->
+                <!-- This is key: same data-sid means same tab will be reused -->
+                <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/671cd238-01d6-4f36-923c-6f802acac782/admin/details?tabId=0" 
+                   class="clickable-link" 
+                   data-sid="GenesysCall">
+                    <img 
+                        src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
+                        alt="Genesys Cloud Call 2" 
+                        class="clickable-image"
+                        width="100" 
+                        height="100"
+                    />
+                </a>
+                <div class="call-label">Call 2</div>
+            </div>
+
+/* JavaScript: The core tab management logic */
+
+        // Click handler function that manages tab opening/updating
+        const onClick = (e) => {
+            e.preventDefault();                    // Stop normal link behavior
+            const href = e.currentTarget.href;    // Get the URL from clicked anchor
+            const sid = e.currentTarget.dataset.sid; // Get tab name from data-sid
+            window.open(href, sid)?.focus();      // Open URL in named tab (creates new or updates existing)
+        };
+
+        // Attach the click handler to all clickable links
+        // This finds all elements with class 'clickable-link' and adds the onClick function
+        document.querySelectorAll('.clickable-link').forEach(link => {
+            link.addEventListener('click', onClick);
+        });
+
+/* How it works:
+   1. Both images have the same data-sid="GenesysCall"
+   2. When clicked, window.open() uses this as the tab name
+   3. First click: creates new tab named "GenesysCall"
+   4. Subsequent clicks: updates the existing "GenesysCall" tab with new URL
+   5. Result: Always uses the same tab, just changes the content
+*/`;
+                
+                sourceDisplay.textContent = codeContent;
+            } else {
+                // Hide source code
+                sourceDiv.style.display = 'none';
+                button.textContent = 'Show Source Code';
+            }
+        }
+    </script>
+</body>
+</html>
