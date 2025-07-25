@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamics 365 MDA - Genesys Tab Management Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .mode-toggle {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+        }
+        
+        .toggle-button {
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        
+        .toggle-button.active {
+            background-color: #1976d2;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .status.failing {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+        
+        .status.working {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .nav-button {
+            padding: 12px 24px;
+            background-color: #673ab7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .nav-button:hover {
+            background-color: #5e35b1;
+        }
+        
+        .nav-button.active {
+            background-color: #512da8;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .record-form {
+            display: none;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            background-color: #fafafa;
+        }
+        
+        .record-form.active {
+            display: block;
+        }
+        
+        .record-header {
+            background-color: #3f51b5;
+            color: white;
+            padding: 15px;
+            margin: -25px -25px 20px -25px;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .record-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .field-group {
+            margin-bottom: 20px;
+        }
+        
+        .field-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .field-value {
+            padding: 8px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .toolbar {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toolbar-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .toolbar-button {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .toolbar-button:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .genesys-button {
+            background-color: #ff9800 !important;
+            color: white !important;
+            border-color: #f57c00 !important;
+            font-weight: bold;
+        }
+        
+        .genesys-button:hover {
+            background-color: #f57c00 !important;
+        }
+        
+        .explanation {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+        }
+        
+        .explanation h3 {
+            margin-top: 0;
+            color: #e65100;
+        }
+        
+        .code-block {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dynamics 365 MDA - Genesys Tab Management Demo</h1>
+        
+        <div class="mode-toggle">
+            <h3>Demo Mode</h3>
+            <button class="toggle-button active" onclick="setMode('failing')" id="failingBtn">
+                ❌ Failing Approach (Current Issue)
+            </button>
+            <button class="toggle-button" onclick="setMode('working')" id="workingBtn">
+                ✅ Working Approach (Global Manager)
+            </button>
+            
+            <div class="status failing" id="statusDisplay">
+                <strong>Current Mode:</strong> Failing Approach - Each "record form" loses reference to previously opened Genesys tab
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-button active" onclick="showRecord('record1')" id="nav1">
+                📋 Case Record #12345
+            </button>
+            <button class="nav-button" onclick="showRecord('record2')" id="nav2">
+                📋 Case Record #67890
+            </button>
+        </div>
+        
+        <!-- Record 1 Form -->
+        <div class="record-form active" id="record1">
+            <div class="record-header">
+                <h2>Case Record #12345 - Customer Login Issue</h2>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Customer Name:</div>
+                <div class="field-value">John Smith</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Case Status:</div>
+                <div class="field-value">In Progress</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Genesys Interaction ID:</div>
+                <div class="field-value">f3967904-0e2e-44d5-8f51-cb41f1db19f1</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Genesys URL:</div>
+                <div class="field-value">https://apps.mypurecloud.com.au/directory/#/analytics/interactions/f3967904-0e2e-44d5-8f51-cb41f1db19f1/admin/details?tabId=0</div>
+            </div>
+            
+            <div class="toolbar">
+                <div class="toolbar-buttons">
+                    <button class="toolbar-button">💾 Save</button>
+                    <button class="toolbar-button">💾✖️ Save & Close</button>
+                    <button class="toolbar-button">➕ New</button>
+                    <button class="toolbar-button">🔄 Refresh</button>
+                    <button class="toolbar-button">👤 Assign</button>
+                    <button class="toolbar-button genesys-button" onclick="openGenesysTab('record1')">
+                        🎧 Open in Genesys
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Record 2 Form -->
+        <div class="record-form" id="record2">
+            <div class="record-header">
+                <h2>Case Record #67890 - Billing Inquiry</h2>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Customer Name:</div>
+                <div class="field-value">Jane Doe</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Case Status:</div>
+                <div class="field-value">New</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Genesys Interaction ID:</div>
+                <div class="field-value">671cd238-01d6-4f36-923c-6f802acac782</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="field-label">Genesys URL:</div>
+                <div class="field-value">https://apps.mypurecloud.com.au/directory/#/analytics/interactions/671cd238-01d6-4f36-923c-6f802acac782/admin/details?tabId=0</div>
+            </div>
+            
+            <div class="toolbar">
+                <div class="toolbar-buttons">
+                    <button class="toolbar-button">💾 Save</button>
+                    <button class="toolbar-button">💾✖️ Save & Close</button>
+                    <button class="toolbar-button">➕ New</button>
+                    <button class="toolbar-button">🔄 Refresh</button>
+                    <button class="toolbar-button">👤 Assign</button>
+                    <button class="toolbar-button genesys-button" onclick="openGenesysTab('record2')">
+                        🎧 Open in Genesys
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h3>How to Test the Demo</h3>
+            <ol>
+                <li><strong>Test Failing Approach:</strong>
+                    <ul>
+                        <li>Make sure "Failing Approach" mode is selected (red status)</li>
+                        <li>On Record #12345, click "Open in Genesys" → Opens Genesys tab</li>
+                        <li>Click "Case Record #67890" to navigate to second record</li>
+                        <li>Click "Open in Genesys" → Creates a NEW Genesys tab (problem!)</li>
+                    </ul>
+                </li>
+                <li><strong>Test Working Approach:</strong>
+                    <ul>
+                        <li>Click "Working Approach" button (green status)</li>
+                        <li>On Record #12345, click "Open in Genesys" → Opens Genesys tab</li>
+                        <li>Click "Case Record #67890" to navigate to second record</li>
+                        <li>Click "Open in Genesys" → REUSES the same Genesys tab (fixed!)</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <h3>What's Happening Behind the Scenes</h3>
+            <div id="currentImplementation">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===========================================
+        // GLOBAL GENESYS MANAGER (The Fix!)
+        // ===========================================
+        window.GlobalGenesysManager = {
+            tabName: "GenesysCloudTab", // Static, constant name
+            
+            openUrl: function(url) {
+                if (!url) {
+                    console.log("No URL provided to GlobalGenesysManager");
+                    return;
+                }
+                
+                console.log("🌍 GlobalGenesysManager: Opening URL in persistent tab:", this.tabName);
+                
+                // Always use the same tab name - this persists across record navigation
+                var genesysTab = window.open(url, this.tabName);
+                if (genesysTab) {
+                    genesysTab.focus();
+                }
+                
+                return genesysTab;
+            }
+        };
+
+        // ===========================================
+        // DEMO STATE MANAGEMENT
+        // ===========================================
+        let currentMode = 'failing';
+        let currentRecord = 'record1';
+
+        // Record data
+        const recordData = {
+            record1: {
+                id: 'f3967904-0e2e-44d5-8f51-cb41f1db19f1',
+                url: 'https://apps.mypurecloud.com.au/directory/#/analytics/interactions/f3967904-0e2e-44d5-8f51-cb41f1db19f1/admin/details?tabId=0'
+            },
+            record2: {
+                id: '671cd238-01d6-4f36-923c-6f802acac782',
+                url: 'https://apps.mypurecloud.com.au/directory/#/analytics/interactions/671cd238-01d6-4f36-923c-6f802acac782/admin/details?tabId=0'
+            }
+        };
+
+        // ===========================================
+        // FAILING APPROACH (Current Problem)
+        // ===========================================
+        function openGenesysTabFailing(recordId) {
+            console.log("❌ Failing approach: Each record form creates its own context");
+            
+            const data = recordData[recordId];
+            if (!data) {
+                console.log("No data found for record:", recordId);
+                return;
+            }
+            
+            // This simulates your current D365 code - each "form" loses reference
+            // In real D365, each record form is a separate JavaScript context
+            console.log("Opening with record-specific context - will create new tabs!");
+            
+            // Using a dynamic tab name that changes per "form context"
+            const contextSpecificTabName = "genesysWindow_" + recordId;
+            window.open(data.url, contextSpecificTabName).focus();
+        }
+
+        // ===========================================
+        // WORKING APPROACH (The Fix)
+        // ===========================================
+        function openGenesysTabWorking(recordId) {
+            console.log("✅ Working approach: Using GlobalGenesysManager");
+            
+            const data = recordData[recordId];
+            if (!data) {
+                console.log("No data found for record:", recordId);
+                return;
+            }
+            
+            // Use the global manager - this persists across "record navigation"
+            if (window.GlobalGenesysManager) {
+                window.GlobalGenesysManager.openUrl(data.url);
+            } else {
+                console.error("GlobalGenesysManager not found");
+                window.open(data.url, "GenesysCloudTab").focus();
+            }
+        }
+
+        // ===========================================
+        // MAIN BUTTON HANDLER (simulates your D365 function)
+        // ===========================================
+        function openGenesysTab(recordId) {
+            if (currentMode === 'failing') {
+                openGenesysTabFailing(recordId);
+            } else {
+                openGenesysTabWorking(recordId);
+            }
+        }
+
+        // ===========================================
+        // DEMO UI FUNCTIONS
+        // ===========================================
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Update button states
+            document.getElementById('failingBtn').classList.toggle('active', mode === 'failing');
+            document.getElementById('workingBtn').classList.toggle('active', mode === 'working');
+            
+            // Update status display
+            const statusDiv = document.getElementById('statusDisplay');
+            if (mode === 'failing') {
+                statusDiv.className = 'status failing';
+                statusDiv.innerHTML = '<strong>Current Mode:</strong> Failing Approach - Each "record form" loses reference to previously opened Genesys tab';
+            } else {
+                statusDiv.className = 'status working';
+                statusDiv.innerHTML = '<strong>Current Mode:</strong> Working Approach - Global manager maintains single Genesys tab across all records';
+            }
+            
+            updateImplementationDisplay();
+        }
+
+        function showRecord(recordId) {
+            // Hide all records
+            document.querySelectorAll('.record-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Hide all nav buttons
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected record
+            document.getElementById(recordId).classList.add('active');
+            
+            // Highlight selected nav button
+            if (recordId === 'record1') {
+                document.getElementById('nav1').classList.add('active');
+            } else {
+                document.getElementById('nav2').classList.add('active');
+            }
+            
+            currentRecord = recordId;
+            
+            console.log("📋 Navigated to:", recordId, "- This simulates D365 form navigation");
+        }
+
+function updateImplementationDisplay() {
+    const implementationDiv = document.getElementById('currentImplementation');
+    
+    if (currentMode === 'failing') {
+        implementationDiv.innerHTML = `
+            <h4>❌ Failing Implementation (Current Problem):</h4>
+            <div class="code-block"><pre>// This simulates your current D365 code
+function openGenesysTab(formContext) {
+    var urlAttr = formContext.getAttribute("lla_genesysurl");
+    var url = urlAttr.getValue();
+    
+    // ❌ PROBLEM: Each record form creates its own context
+    // When you navigate to another record, this context is lost
+    window.open(url, "genesysWindow").focus();
+}
+
+// In the demo, we simulate this by using record-specific tab names
+// which creates separate tabs instead of reusing the same one</pre></div>
+            <p><strong>Why it fails:</strong> Each record form in D365 MDA is a separate JavaScript execution context. When you navigate from Record A to Record B, the window reference from Record A is lost.</p>
+        `;
+    } else {
+        implementationDiv.innerHTML = `
+            <h4>✅ Working Implementation (The Fix):</h4>
+            <div class="code-block"><pre>// Global manager lives in main MDA context (survives navigation)
+window.GlobalGenesysManager = {
+    tabName: "GenesysCloudTab", // Static, constant name
+    
+    openUrl: function(url) {
+        // Always use the same tab name across all records
+        var genesysTab = window.open(url, this.tabName);
+        genesysTab?.focus();
+        return genesysTab;
+    }
+};
+
+// Updated D365 button function
+function openGenesysTab(formContext) {
+    var urlAttr = formContext.getAttribute("lla_genesysurl");
+    var url = urlAttr.getValue();
+    
+    // ✅ SOLUTION: Use global manager instead
+    window.GlobalGenesysManager.openUrl(url);
+}</pre></div>
+            <p><strong>Why it works:</strong> The GlobalGenesysManager lives in the main application context and survives record navigation. It always uses the same static tab name, ensuring consistent tab reuse.</p>
+        `;
+    }
+}
+
+
+        // Initialize the demo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateImplementationDisplay();
+            console.log("🚀 Dynamics 365 MDA Genesys Tab Demo loaded");
+            console.log("📋 Current record:", currentRecord);
+            console.log("⚙️ Current mode:", currentMode);
+        });
+    </script>
+</body>
+</html>
