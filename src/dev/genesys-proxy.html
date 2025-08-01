@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Genesys Proxy</title></head>
+<body>
+<script>
+        const targetUrl = new URLSearchParams(window.location.search).get('url');
+        if (targetUrl) {
+            window.location.href = decodeURIComponent(targetUrl);
+        }
+</script>
+</body>
+</html>
