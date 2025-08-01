@@ -118,7 +118,7 @@
             <div class="call-section">
                 <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/f3967904-0e2e-44d5-8f51-cb41f1db19f1/admin/details?tabId=0" 
                    class="clickable-link" 
-                   data-sid="GenesysCall">
+                   data-sid="genesysWindow">
                     <img 
                         src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
                         alt="Genesys Cloud Call 1" 
@@ -133,7 +133,7 @@
             <div class="call-section">
                 <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/671cd238-01d6-4f36-923c-6f802acac782/admin/details?tabId=0" 
                    class="clickable-link" 
-                   data-sid="GenesysCall">
+                   data-sid="genesysWindow">
                     <img 
                         src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
                         alt="Genesys Cloud Call 2" 
@@ -155,12 +155,53 @@
     </div>
 
     <script>
+
+// Enhanced tab management with persistence
+        class GenesysTabManager {
+            constructor() {
+                this.tabName = 'genesysWindow';
+                this.checkInterval = null;
+                this.currentTab = null;
+            }
+            
+            openTab(url) {
+                // Always try to use the same tab name
+                this.currentTab = window.open(url, this.tabName);
+                this.currentTab?.focus();
+                
+                // Mark that we have an active Genesys session
+                localStorage.setItem('genesysActive', Date.now().toString());
+                
+                return this.currentTab;
+            }
+            
+            isRecentSession() {
+                const lastActive = localStorage.getItem('genesysActive');
+                if (!lastActive) return false;
+                
+                // Consider session recent if within last 24 hours
+                const timeDiff = Date.now() - parseInt(lastActive);
+                return timeDiff < (24 * 60 * 60 * 1000);
+            }
+        }
+
+        // Create global tab manager
+        const tabManager = new GenesysTabManager();
+
+        // Updated click handler
         const onClick = (e) => {
             e.preventDefault();
             const href = e.currentTarget.href;
-            const sid = e.currentTarget.dataset.sid;
-            window.open(href, sid)?.focus();
+            tabManager.openTab(href);
         };
+
+        // Click handler for clickable links
+        // const onClick = (e) => {
+        //     e.preventDefault();
+        //     const href = e.currentTarget.href;
+        //     const sid = e.currentTarget.dataset.sid;
+        //     window.open(href, sid)?.focus();
+        // };
 
         // Add click handlers to both links
         document.querySelectorAll('.clickable-link').forEach(link => {
@@ -186,7 +227,7 @@
                 <!-- Anchor tag with href (URL) and data-sid (tab name) attributes -->
                 <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/f3967904-0e2e-44d5-8f51-cb41f1db19f1/admin/details?tabId=0" 
                    class="clickable-link" 
-                   data-sid="GenesysCall">
+                   data-sid="genesysWindow">
                     <!-- Clickable image inside the anchor -->
                     <img 
                         src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
@@ -204,7 +245,7 @@
                 <!-- This is key: same data-sid means same tab will be reused -->
                 <a href="https://apps.mypurecloud.com.au/directory/#/analytics/interactions/671cd238-01d6-4f36-923c-6f802acac782/admin/details?tabId=0" 
                    class="clickable-link" 
-                   data-sid="GenesysCall">
+                   data-sid="genesysWindow">
                     <img 
                         src="https://img.icons8.com/sf-ultralight-filled/100/000000/genesys-cloud.png" 
                         alt="Genesys Cloud Call 2" 
@@ -233,10 +274,10 @@
         });
 
 /* How it works:
-   1. Both images have the same data-sid="GenesysCall"
+   1. Both images have the same data-sid="genesysWindow"
    2. When clicked, window.open() uses this as the tab name
-   3. First click: creates new tab named "GenesysCall"
-   4. Subsequent clicks: updates the existing "GenesysCall" tab with new URL
+   3. First click: creates new tab named "genesysWindow"
+   4. Subsequent clicks: updates the existing "genesysWindow" tab with new URL
    5. Result: Always uses the same tab, just changes the content
 */`;
                 

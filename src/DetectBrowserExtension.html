@@ -1,0 +1,68 @@
+<html>
+
+<body>
+    <script>
+
+        function detectExtension1(extensionId) {
+            return new Promise((resolve) => {
+                //Add try-catch
+                try {
+
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = () => resolve(true);
+                    //chrome-extension://lkpmenbgjdodbpphmegajfoogclipoil/Common/LIFE0020-MasterLogo-White-RGB.png
+                    img.onerror = (error) => {
+                        console.log(error);
+                        resolve(false);
+                    }
+                    img.src = `chrome-extension://${extensionId}/Common/LIFE0020-MasterLogo-White-RGB.png`;
+
+                } catch (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Usage
+        detectExtension1('lkpmenbgjdodbpphmegajfoogclipoil').then((isInstalled) => {
+            console.log(isInstalled ? 'Extension is installed' : 'Extension is not installed');
+        });
+
+        function detectExtension2(extensionId) {
+            return new Promise((resolve) => {
+                if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                    chrome.runtime.sendMessage(extensionId, 'version', response => {
+                        resolve(!!response);
+                    });
+                } else {
+                    resolve(false);
+                }
+            });
+        }
+
+        // Usage
+        detectExtension2('lkpmenbgjdodbpphmegajfoogclipoil').then((isInstalled) => {
+            console.log(isInstalled ? 'Extension is installed' : 'Extension is not installed');
+        });
+
+        function detectExtension3(extensionId) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                // img.src = `chrome-extension://${extensionId}/icon.png`;
+                img.src = `chrome-extension://${extensionId}/Common/LIFE0020-MasterLogo-White-RGB.png1`;
+                img.decode().then(() => resolve(true)).catch((error) => { 
+                    console.log(error); 
+                    resolve(false)});
+            });
+        }
+
+        detectExtension3('lkpmenbgjdodbpphmegajfoogclipoil').then((isInstalled) => {
+            console.log(isInstalled ? 'Extension is installed' : 'Extension is not installed');
+        });
+
+
+    </script>
+</body>
+
+</html>

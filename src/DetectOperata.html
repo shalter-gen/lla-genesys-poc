@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Operata Extension Detector</title>
+  <style>
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <button id="check-button">Check Operata</button>
+  <div id="result"></div>
+
+  <script>
+    const checkButton = document.getElementById('check-button');
+    const resultDiv = document.getElementById('result');
+
+    checkButton.addEventListener('click', () => {
+      let installLink;
+      let scriptSrc;
+
+      // Check browser
+      if (navigator.userAgent.includes('Edg')) {
+        // Edge
+        installLink = 'https://microsoftedge.microsoft.com/addons/detail/operata-collector/ghgkknhlginpepabafckbejbpfmdppjk';
+        scriptSrc = 'chrome-extension://ghgkknhlginpepabafckbejbpfmdppjk/pc-override.js';
+      } else if (navigator.userAgent.includes('Chrome')) {
+        // Chrome
+        installLink = 'https://chromewebstore.google.com/detail/operata-collector/efhlocglafmcfhkpojjbckpbonbfbgdb?hl=en';
+        scriptSrc = 'chrome-extension://efhlocglafmcfhkpojjbckpbonbfbgdb/pc-override.js';
+      } else {
+        // Unsupported browser
+        resultDiv.innerHTML = 'Unsupported browser';
+        return;
+      }
+
+      const scriptElement = document.querySelector(`script[src="${scriptSrc}"]`);
+
+      if (scriptElement) {
+        resultDiv.innerHTML = 'Operata extension installed';
+      } else {
+        resultDiv.innerHTML = `Operata needs to be installed. <a href="${installLink}" target="_blank">Install now</a>`;
+      }
+    });
+  </script>
+</body>
+</html>

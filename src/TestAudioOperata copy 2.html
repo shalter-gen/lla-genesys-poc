@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operata Detector & Audio Device Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        select {
+            margin: 10px 0;
+            padding: 5px;
+        }
+        #visualizer {
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Operata Detector & Audio Device Tester</h1>
+
+    <div class="section">
+        <h2>Operata Extension Detector</h2>
+        <button id="checkOperata">Check Operata</button>
+        <div id="operataResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>Audio Device Selector and Tester</h2>
+        <button id="requestPermissions">Request Audio Permissions</button>
+        <div id="deviceSelectors" style="display:none;">
+            <h3>Input Devices</h3>
+            <select id="inputDevices"></select>
+            <button id="testInput">Test Input Device</button>
+            <h3>Output Devices</h3>
+            <select id="outputDevices"></select>
+            <button id="testOutput">Test Output Device</button>
+        </div>
+        <canvas id="visualizer" width="300" height="150"></canvas>
+    </div>
+
+    <script>
+        // Operata Detection Logic
+        const checkButton = document.getElementById('checkOperata');
+        const resultDiv = document.getElementById('operataResult');
+
+        checkButton.addEventListener('click', () => {
+            let installLink;
+            let scriptSrc;
+
+            if (navigator.userAgent.includes('Edg')) {
+                installLink = 'https://microsoftedge.microsoft.com/addons/detail/operata-collector/ghgkknhlginpepabafckbejbpfmdppjk';
+                scriptSrc = 'chrome-extension://ghgkknhlginpepabafckbejbpfmdppjk/pc-override.js';
+            } else if (navigator.userAgent.includes('Chrome')) {
+                installLink = 'https://chromewebstore.google.com/detail/operata-collector/efhlocglafmcfhkpojjbckpbonbfbgdb?hl=en';
+                scriptSrc = 'chrome-extension://efhlocglafmcfhkpojjbckpbonbfbgdb/pc-override.js';
+            } else {
+                resultDiv.innerHTML = 'Unsupported browser';
+                return;
+            }
+
+            const scriptElement = document.querySelector(`script[src="${scriptSrc}"]`);
+
+            if (scriptElement) {
+                resultDiv.innerHTML = 'Operata extension installed';
+            } else {
+                resultDiv.innerHTML = `Operata needs to be installed. <a href="${installLink}" target="_blank">Install now</a>`;
+            }
+        });
+
+        // Audio Device Testing Logic
+        let animationFrameId;
+        let analyser;
+
+        document.getElementById('requestPermissions').addEventListener('click', async function() {
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                document.getElementById('deviceSelectors').style.display = 'block';
+                updateDeviceLists();
+            } catch (err) {
+                console.error('Error requesting permissions:', err);
+            }
+        });
+
+        async function updateDeviceLists() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const inputSelect = document.getElementById('inputDevices');
+            const outputSelect = document.getElementById('outputDevices');
+            
+            inputSelect.innerHTML = '';
+            outputSelect.innerHTML = '';
+
+            devices.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `${device.kind} (${device.deviceId.slice(0,5)}...)`;
+                
+                if (device.kind === 'audioinput') {
+                    inputSelect.appendChild(option);
+                } else if (device.kind === 'audiooutput') {
+                    outputSelect.appendChild(option);
+                }
+            });
+        }
+
+        async function testInputDevice() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: { deviceId: document.getElementById('inputDevices').value }
+            });
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            source.connect(analyser);
+            
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            const canvas = document.getElementById('visualizer');
+            const canvasCtx = canvas.getContext('2d');
+            
+            function draw() {
+                animationFrameId = requestAnimationFrame(draw);
+                analyser.getByteTimeDomainData(dataArray);
+                canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                canvasCtx.lineWidth = 2;
+                canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+                canvasCtx.beginPath();
+                const sliceWidth = canvas.width * 1.0 / bufferLength;
+                let x = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = v * canvas.height / 2;
+                    if (i === 0) {
+                        canvasCtx.moveTo(x, y);
+                    } else {
+                        canvasCtx.lineTo(x, y);
+                    }
+                    x += sliceWidth;
+                }
+                canvasCtx.lineTo(canvas.width, canvas.height / 2);
+                canvasCtx.stroke();
+            }
+            draw();
+        }
+
+        function stopVisualizer() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        document.getElementById('testInput').addEventListener('click', testInputDevice);
+        document.getElementById('testOutput').addEventListener('click', function() {
+            stopVisualizer();
+            const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+            audio.setSinkId(document.getElementById('outputDevices').value)
+                .then(() => audio.play())
+                .catch(err => console.error('Error testing output:', err));
+        });
+    </script>
+</body>
+</html>

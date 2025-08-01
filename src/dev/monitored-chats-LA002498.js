@@ -1,10 +1,8 @@
 let currentSortColumn = 0; // Default to first column (date)
 let currentSortDirection = 'desc'; // Default to descending
-let currentUserhasIssRole = false;
 
-const MAX_PAGE_RELOADS_FOR_TOKEN = 5;
-const TOKEN_RELOAD_DELAY = 2000; // 2 seconds in milliseconds
-const GC_ROLES_STOP_MONITORING = ['LLA_ISS_DIGITAL', 'LLA_LEAD_ISS', 'LLA_SERVICE_LEAD'];
+const MAX_RELOADS = 5;
+const RELOAD_DELAY = 2000; // 2 seconds in milliseconds
 
 function determineEnvironment() {
     return window.location.protocol === 'chrome-extension:';
@@ -25,7 +23,7 @@ async function getToken() {
         if (!token) {
             let monitored_chats_auth_data = localStorage.getItem('monitored_chats_auth_data');
             if (monitored_chats_auth_data)
-                token = JSON.parse(monitored_chats_auth_data)?.accessToken;
+                token = JSON.parse(monitored_chats_auth_data)?.accessToken;    
         }
     }
 
@@ -34,7 +32,7 @@ async function getToken() {
     }
 
     try {
-        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me?expand=authorization', {
+        const response = await fetch('https://api.mypurecloud.com.au/api/v2/users/me', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -42,8 +40,6 @@ async function getToken() {
         });
 
         if (response.ok) {
-            const userData = await response.json();
-            currentUserhasIssRole = userData.authorization.roles.some(role => GC_ROLES_STOP_MONITORING.includes(role.name));
             return token;
         } else {
             console.error('Token is invalid or expired');
@@ -93,12 +89,12 @@ async function handleTokenCheck(initializeFeatures = false) {
     } else {
         console.error('No valid token found');
         const attempts = await getReloadAttempts();
-        if (attempts < MAX_PAGE_RELOADS_FOR_TOKEN) {
+        if (attempts < MAX_RELOADS) {
             await setReloadAttempts(attempts + 1);
-            console.log(`Reload attempt ${attempts + 1} of ${MAX_PAGE_RELOADS_FOR_TOKEN}`);
+            console.log(`Reload attempt ${attempts + 1} of ${MAX_RELOADS}`);
             setTimeout(() => {
                 window.location.reload();
-            }, TOKEN_RELOAD_DELAY);
+            }, RELOAD_DELAY);
         } else {
             console.error('Max reload attempts reached');
             await setReloadAttempts(0); // Reset counter on successful token
@@ -232,50 +228,7 @@ function getMessageType(conversation) {
     }
 }
 
-const createMonitorDropdown = (conversation, token) => {
-    const container = document.createElement('div');
-    container.className = 'monitor-dropdown';
-
-    const mainButton = document.createElement('button');
-    mainButton.className = 'monitor-btn';
-    mainButton.textContent = 'Monitor';
-
-    const dropdownContent = document.createElement('div');
-    dropdownContent.className = 'dropdown-content';
-
-    const tabLink = document.createElement('div');
-    tabLink.textContent = 'New tab';
-    tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
-
-    const popupLink = document.createElement('div');
-    popupLink.textContent = 'Popup';
-    popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
-
-    dropdownContent.appendChild(tabLink);
-    dropdownContent.appendChild(popupLink);
-    container.appendChild(mainButton);
-    container.appendChild(dropdownContent);
-
-    return container;
-}
-
 function processConversations(conversations, token) {
-    // Add Genesys Monitoring column to header if user has permission
-    const headerRow = document.querySelector('#monitoredChatsTable thead tr');
-    if (currentUserhasIssRole) {
-        // Check if the 'Genesys Monitoring' column already exists
-        const existingGenesysHeader = Array.from(headerRow.children).find(
-            child => child.textContent === 'Genesys Monitoring'
-        );
-    
-        if (!existingGenesysHeader) {
-            const genesysMonitoringHeader = document.createElement('th');
-            genesysMonitoringHeader.textContent = 'Genesys Monitoring';
-            // Insert before the last column (Custom Monitoring)
-            headerRow.insertBefore(genesysMonitoringHeader, headerRow.lastElementChild);
-        }
-    }
-
     const tableBody = document.getElementById('monitoredChatsBody');
     tableBody.innerHTML = '';
 
@@ -311,36 +264,45 @@ function processConversations(conversations, token) {
             row.insertCell().textContent = monitoringParticipant.participantName;
 
             // Add Stop Monitoring button
-            if (currentUserhasIssRole) {
-                const stopCell = row.insertCell();
-                const stopButton = document.createElement('button');
-                stopButton.className = 'monitor-btn';
-                stopButton.textContent = 'Stop Monitoring';
-    
-                // Enable or disable the "Stop monitoring" button based on roles
-                stopButton.disabled = currentUserhasIssRole ? false : true;
-    
-                stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
-                stopCell.appendChild(stopButton);
-            }         
+            const stopCell = row.insertCell();
+            const stopButton = document.createElement('button');
+            stopButton.textContent = 'Stop Monitoring';
+            stopButton.onclick = () => confirmStopMonitoring(conversation.conversationId, monitoringParticipant.participantId, token, stopButton);
+            stopCell.appendChild(stopButton);
         } else {
             row.insertCell();
             row.insertCell();
-            if (currentUserhasIssRole) {
-                row.insertCell();
-            }        
+            row.insertCell();
         }
 
         const actionCell = row.insertCell();
-        const dropdownDiv = createMonitorDropdown(conversation, token);
+        const dropdownDiv = document.createElement('div');
+        dropdownDiv.className = 'dropdown';
+
+        const mainButton = document.createElement('button');
+        mainButton.className = 'dropbtn';
+        mainButton.textContent = 'Monitor';
+
+        const dropdownContent = document.createElement('div');
+        dropdownContent.className = 'dropdown-content';
+
+        const tabLink = document.createElement('a');
+        tabLink.textContent = 'New tab';
+        tabLink.addEventListener('click', () => customMonitorTab(conversation.conversationId, conversation.externalTag, token));
+
+        const popupLink = document.createElement('a');
+        popupLink.textContent = 'Popup';
+        popupLink.addEventListener('click', () => customMonitorPopup(conversation.conversationId, conversation.externalTag, token));
+
+        dropdownContent.appendChild(tabLink);
+        dropdownContent.appendChild(popupLink);
+        dropdownDiv.appendChild(mainButton);
+        dropdownDiv.appendChild(dropdownContent);
         actionCell.appendChild(dropdownDiv);
 
-    });
 
-    // After populating the table, reapply the current sort
-    const headers = document.querySelectorAll('#monitoredChatsTable th');
-    headers[currentSortColumn].classList.add(`sort-${currentSortDirection}`);
-    sortTable(currentSortColumn);
+        // }
+    });
 }
 
 // Split the customMonitor function into two separate functions
@@ -468,14 +430,9 @@ function initializeTableFeatures() {
     // Add sorting to headers
     const headers = document.querySelectorAll('#monitoredChatsTable th');
     headers.forEach((header, index) => {
-        header.addEventListener('click', () => sortTable(index, true));
+        header.addEventListener('click', () => sortTable(index));
         header.classList.add('sortable');
     });
-
-    // Add default sort by date (first column)
-    const dateHeader = headers[0];
-    dateHeader.classList.add('sort-desc');
-    sortTable(0);
 
     // Modify the search input event listener to store the value
     document.getElementById('searchBox').addEventListener('input', function (e) {
@@ -486,25 +443,18 @@ function initializeTableFeatures() {
     document.getElementById('prodOnlyCheckbox').addEventListener('change', () => filterTable({}));
 }
 
-function sortTable(columnIndex, invertSort = false) {
+function sortTable(columnIndex) {
     const table = document.getElementById('monitoredChatsTable');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
     const header = table.querySelectorAll('th')[columnIndex];
-    let isAscending = header.classList.contains('sort-asc');
+    const isAscending = !header.classList.contains('sort-asc');
 
     // Update sort indicators
     table.querySelectorAll('th').forEach(th => {
         th.classList.remove('sort-asc', 'sort-desc');
     });
-    if (invertSort) {
-        isAscending = !isAscending;
-    }
     header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
-
-    // Remember sort direction
-    currentSortColumn = columnIndex;
-    currentSortDirection = isAscending ? 'asc' : 'desc';
 
     // Sort rows
     rows.sort((a, b) => {
@@ -551,51 +501,3 @@ function filterTable(e) {
     });
 }
 
-// Admin Menu
-document.addEventListener('DOMContentLoaded', () => {
-    const adminLogo = document.getElementById('adminLogo');
-    const adminMenu = document.getElementById('adminMenu');
-    const currentPage = window.location.pathname.split('/').pop();
-
-    // Prevent default context menu on logo
-    adminLogo.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        
-        // Position menu at click coordinates
-        adminMenu.style.display = 'block';
-        adminMenu.style.left = `${e.pageX}px`;
-        adminMenu.style.top = `${e.pageY}px`;
-
-        // Disable current page in menu
-        const menuItems = adminMenu.querySelectorAll('li');
-        menuItems.forEach(item => {
-            if (item.dataset.page === currentPage) {
-                item.classList.add('disabled');
-            } else {
-                item.classList.remove('disabled');
-            }
-        });
-    });
-
-    // Handle menu item clicks
-    adminMenu.addEventListener('click', (e) => {
-        const menuItem = e.target;
-        if (menuItem.tagName === 'LI' && !menuItem.classList.contains('disabled')) {
-            window.location.href = menuItem.dataset.page;
-        }
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!adminMenu.contains(e.target) && e.target !== adminLogo) {
-            adminMenu.style.display = 'none';
-        }
-    });
-
-    // Close menu when pressing Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            adminMenu.style.display = 'none';
-        }
-    });
-});
