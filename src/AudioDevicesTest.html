@@ -22,6 +22,109 @@
     <canvas id="visualizer" width="300" height="100"></canvas>
 
     <script>
+        // ==UserScript==
+        // @name         STS WebMessaging RegionalAccess + Notifications
+        // @namespace    http://tampermonkey.net/
+        // @version      2024-08-14
+        // @description  try to take over the world!
+        // @author       You
+        // @match        https://saregionalaccess.org.au/*
+        // @match        https://en.wikipedia.org/*
+        // @icon         https://www.google.com/s2/favicons?sz=64&domain=sitbackdev.com.au
+        // @grant        none
+        // ==/UserScript==
+
+        (function() {
+            'use strict';
+        (function() {
+        // Track if already subscribed
+        let notificationsSubscribed = false;
+
+        // Helper: Request Notification permission if not yet granted/denied
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
+            }
+        }
+
+        // Wait for Genesys Messenger to be ready
+        function onGenesysReady(callback) {
+            if (typeof Genesys === "function") {
+            // Register for Messenger.ready only once
+            if (!onGenesysReady._subscribed) {
+                onGenesysReady._subscribed = true;
+                Genesys("subscribe", "Messenger.ready", function() {
+                console.log("[Genesys] Messenger.ready event fired.");
+                callback();
+                });
+            }
+            } else {
+            // Wait for Genesys to be defined
+            setTimeout(function() { onGenesysReady(callback); }, 250);
+            }
+        }
+
+        // Core notification handler - subscribe only once
+        function setupMessageNotifications() {
+            if (notificationsSubscribed) return;
+            notificationsSubscribed = true;
+            requestNotificationPermission();
+
+            Genesys("subscribe", "MessagingService.messagesReceived", function(event) {
+            // Defensive: genesys could send multiple messages at once
+                console.log("[Genesys] Got event: ", JSON.stringify(event));
+            if (!event || !event.data || !event.data.messages) return;
+            event.data.messages.forEach(function(msg) {
+                // Only agent/bot messages (outbound from org to user)
+                if (
+                //document.hidden &&
+                Notification.permission === "granted" &&
+                msg.direction === "Outbound" &&
+                (msg.type === "Text" || msg.type === "Structured") &&
+                msg.text // Ensure msg.text exists
+                ) {
+                    console.log("[Genesys] Notifying or received msg: ", msg.text);
+
+                    // (Optional) Set more context: from/org name, image if you wish
+                new Notification("New message received", {
+                    body: msg.text,
+                    // icon: msg.channel?.from?.image || "/path/to/fallback-icon.png"
+                });
+                }
+            });
+            });
+            console.log("[Genesys] Subscribed to MessagingService.messagesReceived.");
+        }
+
+        // Kick-off: Wait for Genesys, then subscribe
+        onGenesysReady(setupMessageNotifications);
+
+        // Prompt for notification (optional, you can just leave it in handler above if you prefer)
+        requestNotificationPermission();
+        })();
+
+
+
+
+        (function (g, e, n, es, ys) {
+            g['_genesysJs'] = e;
+            g[e] = g[e] || function () {
+            (g[e].q = g[e].q || []).push(arguments)
+            };
+            g[e].t = 1 * new Date();
+            g[e].c = es;
+            ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+        })(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
+            environment: 'prod-apse2',
+            deploymentId: 'c1505209-b3f1-4092-8c61-41516695ba2e',
+            debug: false
+        });
+
+            // Your code here...
+        })();
+    </script>
+
+    <script>
         let audioContext;
         let analyser;
         let microphone;
