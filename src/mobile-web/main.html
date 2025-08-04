@@ -184,150 +184,8 @@
         async function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 try {
-                    // Create service worker code as a string
-                    const swCode = `
-                        // Inline Service Worker for Genesys Chat PWA
-                        const CACHE_NAME = 'genesys-chat-pwa-v1';
-                        const urlsToCache = ['/'];
+                    const registration = await navigator.serviceWorker.register('sw.js');
 
-                        // Install event
-                        self.addEventListener('install', event => {
-                            console.log('[SW] Install event');
-                            event.waitUntil(
-                                caches.open(CACHE_NAME)
-                                    .then(cache => {
-                                        console.log('[SW] Opened cache');
-                                        return cache.addAll(urlsToCache);
-                                    })
-                                    .catch(error => {
-                                        console.log('[SW] Cache failed:', error);
-                                    })
-                            );
-                            self.skipWaiting();
-                        });
-
-                        // Activate event
-                        self.addEventListener('activate', event => {
-                            console.log('[SW] Activate event');
-                            event.waitUntil(
-                                caches.keys().then(cacheNames => {
-                                    return Promise.all(
-                                        cacheNames.map(cacheName => {
-                                            if (cacheName !== CACHE_NAME) {
-                                                console.log('[SW] Deleting old cache:', cacheName);
-                                                return caches.delete(cacheName);
-                                            }
-                                        })
-                                    );
-                                })
-                            );
-                            self.clients.claim();
-                        });
-
-                        // Fetch event
-                        self.addEventListener('fetch', event => {
-                            if (event.request.method !== 'GET') return;
-                            if (!event.request.url.startsWith(self.location.origin)) return;
-                            
-                            event.respondWith(
-                                caches.match(event.request)
-                                    .then(response => {
-                                        return response || fetch(event.request);
-                                    })
-                                    .catch(error => {
-                                        console.log('[SW] Fetch failed:', error);
-                                    })
-                            );
-                        });
-
-                        // Push event
-                        self.addEventListener('push', event => {
-                            console.log('[SW] Push received:', event);
-                            
-                            let notificationData = {
-                                title: 'New Message',
-                                body: 'You have a new message',
-                                icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
-                                badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
-                                tag: 'genesys-message'
-                            };
-                            
-                            if (event.data) {
-                                try {
-                                    const data = event.data.json();
-                                    notificationData = { ...notificationData, ...data };
-                                } catch (error) {
-                                    console.log('[SW] Push data parse error:', error);
-                                    notificationData.body = event.data.text() || notificationData.body;
-                                }
-                            }
-                            
-                            event.waitUntil(
-                                self.registration.showNotification(notificationData.title, {
-                                    body: notificationData.body,
-                                    icon: notificationData.icon,
-                                    badge: notificationData.badge,
-                                    tag: notificationData.tag,
-                                    requireInteraction: false,
-                                    data: notificationData.data
-                                })
-                            );
-                        });
-
-                        // Notification click event
-                        self.addEventListener('notificationclick', event => {
-                            console.log('[SW] Notification clicked:', event.notification);
-                            event.notification.close();
-                            
-                            event.waitUntil(
-                                clients.matchAll({
-                                    type: 'window',
-                                    includeUncontrolled: true
-                                }).then(clientList => {
-                                    for (let client of clientList) {
-                                        if (client.url.includes(self.location.origin) && 'focus' in client) {
-                                            client.postMessage({
-                                                type: 'NOTIFICATION_CLICKED',
-                                                data: event.notification.data
-                                            });
-                                            return client.focus();
-                                        }
-                                    }
-                                    
-                                    if (clients.openWindow) {
-                                        return clients.openWindow('/');
-                                    }
-                                })
-                            );
-                        });
-
-                        // Message event
-                        self.addEventListener('message', event => {
-                            console.log('[SW] Message received:', event.data);
-                            
-                            if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
-                                const { title, body, icon, data } = event.data;
-                                
-                                self.registration.showNotification(title || 'New Message', {
-                                    body: body || 'You have a new message',
-                                    icon: icon || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
-                                    badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
-                                    tag: 'genesys-message',
-                                    requireInteraction: false,
-                                    data: data || {}
-                                });
-                            }
-                        });
-
-                        console.log('[SW] Inline Service Worker loaded');
-                    `;
-
-                    // Create blob from service worker code
-                    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-                    const swUrl = URL.createObjectURL(swBlob);
-
-                    // Register the service worker from blob URL
-                    const registration = await navigator.serviceWorker.register(swUrl);
                     console.log('Service Worker registered:', registration);
                     serviceWorkerReady = true;
                     showStatus('Service Worker registered successfully', 'success');
@@ -394,8 +252,8 @@
                 if ((isIOS() && isPWAInstalled()) || requiresServiceWorkerNotifications()) {
                     await registration.showNotification(title, {
                         body: body,
-                        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
-                        badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
+                        icon: '/icon-192.png',
+                        badge: '/icon-192.png',
                         tag: 'genesys-message',
                         data: data,
                         requireInteraction: false,
@@ -405,7 +263,7 @@
                     // Fallback for Firefox Android and other browsers that support direct notifications
                     new Notification(title, {
                         body: body,
-                        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iaWNvbiIgaGVpZ2h0PSJpY29uIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBmaWxsPSIjMDA3M2ZmIiBkPSJtOTYgNjRrMTIuODQtMTQgMTIuODQtMTRxMC01LjY0LTEyLjg0LTE0LTEyLjg0LTE0eiIvPgo8L3N2Zz4K',
+                        icon: '/icon-192.png',
                         data: data
                     });
                 } else {
