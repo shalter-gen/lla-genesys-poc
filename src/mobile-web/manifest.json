@@ -2,12 +2,14 @@
   "name": "Lifeline Chat PWA",
   "short_name": "Lifeline Chat",
   "description": "Progressive Web App for Lifeline Chat with notifications support",
-  "start_url": "/mobile-web",
+  "old_start_url": "/mobile-web",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#000000",
   "background_color": "#ffffff",
-  "scope": "/mobile-web",
+  "old_scope": "/mobile-web",
+  "scope": "/",
   "lang": "en",
   "categories": ["business", "communication"],
   "icons": [
@@ -64,8 +66,9 @@
     {
       "name": "Open Chat",
       "short_name": "Chat",
-      "description": "Open Genesys Chat",
-      "url": "/mobile-web",
+      "description": "Open Lifeline Chat",
+      "old_url": "/mobile-web",
+      "url": "/",
       "icons": [
         {
           "src": "icon-192.png",
@@ -81,7 +84,8 @@
   "protocol_handlers": [
     {
       "protocol": "web+chat",
-      "url": "/mobile-web?chat=%s"
-    }
+      "old_url": "/mobile-web?chat=%s",
+      "url": "/"
+     }
   ]
 }
