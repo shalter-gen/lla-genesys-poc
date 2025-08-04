@@ -1,7 +1,7 @@
 {
-  "name": "Genesys Chat PWA",
-  "short_name": "Genesys Chat",
-  "description": "Progressive Web App for Genesys Chat with notifications support",
+  "name": "Lifeline Chat PWA",
+  "short_name": "Lifeline Chat",
+  "description": "Progressive Web App for Lifeline Chat with notifications support",
   "start_url": "/mobile-web",
   "display": "standalone",
   "orientation": "portrait-primary",
