@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html>
-<head><title>Genesys Proxy</title></head>
+
+<head>
+    <title>Genesys Proxy</title>
+</head>
+
 <body>
-<script>
+    <script>
         const targetUrl = new URLSearchParams(window.location.search).get('url');
         if (targetUrl) {
             window.location.href = decodeURIComponent(targetUrl);
         }
-</script>
+
+
+        function openGenesysTab(formContext) {
+
+            // Get the URL from the field
+            const urlAttr = formContext.getAttribute("lla_genesysurl");
+            if (!urlAttr) {
+                console.log("URL field not found.");
+                return;
+            }
+
+            const url = urlAttr.getValue();
+            if (!url) {
+                console.log("No URL value set.");
+                return;
+            }
+
+            // Construct the proxy URL hosting location + encoded actual Genesys URL
+            const proxyBase = "https://white-rock-014490f00.4.azurestaticapps.net/dev/genesys-proxy.html";
+            const proxyUrl = proxyBase + "?url=" + encodeURIComponent(actualUrl);
+            window.open(proxyUrl, "genesysWindow").focus();
+        }
+    </script>
 </body>
+
 </html>

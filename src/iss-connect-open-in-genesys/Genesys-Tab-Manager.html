@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Genesys Tab Manager</title>
+</head>
+
+<body style="display:none;">
+    <script>
+        window.GenesysTabManager = {
+            genesysTab: null, tabName: 'GenesysCloudTab',
+            // Listen for messages from form JavaScript
+            init: function () {
+                window.addEventListener('message', (event) => {
+                    if (event.data.action === 'openGenesysUrl') {
+                        this.openOrUpdateTab(event.data.url);
+                    }
+                });
+                console.log('Genesys Tab Manager initialized in persistent context');
+            },
+            openOrUpdateTab: function (url) {
+                try {
+                    // Try to reuse existing tab 
+                    if (this.genesysTab && !this.genesysTab.closed) {
+                        this.genesysTab.location.href = url;
+                        this.genesysTab.focus();
+                        console.log('Updated existing Genesys tab with new URL');
+                    } else {
+                        // Open new tab 
+                        this.genesysTab = window.open(url, this.tabName);
+                        if (this.genesysTab) {
+                            this.genesysTab.focus();
+                            console.log('Opened new Genesys tab');
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error managing Genesys tab:', e);
+                    // Fallback: open new tab
+                    this.genesysTab = window.open(url, this.tabName);
+                }
+            }
+        };
+        // Initialize when loaded 
+        window.GenesysTabManager.init(); 
+    </script>
+</body>
+
+</html>

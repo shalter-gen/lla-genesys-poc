@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SDIP Spotlight Bingo</title>
+    <title>Spotlight Bingo</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -119,13 +119,30 @@
             box-shadow: 0 0 8px #c8efc5;
             border: 1px solid #66bb99;
         }
+        #reset-btn {
+            display: block;
+            margin: 18px auto 0 auto;
+            background: #dd3e3e;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            padding: 7px 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #eee;
+            transition: background 0.11s;
+        }
+        #reset-btn:hover {
+            background: #aa2400;
+        }
         @media (max-width: 1024px) {
             .container {flex-direction: column;}
             #score-panel {margin: 0 auto;}
         }
     </style>
     <script>
-        // The 25 Bingo Q&As and mappings
+        // Bingo Q&A
         const bingoQuestions = [
             "Has visited a famous shanty town in Cancun.",
             "Has survived zip lining across hills and rivers.",
@@ -153,27 +170,45 @@
             "Can tie knots exceptionally well.",
             "Has a heritage spanning French, Sri Lankan, Mauritian, Welsh, and Spanish backgrounds."
         ];
-        // Labels A-E, 1-5
         const COLS = 5, ROWS = 5;
         const labelsHorizontal = ["A", "B", "C", "D", "E"];
-        // Keep label=>question index
         let cellLabels = [];
-        let qIndex = 0;
         for (let r = 0; r < ROWS; r++) {
             for (let c = 0; c < COLS; c++) {
                 cellLabels.push(labelsHorizontal[c] + '-' + (r + 1));
             }
         }
-        // Shuffle questions/cells (same as previous page, so map is preserved)
-        // Already matched to questions.
-
-        // Scoreboard participants:
         const participants = [
             "James","Satish","Thierry","Paul","Varun","Ruth","Deepti","Louise","Malita","Stephen","Mark","Ben","Dominic","Jeremy"
         ];
 
+        // State management
+        function getSavedGame() {
+            // { openCells: [bool, ...], scores: [name,...] }
+            try {
+                let raw = localStorage.getItem('bingoGameState');
+                if (!raw) return null;
+                let obj = JSON.parse(raw);
+                if (!obj.openCells || !obj.scores || obj.openCells.length !== 25 || obj.scores.length !== 25) return null;
+                return obj;
+            } catch {
+                return null;
+            }
+        }
+        function saveGameState(open, scores) {
+            try {
+                localStorage.setItem('bingoGameState', JSON.stringify({openCells: open, scores: scores}));
+            } catch {}
+        }
+        function resetGameState() {
+            localStorage.removeItem('bingoGameState');
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
-            // Make BINGO Table
+            let saved = getSavedGame();
+            let openCells = saved ? saved.openCells.slice() : Array(25).fill(false);
+            let scores = saved ? saved.scores.slice() : Array(25).fill("");
+            // BINGO table
             let tableHTML = "<table>";
             tableHTML += "<tr><th></th>";
             for (let c = 0; c < COLS; c++)
@@ -185,11 +220,12 @@
                 for (let c = 0; c < COLS; c++) {
                     let cellId = `cell-${r}-${c}`;
                     let cellLabel = labelsHorizontal[c] + '-' + (r + 1);
+                    // revealed if openCells[idx]
                     tableHTML += `
-                        <td id="${cellId}" onclick="revealCell('${cellId}')">
+                        <td id="${cellId}" class="${openCells[idx] ? 'revealed':''}" onclick="revealCell('${cellId}',${idx})">
                             <div class="cell-content">
-                                <span class="cell-label">${cellLabel}</span>
-                                <span class="cell-question" style="display:none;">${bingoQuestions[idx]}</span>
+                                <span class="cell-label" style="opacity:${openCells[idx]?0.10:0.20}">${cellLabel}</span>
+                                <span class="cell-question" style="display:${openCells[idx]?'inline':'none'}">${bingoQuestions[idx]}</span>
                             </div>
                         </td>
                     `;
@@ -200,30 +236,76 @@
             tableHTML += "</table>";
             document.getElementById("bingo-table-container").innerHTML = tableHTML;
 
-            // Make Score Panel
+            // Score Panel
             let scoreHTML = `<h2>Scoring Panel</h2>`;
             for (let i = 0; i < 25; i++) {
                 scoreHTML += `<div class="score-row">
                     <div class="score-label">${cellLabels[i]}</div>
-                    <select onchange="updateWinnerBox()" id="score-q${i}">
+                    <select onchange="onScoreSelect(${i})" id="score-q${i}">
                     <option value="">---</option>
                     ${participants.map(name => `<option value="${name}">${name}</option>`).join('')}
                     </select>
                 </div>`;
             }
-            // Winner summary
             scoreHTML += '<div id="winner-box"></div>';
+            scoreHTML += `<button id="reset-btn" onclick="resetBingoGame()">Reset Game</button>`;
             document.getElementById("score-panel").innerHTML = scoreHTML;
+            // Restore scores to UI
+            for (let i = 0; i < 25; i++) {
+                document.getElementById('score-q'+i).value = scores[i];
+            }
+            updateWinnerBox();
 
-            // Initialize winner update
+            // Expose functions globally
+            window.revealCell = function (id, idx) {
+                let td = document.getElementById(id);
+                if (openCells[idx]) return;
+                td.classList.add("revealed");
+                let q = td.querySelector(".cell-question");
+                q.style.display = "inline";
+                let label = td.querySelector(".cell-label");
+                label.style.opacity = 0.10;
+                openCells[idx] = true;
+                saveGameState(openCells, scores);
+            }
+            window.onScoreSelect = function(idx) {
+                let val = document.getElementById('score-q'+idx).value;
+                scores[idx] = val;
+                saveGameState(openCells, scores);
+                updateWinnerBox();
+            }
+            window.resetBingoGame = function() {
+                if (!window.confirm("Reset all progress, scores, and open questions?")) return;
+                // Reset
+                openCells = Array(25).fill(false);
+                scores = Array(25).fill("");
+                resetGameState();
+                // Hide all cell questions
+                for (let r = 0; r < ROWS; r++) {
+                    for (let c = 0; c < COLS; c++) {
+                        let idx = r * COLS + c;
+                        let cellId = `cell-${r}-${c}`;
+                        let td = document.getElementById(cellId);
+                        td.classList.remove("revealed");
+                        let qSpan = td.querySelector(".cell-question");
+                        qSpan.style.display = "none";
+                        let labelSpan = td.querySelector(".cell-label");
+                        labelSpan.style.opacity = 0.20;
+                    }
+                }
+                // Reset all select boxes
+                for (let i = 0; i < 25; i++) {
+                    document.getElementById('score-q'+i).value = "";
+                }
+                updateWinnerBox();
+            }
             window.updateWinnerBox = function () {
                 let counts = {};
                 for (let p of participants) counts[p] = 0;
                 for (let i = 0; i < 25; i++) {
-                    let val = document.getElementById('score-q'+i).value;
+                    let val = scores[i];
                     if (val && participants.includes(val)) counts[val]++;
                 }
-                // max score logic
                 let max = 0, champs = [];
                 for (let p of participants) {
                     if (counts[p] > max) max = counts[p];
@@ -231,7 +313,6 @@
                 for (let p of participants) {
                     if (counts[p] === max && max > 0) champs.push(p);
                 }
-                // Display
                 let out = '';
                 if (max === 0) {
                     out = "<b>No answers scored yet.</b>";
@@ -244,16 +325,6 @@
                 document.getElementById("winner-box").innerHTML = out;
             }
         });
-        // Expose reveal function globally
-        window.revealCell = function (id) {
-            let td = document.getElementById(id);
-            if (td.classList.contains("revealed")) return;
-            td.classList.add("revealed");
-            let q = td.querySelector(".cell-question");
-            q.style.display = "inline";
-            let label = td.querySelector(".cell-label");
-            label.style.opacity = 0.10;
-        }
     </script>
 </head>
 <body>
@@ -265,7 +336,7 @@
     <div style="text-align:center; margin-top:24px; color:#444;">
         Each player: pick a grid cell (e.g., <b>C-2</b>), click to reveal your question.<br>
         When someone answers correctly, the host marks the winner for that question in the score panel.<br>
-        Score is dynamically tallied — the winner(s) display at the bottom.
+        Progress and scores are automatically saved and restored — use "Reset" for a fresh game.
     </div>
 </body>
 </html>
