@@ -232,6 +232,18 @@
                 document.getElementById("winner-box").innerHTML = out;
             }
 
+            window.revealCell = function (id, idx) {
+                let td = document.getElementById(id);
+                if (openCells[idx]) return;
+                td.classList.add("revealed");
+                let q = td.querySelector(".cell-question");
+                q.style.display = "inline";
+                let label = td.querySelector(".cell-label");
+                label.style.opacity = 0.10;
+                openCells[idx] = true;
+                saveGameState(openCells, scores);
+            }
+            
 
             let saved = getSavedGame();
             let openCells = saved ? saved.openCells.slice() : Array(25).fill(false);
@@ -285,17 +297,6 @@
             updateWinnerBox();
 
             // Expose functions globally
-            window.revealCell = function (id, idx) {
-                let td = document.getElementById(id);
-                if (openCells[idx]) return;
-                td.classList.add("revealed");
-                let q = td.querySelector(".cell-question");
-                q.style.display = "inline";
-                let label = td.querySelector(".cell-label");
-                label.style.opacity = 0.10;
-                openCells[idx] = true;
-                saveGameState(openCells, scores);
-            }
             window.onScoreSelect = function(idx) {
                 let val = document.getElementById('score-q'+idx).value;
                 scores[idx] = val;
