@@ -205,6 +205,34 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
+
+            window.updateWinnerBox = function () {
+                let counts = {};
+                for (let p of participants) counts[p] = 0;
+                for (let i = 0; i < 25; i++) {
+                    let val = scores[i];
+                    if (val && participants.includes(val)) counts[val]++;
+                }
+                let max = 0, champs = [];
+                for (let p of participants) {
+                    if (counts[p] > max) max = counts[p];
+                }
+                for (let p of participants) {
+                    if (counts[p] === max && max > 0) champs.push(p);
+                }
+                let out = '';
+                if (max === 0) {
+                    out = "<b>No answers scored yet.</b>";
+                } else {
+                    out = `<b>Winner${champs.length>1?'s':''}:</b> &nbsp; ${champs.join(', ')}<br>`;
+                    out += "<b>Score:</b> " + max + "<br>";
+                }
+                out += "<br><u>Live Tally:</u><br>";
+                out += participants.map(p => `${p}: <b>${counts[p]}</b>`).join(" &nbsp; ");
+                document.getElementById("winner-box").innerHTML = out;
+            }
+
+
             let saved = getSavedGame();
             let openCells = saved ? saved.openCells.slice() : Array(25).fill(false);
             let scores = saved ? saved.scores.slice() : Array(25).fill("");
@@ -298,31 +326,6 @@
                     document.getElementById('score-q'+i).value = "";
                 }
                 updateWinnerBox();
-            }
-            window.updateWinnerBox = function () {
-                let counts = {};
-                for (let p of participants) counts[p] = 0;
-                for (let i = 0; i < 25; i++) {
-                    let val = scores[i];
-                    if (val && participants.includes(val)) counts[val]++;
-                }
-                let max = 0, champs = [];
-                for (let p of participants) {
-                    if (counts[p] > max) max = counts[p];
-                }
-                for (let p of participants) {
-                    if (counts[p] === max && max > 0) champs.push(p);
-                }
-                let out = '';
-                if (max === 0) {
-                    out = "<b>No answers scored yet.</b>";
-                } else {
-                    out = `<b>Winner${champs.length>1?'s':''}:</b> &nbsp; ${champs.join(', ')}<br>`;
-                    out += "<b>Score:</b> " + max + "<br>";
-                }
-                out += "<br><u>Live Tally:</u><br>";
-                out += participants.map(p => `${p}: <b>${counts[p]}</b>`).join(" &nbsp; ");
-                document.getElementById("winner-box").innerHTML = out;
             }
         });
     </script>
