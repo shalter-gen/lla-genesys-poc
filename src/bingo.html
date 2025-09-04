@@ -148,12 +148,12 @@
             "Has survived zip lining across hills and rivers.",
             "Can list all monarchs and spouses of England/GB from 1066 and share facts about each.",
             "Turned $200 into $12,000 at a casino, then lost it all in one bet.",
-            "Has cooked chicken biryani so well it’s become their signature dish.",
+            "Has cooked chicken biryani so well it's become their signature dish.",
             "Was a guest of Celtic FC and flew on their official plane to a Champions League match.",
             "Has run clubs or raves during the 'summer of love' era and found their community.",
             "Grew up in the same town as an actor who played Dr. Who.",
             "Collects Laughing Buddhas, knowing they're modeled after a Chinese monk, not the Buddha.",
-            "Enjoys spinning progressive house vinyl on Technics 1210s and loves ‘hole in the wall’ eateries.",
+            "Enjoys spinning progressive house vinyl on Technics 1210s and loves 'hole in the wall' eateries.",
             "Has attended Soundwave Festival 2013.",
             "Is undefeated at Trivial Pursuit.",
             "Was born bald and had her grandmother shave her head 3–4 times to make her hair thicker.",
@@ -170,18 +170,18 @@
             "Can tie knots exceptionally well.",
             "Has a heritage spanning French, Sri Lankan, Mauritian, Welsh, and Spanish backgrounds."
         ];
-        const bingoQuestions = [
-            "Has driven on a race track and then been shown how it’s really done by a professional racing driver.",
+        const bingoQuestions_v2 = [
+            "Has driven on a race track and then been shown how it's really done by a professional racing driver.",
             "Appeared on TV as a kid after winning a self-defence training competition.",
             "Once flew on the official Celtic FC plane to a Champions League match as a guest.",
             "Can make a water droplet sound using just their cheek.",
-            "Spent time running clubs and raves during the ‘summer of love’ and found their community there.",
+            "Spent time running clubs and raves during the 'summer of love' and found their community there.",
             "Loves spinning progressive house vinyl on classic Technics 1210 turntables.",
             "Has a fascinating heritage mixing French, Sri Lankan, Mauritian, Welsh, and Spanish roots.",
-            "Knows how to tie knots exceptionally well—more than just a sailor’s skill!",
+            "Knows how to tie knots exceptionally well—more than just a sailor's skill!",
             "Can list every monarch and their spouse of England/Great Britain since 1066, complete with fun facts.",
             "Is undefeated at Trivial Pursuit and ready to defend their title.",
-            "Has a Moodle named Lily who isn’t even their dog but easily beats most friends for affection.",
+            "Has a Moodle named Lily who isn't even their dog but easily beats most friends for affection.",
             "Was born bald and had their grandmother shave their head multiple times to encourage thicker hair growth.",
             "Can reverse park perfectly in one smooth move, thanks to some quick coaching.",
             "Has visited the Westvleteren Monastery in Belgium, open only two weeks per year and famous for its trappist beer.",
@@ -192,10 +192,37 @@
             "Worked as a school supervisor for a year after failing their baccalaureate exams.",
             "Collected marbles as a kid, but only because it meant more playtime with friends.",
             "Turned $200 into $12,000 at a casino once, before losing it all on one daring bet.",
-            "Has mastered cooking chicken biryani so well it’s their signature dish when hosting.",
-            "Collects Laughing Buddhas, fully understanding they’re based on a Chinese Buddhist monk, not the historical Buddha.",
+            "Has mastered cooking chicken biryani so well it's their signature dish when hosting.",
+            "Collects Laughing Buddhas, fully understanding they're based on a Chinese Buddhist monk, not the historical Buddha.",
             "Is surprisingly good at multiple racquet sports, from badminton to tennis.",
             "Enrolled themselves in primary school in Australia — all on their own!"
+        ];
+        const bingoQuestions = [
+            ["Has driven on a race track and then been shown how it's really done by a professional racing driver.", "Louise"],
+            ["Appeared on TV as a kid after winning a self-defence training competition.", "Deepti"],
+            ["Once flew on the official Celtic FC plane to a Champions League match as a guest.", "Dominic"],
+            ["Can make a water droplet sound using just their cheek.", "Dominic"],
+            ["Spent time running clubs and raves during the 'summer of love' and found their community there.", "Jeremy"],
+            ["Loves spinning progressive house vinyl on classic Technics 1210 turntables.", "Jeremy"],
+            ["Has a fascinating heritage mixing French, Sri Lankan, Mauritian, Welsh, and Spanish roots.", "Jeremy"],
+            ["Knows how to tie knots exceptionally well—more than just a sailor's skill!", "Mark"],
+            ["Can list every monarch and their spouse of England/Great Britain since 1066, complete with fun facts.", "Paul"],
+            ["Is undefeated at Trivial Pursuit and ready to defend their title.", "Paul"],
+            ["Has a Moodle named Lily who isn't even their dog but easily beats most friends for affection.", "Paul"],
+            ["Was born bald and had their grandmother shave their head multiple times to encourage thicker hair growth.", "Ruth"],
+            ["Can reverse park perfectly in one smooth move, thanks to some quick coaching.", "Ruth"],
+            ["Has visited the Westvleteren Monastery in Belgium, open only two weeks per year and famous for its trappist beer.", "Ruth"],
+            ["Has braved zip lining over hills and rivers with great thrill.", "Satish"],
+            ["Attended the iconic Soundwave Festival in 2013.", "Satish"],
+            ["Played in an orchestra as a child, bringing music to life.", "Deepti"],
+            ["Explored a famous shanty town in Cancun — a truly unusual place.", "Thierry"],
+            ["Worked as a school supervisor for a year after failing their baccalaureate exams.", "Thierry"],
+            ["Collected marbles as a kid, but only because it meant more playtime with friends.", "Thierry"],
+            ["Turned $200 into $12,000 at a casino once, before losing it all on one daring bet.", "Varun"],
+            ["Has mastered cooking chicken biryani so well it's their signature dish when hosting.", "Varun"],
+            ["Collects Laughing Buddhas, fully understanding they're based on a Chinese Buddhist monk, not the historical Buddha.", "Varun"],
+            ["Is surprisingly good at multiple racquet sports, from badminton to tennis.", "Varun"],
+            ["Enrolled themselves in primary school in Australia — all on their own!", "Varun"]
         ];
         const COLS = 5, ROWS = 5;
         const labelsHorizontal = ["A", "B", "C", "D", "E"];
@@ -275,6 +302,34 @@
             let saved = getSavedGame();
             let openCells = saved ? saved.openCells.slice() : Array(25).fill(false);
             let scores = saved ? saved.scores.slice() : Array(25).fill("");
+            // // BINGO table
+            // let tableHTML = "<table>";
+            // tableHTML += "<tr><th></th>";
+            // for (let c = 0; c < COLS; c++)
+            //     tableHTML += `<th>${labelsHorizontal[c]}</th>`;
+            // tableHTML += "</tr>";
+            // let idx = 0;
+            // for (let r = 0; r < ROWS; r++) {
+            //     tableHTML += `<tr><th>${r + 1}</th>`;
+            //     for (let c = 0; c < COLS; c++) {
+            //         let cellId = `cell-${r}-${c}`;
+            //         let cellLabel = labelsHorizontal[c] + '-' + (r + 1);
+            //         // revealed if openCells[idx]
+            //         tableHTML += `
+            //             <td id="${cellId}" class="${openCells[idx] ? 'revealed':''}" onclick="revealCell('${cellId}',${idx})">
+            //                 <div class="cell-content">
+            //                     <span class="cell-label" style="opacity:${openCells[idx]?0.10:0.20}">${cellLabel}</span>
+            //                     <span class="cell-question" style="display:${openCells[idx]?'inline':'none'}">${bingoQuestions[idx]}</span>
+            //                 </div>
+            //             </td>
+            //         `;
+            //         idx++;
+            //     }
+            //     tableHTML += "</tr>";
+            // }
+            // tableHTML += "</table>";
+            // document.getElementById("bingo-table-container").innerHTML = tableHTML;
+
             // BINGO table
             let tableHTML = "<table>";
             tableHTML += "<tr><th></th>";
@@ -287,12 +342,25 @@
                 for (let c = 0; c < COLS; c++) {
                     let cellId = `cell-${r}-${c}`;
                     let cellLabel = labelsHorizontal[c] + '-' + (r + 1);
-                    // revealed if openCells[idx]
+                    let [question, answer] = bingoQuestions[idx];
                     tableHTML += `
-                        <td id="${cellId}" class="${openCells[idx] ? 'revealed':''}" onclick="revealCell('${cellId}',${idx})">
+                        <td id="${cellId}" class="${openCells[idx] ? 'revealed' : ''}" style="position: relative;" onclick="revealCell('${cellId}',${idx})">
                             <div class="cell-content">
-                                <span class="cell-label" style="opacity:${openCells[idx]?0.10:0.20}">${cellLabel}</span>
-                                <span class="cell-question" style="display:${openCells[idx]?'inline':'none'}">${bingoQuestions[idx]}</span>
+                                <span class="cell-label" style="opacity:${openCells[idx] ? 0.10 : 0.20}">${cellLabel}</span>
+                                <span class="cell-question" style="display:${openCells[idx] ? 'inline' : 'none'}">${question}</span>
+                                <div class="answer-overlay" style="display:none; 
+                                    position:absolute; top:0; left:0; right:0; bottom:0; 
+                                    background: rgba(0,0,0,0.5);
+                                    color: white; 
+                                    font-size: 1.15em; 
+                                    text-align: center; 
+                                    line-height: 130px; 
+                                    font-weight: bold;
+                                    cursor: default;
+                                    user-select:none;
+                                    z-index:1000;">
+                                    ${answer}
+                                </div>
                             </div>
                         </td>
                     `;
@@ -302,6 +370,37 @@
             }
             tableHTML += "</table>";
             document.getElementById("bingo-table-container").innerHTML = tableHTML;
+
+            // Add right-click event listeners to toggle answer overlay
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    let cellId = `cell-${r}-${c}`;
+                    let td = document.getElementById(cellId);
+                    // td.addEventListener('contextmenu', function (e) {
+                    //     e.preventDefault();
+                    //     let answerOverlay = td.querySelector('.answer-overlay');
+                    //     if (answerOverlay.style.display === 'none' || answerOverlay.style.display === '') {
+                    //         answerOverlay.style.display = 'block';
+                    //     } else {
+                    //         answerOverlay.style.display = 'none';
+                    //     }
+                    // });
+                    td.addEventListener('contextmenu', function (e) {
+                        if (e.ctrlKey) {             // Check if Control key is pressed during right-click
+                            e.preventDefault();      // Prevent default context menu
+                            let answerOverlay = td.querySelector('.answer-overlay');
+                            if (answerOverlay.style.display === 'none' || answerOverlay.style.display === '') {
+                                answerOverlay.style.display = 'block';
+                            } else {
+                                answerOverlay.style.display = 'none';
+                            }
+                        }
+                        // Otherwise, do not prevent default so normal context menu is shown
+                    });
+
+                }
+            }
+
 
             // Score Panel
             let scoreHTML = `<h2>Scoring Panel</h2>`;
