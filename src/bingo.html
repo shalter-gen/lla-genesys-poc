@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SDIP Spotlight Bingo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+        }
+        table {
+            border-collapse: collapse;
+            font-size: 1.1em;
+            background: #fff;
+            box-shadow: 0 2px 12px #bbb;
+            margin-bottom: 14px;
+        }
+        th, td {
+            border: 1px solid #bbb;
+            width: 230px;
+            height: 130px;
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
+            padding: 0;
+        }
+        th {
+            background: #194470;
+            color: #fff;
+            font-weight: 600;
+            width: 60px;
+            height: 40px;
+        }
+        td {
+            background: #e5ecfa;
+            cursor: pointer;
+            transition: background 0.10s;
+            font-size: 1.05em;
+        }
+        td.revealed {
+            background: #b5dafa;
+            color: #333;
+            cursor: default;
+            font-weight: 600;
+        }
+        .cell-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            font-size: 1.05em;
+            min-height: 50px;
+            min-width: 70px;
+        }
+        .cell-label {
+            color: #688ec9;
+            font-size: 2em;
+            font-weight: 900;
+            opacity: 0.20;
+            position: absolute;
+            bottom: 5px;
+            right: 12px;
+        }
+        #score-panel {
+            background: #f0f5fb;
+            border: 1px solid #b8dafc;
+            border-radius: 8px;
+            max-width: 320px;
+            box-shadow: 0 2px 6px #aac;
+            padding: 24px 20px 28px 20px;
+        }
+        #score-panel h2 {
+            font-size: 1.18em;
+            margin: 0 0 12px 0;
+            text-align: center;
+            color: #345099;
+        }
+        .score-row {
+            display: flex;
+            margin-bottom: 6px;
+            align-items: center;
+            gap: 6px;
+            font-size: 1em;
+        }
+        .score-label {
+            width: 50px;
+            color: #386ca9;
+            font-weight: bold;
+        }
+        select {
+            font-size: 1em;
+            padding: 2px;
+            min-width: 120px;
+            border-radius: 3px;
+            border: 1px solid #b4b4b4;
+            background: #fff;
+        }
+        #winner-box {
+            background: #e0f6e8;
+            border-radius: 6px;
+            margin-top: 20px;
+            padding: 13px 10px;
+            text-align: left;
+            min-height: 38px;
+            font-size: 1.08em;
+            box-shadow: 0 0 8px #c8efc5;
+            border: 1px solid #66bb99;
+        }
+        @media (max-width: 1024px) {
+            .container {flex-direction: column;}
+            #score-panel {margin: 0 auto;}
+        }
+    </style>
+    <script>
+        // The 25 Bingo Q&As and mappings
+        const bingoQuestions = [
+            "Has visited a famous shanty town in Cancun.",
+            "Has survived zip lining across hills and rivers.",
+            "Can list all monarchs and spouses of England/GB from 1066 and share facts about each.",
+            "Turned $200 into $12,000 at a casino, then lost it all in one bet.",
+            "Has cooked chicken biryani so well it’s become their signature dish.",
+            "Was a guest of Celtic FC and flew on their official plane to a Champions League match.",
+            "Has run clubs or raves during the 'summer of love' era and found their community.",
+            "Grew up in the same town as an actor who played Dr. Who.",
+            "Collects Laughing Buddhas, knowing they're modeled after a Chinese monk, not the Buddha.",
+            "Enjoys spinning progressive house vinyl on Technics 1210s and loves ‘hole in the wall’ eateries.",
+            "Has attended Soundwave Festival 2013.",
+            "Is undefeated at Trivial Pursuit.",
+            "Was born bald and had her grandmother shave her head 3–4 times to make her hair thicker.",
+            "Was part of a school classical music band as a child.",
+            "Has mastered making water droplet sounds with their cheek.",
+            "Is surprisingly skilled in multiple racquet sports.",
+            "Once enrolled themselves in primary school in Australia as a child.",
+            "Was a school supervisor for a year after failing the baccalaureate.",
+            "Has a Moodle named Lily that isn't even their own dog, but prefers her to most friends and family.",
+            "Has played in an orchestra as a child.",
+            "Has collected marbles just to play games with friends.",
+            "Has experience reverse parking perfectly in one move.",
+            "Has been to Westvleteren Monastery in Belgium, open only two weeks a year, famed for its trappist beer.",
+            "Can tie knots exceptionally well.",
+            "Has a heritage spanning French, Sri Lankan, Mauritian, Welsh, and Spanish backgrounds."
+        ];
+        // Labels A-E, 1-5
+        const COLS = 5, ROWS = 5;
+        const labelsHorizontal = ["A", "B", "C", "D", "E"];
+        // Keep label=>question index
+        let cellLabels = [];
+        let qIndex = 0;
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                cellLabels.push(labelsHorizontal[c] + '-' + (r + 1));
+            }
+        }
+        // Shuffle questions/cells (same as previous page, so map is preserved)
+        // Already matched to questions.
+
+        // Scoreboard participants:
+        const participants = [
+            "James","Satish","Thierry","Paul","Varun","Ruth","Deepti","Louise","Malita","Stephen","Mark","Ben","Dominic","Jeremy"
+        ];
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Make BINGO Table
+            let tableHTML = "<table>";
+            tableHTML += "<tr><th></th>";
+            for (let c = 0; c < COLS; c++)
+                tableHTML += `<th>${labelsHorizontal[c]}</th>`;
+            tableHTML += "</tr>";
+            let idx = 0;
+            for (let r = 0; r < ROWS; r++) {
+                tableHTML += `<tr><th>${r + 1}</th>`;
+                for (let c = 0; c < COLS; c++) {
+                    let cellId = `cell-${r}-${c}`;
+                    let cellLabel = labelsHorizontal[c] + '-' + (r + 1);
+                    tableHTML += `
+                        <td id="${cellId}" onclick="revealCell('${cellId}')">
+                            <div class="cell-content">
+                                <span class="cell-label">${cellLabel}</span>
+                                <span class="cell-question" style="display:none;">${bingoQuestions[idx]}</span>
+                            </div>
+                        </td>
+                    `;
+                    idx++;
+                }
+                tableHTML += "</tr>";
+            }
+            tableHTML += "</table>";
+            document.getElementById("bingo-table-container").innerHTML = tableHTML;
+
+            // Make Score Panel
+            let scoreHTML = `<h2>Scoring Panel</h2>`;
+            for (let i = 0; i < 25; i++) {
+                scoreHTML += `<div class="score-row">
+                    <div class="score-label">${cellLabels[i]}</div>
+                    <select onchange="updateWinnerBox()" id="score-q${i}">
+                    <option value="">---</option>
+                    ${participants.map(name => `<option value="${name}">${name}</option>`).join('')}
+                    </select>
+                </div>`;
+            }
+            // Winner summary
+            scoreHTML += '<div id="winner-box"></div>';
+            document.getElementById("score-panel").innerHTML = scoreHTML;
+
+            // Initialize winner update
+            window.updateWinnerBox = function () {
+                let counts = {};
+                for (let p of participants) counts[p] = 0;
+                for (let i = 0; i < 25; i++) {
+                    let val = document.getElementById('score-q'+i).value;
+                    if (val && participants.includes(val)) counts[val]++;
+                }
+                // max score logic
+                let max = 0, champs = [];
+                for (let p of participants) {
+                    if (counts[p] > max) max = counts[p];
+                }
+                for (let p of participants) {
+                    if (counts[p] === max && max > 0) champs.push(p);
+                }
+                // Display
+                let out = '';
+                if (max === 0) {
+                    out = "<b>No answers scored yet.</b>";
+                } else {
+                    out = `<b>Winner${champs.length>1?'s':''}:</b> &nbsp; ${champs.join(', ')}<br>`;
+                    out += "<b>Score:</b> " + max + "<br>";
+                }
+                out += "<br><u>Live Tally:</u><br>";
+                out += participants.map(p => `${p}: <b>${counts[p]}</b>`).join(" &nbsp; ");
+                document.getElementById("winner-box").innerHTML = out;
+            }
+        });
+        // Expose reveal function globally
+        window.revealCell = function (id) {
+            let td = document.getElementById(id);
+            if (td.classList.contains("revealed")) return;
+            td.classList.add("revealed");
+            let q = td.querySelector(".cell-question");
+            q.style.display = "inline";
+            let label = td.querySelector(".cell-label");
+            label.style.opacity = 0.10;
+        }
+    </script>
+</head>
+<body>
+    <h1>Spotlight Bingo</h1>
+    <div class="container">
+        <div id="bingo-table-container"></div>
+        <div id="score-panel"></div>
+    </div>
+    <div style="text-align:center; margin-top:24px; color:#444;">
+        Each player: pick a grid cell (e.g., <b>C-2</b>), click to reveal your question.<br>
+        When someone answers correctly, the host marks the winner for that question in the score panel.<br>
+        Score is dynamically tallied — the winner(s) display at the bottom.
+    </div>
+</body>
+</html>
