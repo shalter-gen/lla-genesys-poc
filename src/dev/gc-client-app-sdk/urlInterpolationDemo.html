@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Genesys Cloud URL Info Demo</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+        <style>
+            body {
+                margin-left: 20px;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <noscript>
+            For full functionality of this site it is necessary to enable JavaScript. Here are the <a href="http://www.enable-javascript.com/" target="_blank">instructions how to enable JavaScript in your web browser</a>.
+        </noscript>
+
+        <h1>URL Interpolation</h1>
+        <p>
+            Data can be seeded into an app (Standalone or Widget) via URL string replacement.
+        </p>
+        <hr>
+
+        <h2>URL</h2>
+        <p>
+            <span class="ex-url"></span>
+        </p>
+        <dl class="url-vars">
+        </dl>
+
+        <h2>Localization Demo</h2>
+        <p>
+            <span class="welcome-text"></span>
+        </p>
+
+        <script>
+            (function () {
+                var DEFAULT_LANG_TAG = 'en-us';
+                var langTag = null;
+                var usePopupAuth = null;
+                var welcomeTokens = {
+                    de: "Willkommen bei Genesys Cloud",
+                    'en-us': "Welcome to Genesys Cloud",
+                    es: "Bienvenido a Genesys Cloud",
+                    fr: "Bienvenue dans Genesys Cloud",
+                    it: "Benvenuti a Genesys Cloud",
+                    ja: "Genesys Cloud へようこそ!",
+                    ko: "Genesys Cloud 시작",
+                    nl: "Welkom bij Genesys Cloud",
+                    no: "Velkommen til Genesys Cloud",
+                    pl: "Witamy w Genesys Cloud",
+                    'pt-br': "Bem-vindo ao Genesys Cloud",
+                    sv: "Välkommen till Genesys Cloud",
+                    th: "ขอต้อนรับสู่ Genesys Cloud",
+                    tr: "Genesys Cloud'a hoş geldiniz",
+                    'zh-cn': "欢迎使用 Genesys Cloud"
+                };
+
+                function getParamValue(paramPairs){
+                    if(decodeURIComponent){
+                        return decodeURIComponent(paramPairs[1]);
+                    }
+
+                    return paramPairs[1];
+                }
+
+                $('.ex-url').text(window.location);
+                var queryString = window.location.search.substring(1);
+                var pairs = queryString.split('&');
+                var pcEnv = null;
+                var gcHostOrigin = null;
+                var gcTargetEnv = null;
+                for (let i = 0; i < pairs.length; i++)
+                {
+                    let currParam = pairs[i].split('=');
+                    let currLiDt = '';
+                    let currLiDd = document.createElement('dd');
+
+                    if(['langTag', 'pcLangTag'].indexOf(currParam[0]) !== -1) {
+                        langTag = getParamValue(currParam);
+                        currLiDt = '<dt>{{pcLangTag}}</dt>';
+                        currLiDd.textContent = langTag;
+                    } else if(currParam[0] === 'pcEnvironment') {
+                        pcEnv = getParamValue(currParam);
+                    } else if(currParam[0] === 'environment' && pcEnv === null) {
+                        pcEnv = getParamValue(currParam);
+                    } else if(['conversationId', 'pcConversationId'].indexOf(currParam[0]) !== -1) {
+                        const conversationId = getParamValue(currParam);
+                        currLiDt = '<dt>{{pcConversationId}}</dt>';
+                        currLiDd.textContent = conversationId;
+                    } else if(currParam[0] === 'gcConversationId') {
+                        const conversationId = getParamValue(currParam);
+                        currLiDt = '<dt>{{gcConversationId}}</dt>';
+                        currLiDd.textContent = conversationId;
+                    } else if(currParam[0] === 'gcWorkitemId') {
+                        const workitemId = getParamValue(currParam);
+                        currLiDt = '<dt>{{gcWorkitemId}}</dt>';
+                        currLiDd.textContent = workitemId;
+                    } else if(currParam[0] === 'gcInteractionId') {
+                        const interactionId = getParamValue(currParam);
+                        currLiDt = '<dt>{{gcInteractionId}}</dt>';
+                        currLiDd.textContent = interactionId;
+                    } else if(currParam[0] === 'gcInteractionType') {
+                        const interactionType = getParamValue(currParam);
+                        currLiDt = '<dt>{{gcInteractionType}}</dt>';
+                        currLiDd.textContent = interactionType;
+                    } else if(['usePopupAuth', 'pcUsePopupAuth'].indexOf(currParam[0]) !== -1){
+                        usePopupAuth = getParamValue(currParam)
+                        currLiDt = '<dt>{{pcUsePopupAuth}}</dt>';
+                        currLiDd.textContent = usePopupAuth;
+                    } else if (currParam[0] === 'gcHostOrigin') {
+                        gcHostOrigin = getParamValue(currParam)
+                    } else if (currParam[0] === 'gcTargetEnv') {
+                        gcTargetEnv = getParamValue(currParam)
+                    }
+
+                    if (currLiDt) {
+                        $('dl.url-vars').append(currLiDt);
+                        $('dl.url-vars').append(currLiDd);
+                    }
+                }
+
+                if (pcEnv) {
+                    let currLiDd = document.createElement('dd');
+                    currLiDd.textContent = pcEnv;
+                    $('dl.url-vars').append('<dt>{{pcEnvironment}}</dt>');
+                    $('dl.url-vars').append(currLiDd);
+                }
+                if (gcHostOrigin) {
+                    let currLiDd = document.createElement('dd');
+                    currLiDd.textContent = gcHostOrigin;
+                    $('dl.url-vars').append('<dt>{{gcHostOrigin}}</dt>');
+                    $('dl.url-vars').append(currLiDd);
+                }
+                if (gcTargetEnv) {
+                    let currLiDd = document.createElement('dd');
+                    currLiDd.textContent = gcTargetEnv;
+                    $('dl.url-vars').append('<dt>{{gcTargetEnv}}</dt>');
+                    $('dl.url-vars').append(currLiDd);
+                }
+
+                $('.welcome-text').text(welcomeTokens[langTag] || welcomeTokens[DEFAULT_LANG_TAG]);
+            })();
+        </script>
+    </body>
+</html>
