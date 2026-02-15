@@ -341,11 +341,11 @@
                                 conversationsTableBody.removeChild(conversationsTableBody.firstChild);
                             }
 
-                            getUserConversationHistory(profileData.id, 30, canViewWrapUpCodes).then(function (conversations) {
+                            getUserConversationHistory(profileData.id, 1, canViewWrapUpCodes).then(function (conversations) {
                                 setHidden(reloadingEl, true);
 
                                 if (conversations.length === 0) {
-                                    setErrorState('No conversations were found for you in the past 30 days');
+                                    setErrorState('No conversations were found for you in the past 24 hours');
                                     reloadButtonEl.disabled = false;
                                     return;
                                 }
