@@ -26,7 +26,7 @@
         <style>
             body {
                 margin-left: 20px;
-                max-width: 450px;
+                /* max-width: 450px; */
             }
 
             .failure {
@@ -195,6 +195,7 @@
 
         <section class="interactions-example hidden">
             <h2>Recent Interactions</h2>
+            <h4>Retrieved through GC API</h4>
             <div class="header">
                 <div>
                     <h4 class="user-name">Name:</h4>
@@ -321,7 +322,7 @@
                         setHidden(authenticatingEl, true);
 
                         // Update user data markup
-                        interactionsHeaderEl.querySelector('.user-name').appendChild(document.createTextNode(' ' + profileData.name));
+                        interactionsHeaderEl.querySelector('.user-name').appendChild(document.createTextNode(' ' + profileData.username));
                         interactionsHeaderEl.querySelector('.interaction-detail-access').appendChild(document.createTextNode(' ' + (canViewInteraction ? 'Yes' : 'No')));
 
                         function reloadInteractions() {
