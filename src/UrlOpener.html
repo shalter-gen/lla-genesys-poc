@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Open Page</title>
 	<style>
@@ -27,10 +28,12 @@
 			white-space: nowrap;
 			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 			-webkit-border-image: none;
-			width: fit-content; /* added this line */
+			width: fit-content;
+			/* added this line */
 		}
 	</style>
 </head>
+
 <body>
 	<button id="open-page-btn">Open Page</button>
 
@@ -38,9 +41,9 @@
 		const url = new URL(window.location.href);
 		const targetUrl = url.searchParams.get('url');
 		const buttonLabel = url.searchParams.get('ButtonLabel') || 'Open Page';
-        const autoClick = url.searchParams.has('autoclick');
+		const autoClick = url.searchParams.has('autoclick');
 
-        let openedWindow;
+		let openedWindow;
 		// document.getElementById('open-page-btn').textContent = buttonLabel;
 		// document.getElementById('open-page-btn').addEventListener('click', () => {
 		// 	if (!openedWindow || openedWindow.closed) {
@@ -51,23 +54,23 @@
 		// 	}
 		// });
 
-        const button = document.getElementById('open-page-btn');
-        button.textContent = buttonLabel;
+		const button = document.getElementById('open-page-btn');
+		button.textContent = buttonLabel;
 
-        function openTargetPage() {
-            if (!openedWindow || openedWindow.closed) {
-                openedWindow = window.open(targetUrl, '_blank');
-            } else {
-                openedWindow.location = targetUrl; 
-                openedWindow.focus();
-            }
-        }
-        button.addEventListener('click', openTargetPage);
+		function openTargetPage() {
+			if (!openedWindow || openedWindow.closed) {
+				openedWindow = window.open(targetUrl, '_blank');
+			} else {
+				openedWindow.location = targetUrl;
+				openedWindow.focus();
+			}
+		}
+		button.addEventListener('click', openTargetPage);
 
 		// Automatically click the button if 'autoclick' parameter is present
 		if (autoClick) {
 			button.click();
-            // openTargetPage();
+			// openTargetPage();
 			// run following after timeout of 1s
 			// setTimeout(() => {
 			// 	window.close();
@@ -76,5 +79,21 @@
 
 
 	</script>
+
+	<script type="text/javascript" charset="utf-8">
+		(function (g, e, n, es, ys) {
+			g['_genesysJs'] = e;
+			g[e] = g[e] || function () {
+				(g[e].q = g[e].q || []).push(arguments)
+			};
+			g[e].t = 1 * new Date();
+			g[e].c = es;
+			ys = document.createElement('script'); ys.async = 1; ys.src = n; ys.charset = 'utf-8'; document.head.appendChild(ys);
+		})(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
+			environment: 'prod-apse2',
+			deploymentId: 'c1505209-b3f1-4092-8c61-41516695ba2e'
+		});
+	</script>
 </body>
+
 </html>
