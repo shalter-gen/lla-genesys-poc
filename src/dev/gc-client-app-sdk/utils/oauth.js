@@ -1,5 +1,5 @@
 // Authenticate with Genesys Cloud
-function authenticate(client, pcEnvironment, state) {
+async function authenticate(client, pcEnvironment, state) {
     // Allow targeting a different environment when host app is running locally
     const platformEnvironment = pcEnvironment === 'localhost' ? 'mypurecloud.com.au' : pcEnvironment;
     /*
@@ -26,10 +26,18 @@ function authenticate(client, pcEnvironment, state) {
     const { origin, protocol, host, pathname } = window.location;
     const redirectUrl = (origin || `${protocol}//${host}`) + pathname;
 
-    return client.loginImplicitGrant(clientId, redirectUrl, { state })
+
+    const codeVerifier = client.generatePKCECodeVerifier(128);
+    const codeChallenge = await client.computePKCECodeChallenge(codeVerifier);
+
+    return client.loginPKCEGrant(clientId, redirectUrl, codeVerifier, codeChallenge, { state })
         .then(data => {
             window.history.replaceState(null, '', `${pathname}?${data.state}`);
         });
+    // return client.loginImplicitGrant(clientId, redirectUrl, { state })
+    //     .then(data => {
+    //         window.history.replaceState(null, '', `${pathname}?${data.state}`);
+    //     });
 }
 
 function extractParams(paramStr) {
