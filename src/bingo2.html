@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Balanced Spotlight Bingo</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #f9f9f9;
+        padding: 20px;
+        margin: 0;
+    }
+    h1, h2 {
+        text-align: center;
+        margin-bottom: 16px;
+    }
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+    table {
+        border-collapse: collapse;
+        font-size: 1.1em;
+        background: #fff;
+        box-shadow: 0 2px 12px #bbb;
+        margin-bottom: 20px;
+    }
+    th, td {
+        border: 1px solid #bbb;
+        width: 230px;
+        height: 130px;
+        text-align: center;
+        vertical-align: middle;
+        position: relative;
+        padding: 0;
+    }
+    th {
+        background: #194470;
+        color: #fff;
+        font-weight: 600;
+        width: 60px;
+        height: 40px;
+    }
+    td {
+        background: #e5ecfa;
+        cursor: pointer;
+        transition: background 0.10s;
+        font-size: 1.05em;
+    }
+    td.revealed {
+        background: #b5dafa;
+        color: #333;
+        cursor: default;
+        font-weight: 600;
+    }
+    .cell-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+        font-size: 1.05em;
+        min-height: 50px;
+        min-width: 70px;
+        padding: 12px;
+        box-sizing: border-box;
+    }
+    .cell-label {
+        color: #688ec9;
+        font-size: 2em;
+        font-weight: 900;
+        opacity: 0.20;
+        position: absolute;
+        bottom: 5px;
+        right: 12px;
+        user-select: none;
+    }
+    #score-panel {
+        background: #f0f5fb;
+        border: 1px solid #b8dafc;
+        border-radius: 8px;
+        max-width: 360px;
+        box-shadow: 0 2px 6px #aac;
+        padding: 24px 20px 28px 20px;
+        flex-shrink: 0;
+    }
+    #score-panel h2 {
+        font-size: 1.18em;
+        margin: 0 0 12px 0;
+        color: #345099;
+    }
+    .score-row {
+        display: flex;
+        margin-bottom: 6px;
+        align-items: center;
+        gap: 6px;
+        font-size: 1em;
+    }
+    .score-label {
+        width: 50px;
+        color: #386ca9;
+        font-weight: bold;
+        user-select: none;
+    }
+    select {
+        font-size: 1em;
+        padding: 2px;
+        min-width: 130px;
+        border-radius: 3px;
+        border: 1px solid #b4b4b4;
+        background: #fff;
+        cursor: pointer;
+    }
+    #winner-box {
+        background: #e0f6e8;
+        border-radius: 6px;
+        margin-top: 20px;
+        padding: 13px 10px;
+        text-align: left;
+        min-height: 38px;
+        font-size: 1.08em;
+        box-shadow: 0 0 8px #c8efc5;
+        border: 1px solid #66bb99;
+        user-select: none;
+    }
+    #reset-btn {
+        display: block;
+        margin: 18px auto 0 auto;
+        background: #dd3e3e;
+        color: #fff;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        padding: 8px 16px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #eee;
+        transition: background 0.11s;
+    }
+    #reset-btn:hover {
+        background: #aa2400;
+    }
+    #answer-reference {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 20px 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px #ccc;
+        font-size: 0.95em;
+        overflow-x: auto;
+    }
+    #answer-reference table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    #answer-reference th, #answer-reference td {
+        border: 1px solid #bbb;
+        padding: 6px 10px;
+        text-align: left;
+        vertical-align: top;
+    }
+    #answer-reference th {
+        background: #194470;
+        color: white;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    @media (max-width: 1024px) {
+        .container {flex-direction: column; align-items: center;}
+        #score-panel {margin: 16px auto; width: 90%;}
+        table, #answer-reference table {
+            font-size: 1em;
+            width: 100%;
+        }
+        #answer-reference {
+            padding: 16px;
+        }
+    }
+</style>
+<script>
+    const participants = [
+        "James","Satish","Thierry","Paul","Varun","Ruth","Deepti","Louise","Malita","Stephen","Mark","Ben","Dominic","Jeremy"
+    ];
+
+    const COLS = 5, ROWS = 5;
+    const labelsHorizontal = ["A", "B", "C", "D", "E"];
+
+    const cellLabels = [];
+    for (let r=0; r<ROWS; r++) {
+        for (let c=0; c<COLS; c++) {
+            cellLabels.push(labelsHorizontal[c] + '-' + (r+1));
+        }
+    }
+
+    // Balanced Bingo questions as requested
+const bingoQuestions = [
+    "Has driven on a race track and then been shown how it’s really done by a professional racing driver.",
+    "Was part of a school classical music band back in the day.",
+    "Once flew on the official Celtic FC plane to a Champions League match as a guest.",
+    "Can make a water droplet sound using just their cheek.",
+    "Spent time running clubs and raves during the ‘summer of love’ and found their community there.",
+    "Loves spinning progressive house vinyl on classic Technics 1210 turntables.",
+    "Has a fascinating heritage mixing French, Sri Lankan, Mauritian, Welsh, and Spanish roots.",
+    "Knows how to tie knots exceptionally well—more than just a sailor’s skill!",
+    "Can list every monarch and their spouse of England/Great Britain since 1066, complete with fun facts.",
+    "Is undefeated at Trivial Pursuit and ready to defend their title.",
+    "Has a Moodle named Lily who isn’t even their dog but easily beats most friends for affection.",
+    "Was born bald and had their grandmother shave their head multiple times to encourage thicker hair growth.",
+    "Can reverse park perfectly in one smooth move, thanks to some quick coaching.",
+    "Has visited the Westvleteren Monastery in Belgium, open only two weeks per year and famous for its trappist beer.",
+    "Has braved zip lining over hills and rivers with great thrill.",
+    "Attended the iconic Soundwave Festival in 2013.",
+    "Played in an orchestra as a child, bringing music to life.",
+    "Explored a famous shanty town in Cancun — a truly unusual place.",
+    "Worked as a school supervisor for a year after failing their baccalaureate exams.",
+    "Collected marbles as a kid, but only because it meant more playtime with friends.",
+    "Turned $200 into $12,000 at a casino once, before losing it all on one daring bet.",
+    "Has mastered cooking chicken biryani so well it’s their signature dish when hosting.",
+    "Collects Laughing Buddhas, fully understanding they’re based on a Chinese Buddhist monk, not the historical Buddha.",
+    "Is surprisingly good at multiple racquet sports, from badminton to tennis.",
+    "Enrolled themselves in primary school in Australia — all on their own!"
+];
+
+    // Detailed answer reference with participants and details for host validation
+    const answerReference = [
+        {label: "A-1", participant:"Louise Dawes", detail:"Driving on a race track and then being shown how it's really done by a racing driver."},
+        {label: "B-1", participant:"Deepti Chopra", detail:"Was part of school classical music band."},
+        {label: "C-1", participant:"Dominic Geraghty", detail:"Flew on the official Celtic FC plane to a Champions League match."},
+        {label: "D-1", participant:"Dominic Geraghty", detail:"Can make a water droplet sound with his cheek."},
+        {label: "E-1", participant:"Jeremy Precieux", detail:"Loves spinning 'progressive house' vinyl on Technics 1210s."},
+        {label: "A-2", participant:"Jeremy Precieux", detail:"Has French, Sri Lankan, Mauritian, Welsh, and Spanish heritage."},
+        {label: "B-2", participant:"Mark Manners", detail:"Can tie knots exceptionally well."},
+        {label: "C-2", participant:"Paul Roach", detail:"Can list all monarchs and spouses of England/GB from 1066 with facts."},
+        {label: "D-2", participant:"Paul Roach", detail:"Has a Moodle named Lily that isn't his dog but preferred over many friends."},
+        {label: "E-2", participant:"Ruth Dean-Pala", detail:"Has been to Westvleteren Monastery in Belgium, brews trappist beer."},
+        {label: "A-3", participant:"Ruth Dean-Pala", detail:"Was born bald and had grandmother shave head multiple times."},
+        {label: "B-3", participant:"Satish Shrestha", detail:"Played in an orchestra."},
+        {label: "C-3", participant:"Satish Shrestha", detail:"Has attended Soundwave Festival 2013."},
+        {label: "D-3", participant:"Thierry Masquilier", detail:"Visited a shanty town in Cancun."},
+        {label: "E-3", participant:"Thierry Masquilier", detail:"Took on sourdough bread-making lately."},
+        {label: "A-4", participant:"Varun Bharadwaj", detail:"Built elaborate cardboard forts at home as a kid."},
+        {label: "B-4", participant:"Varun Bharadwaj", detail:"Good at all racquet sports."},
+        {label: "C-4", participant:"Varun Bharadwaj", detail:"Turned $200 into $12,000 at a casino but lost it all on black."},
+        {label: "D-4", participant:"Deepti Chopra", detail:"Star gazing hobby."},
+        {label: "E-4", participant:"Dominic Geraghty", detail:"Played strategy games like Civilization."},
+        {label: "A-5", participant:"Jeremy Precieux", detail:"Attended early Renaissance club in Mansfield, England."},
+        {label: "B-5", participant:"Mark Manners", detail:"Eats durian at a street stall in Singapore."},
+        {label: "C-5", participant:"Paul Roach", detail:"Fishing and boating hobby."},
+        {label: "D-5", participant:"Ruth Dean-Pala", detail:"Reverse parking success with daughter's help."},
+        {label: "E-5", participant:"Satish Shrestha", detail:"Has zip lined across hills and rivers."}
+    ];
+
+    // State for open cells & scores; will be loaded/saved to localStorage
+    let openCells, scores;
+
+    // Save/load helpers
+    function getSavedGame() {
+        try {
+            let raw = localStorage.getItem('bingoGameState');
+            if (!raw) return null;
+            let obj = JSON.parse(raw);
+            if (!obj.openCells || !obj.scores) return null;
+            if (obj.openCells.length !== 25 || obj.scores.length !== 25) return null;
+            return obj;
+        } catch {
+            return null;
+        }
+    }
+    function saveGame(open, sc) {
+        try {
+            localStorage.setItem('bingoGameState', JSON.stringify({openCells: open, scores: sc}));
+        } catch {}
+    }
+    function resetGame() {
+        localStorage.removeItem('bingoGameState');
+    }
+
+    // Update winner tally display
+    window.updateWinnerBox = function () {
+        let counts = {};
+        for (let p of participants) counts[p] = 0;
+        for (let i = 0; i < 25; i++) {
+            let val = scores[i];
+            if (val && participants.includes(val)) counts[val]++;
+        }
+        let max = 0, champs = [];
+        for (let p of participants) {
+            if (counts[p] > max) max = counts[p];
+        }
+        for (let p of participants) {
+            if (counts[p] === max && max > 0) champs.push(p);
+        }
+        let out = '';
+        if (max === 0) {
+            out = "<b>No answers scored yet.</b>";
+        } else {
+            out = `<b>Winner${champs.length>1?'s':''}:</b> &nbsp; ${champs.join(', ')}<br>`;
+            out += "<b>Score:</b> " + max + "<br>";
+        }
+        out += "<br><u>Live Tally:</u><br>";
+        out += participants.map(p => `${p}: <b>${counts[p]}</b>`).join(" &nbsp; ");
+        document.getElementById("winner-box").innerHTML = out;
+    };
+
+    // Make revealCell function globally available before table generation
+    window.revealCell = function (id, idx) {
+        let td = document.getElementById(id);
+        if (openCells[idx]) return;
+        td.classList.add("revealed");
+        let q = td.querySelector(".cell-question");
+        q.style.display = "inline";
+        let label = td.querySelector(".cell-label");
+        label.style.opacity = 0.10;
+        openCells[idx] = true;
+        saveGame(openCells, scores);
+    };
+
+    // Handle score select changes
+    window.onScoreSelect = function(idx) {
+        let val = document.getElementById('score-q'+idx).value;
+        scores[idx] = val;
+        saveGame(openCells, scores);
+        updateWinnerBox();
+    };
+
+    // Reset all game progress and UI
+    window.resetBingoGame = function() {
+        if (!window.confirm("Reset all progress, scores, and open questions?")) return;
+        openCells = Array(25).fill(false);
+        scores = Array(25).fill("");
+        resetGame();
+        for (let r=0; r<ROWS; r++) {
+            for(let c=0; c<COLS; c++) {
+                let idx = r*COLS + c;
+                let cellId = 'cell-'+r+'-'+c;
+                let td = document.getElementById(cellId);
+                td.classList.remove("revealed");
+                let qSpan = td.querySelector(".cell-question");
+                qSpan.style.display = "none";
+                let labelSpan = td.querySelector(".cell-label");
+                labelSpan.style.opacity = 0.20;
+            }
+        }
+        for(let i=0; i<25; i++) {
+            let sel = document.getElementById('score-q'+i);
+            sel.value = "";
+        }
+        updateWinnerBox();
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Load saved state or init
+        let saved = getSavedGame();
+        openCells = saved ? saved.openCells.slice() : Array(25).fill(false);
+        scores = saved ? saved.scores.slice() : Array(25).fill("");
+
+        // Build bingo table
+        let tableHTML = "<table>";
+        tableHTML += "<tr><th></th>";
+        for(let c=0; c<COLS; c++) tableHTML += `<th>${labelsHorizontal[c]}</th>`;
+        tableHTML += "</tr>";
+        let idx = 0;
+        for(let r=0; r<ROWS; r++) {
+            tableHTML += `<tr><th>${r+1}</th>`;
+            for(let c=0; c<COLS; c++) {
+                let cellId = `cell-${r}-${c}`;
+                let cellLabel = labelsHorizontal[c]+'-'+(r+1);
+                tableHTML += `
+                    <td id="${cellId}" class="${openCells[idx] ? 'revealed' : ''}" onclick="revealCell('${cellId}',${idx})">
+                        <div class="cell-content">
+                            <span class="cell-label" style="opacity:${openCells[idx] ? 0.10 : 0.20}">${cellLabel}</span>
+                            <span class="cell-question" style="display:${openCells[idx] ? 'inline' : 'none'}">${bingoQuestions[idx]}</span>
+                        </div>
+                    </td>
+                `;
+                idx++;
+            }
+            tableHTML += "</tr>";
+        }
+        tableHTML += "</table>";
+        document.getElementById("bingo-table-container").innerHTML = tableHTML;
+
+        // Build score panel
+        let scoreHTML = `<h2>Scoring Panel</h2>`;
+        for(let i=0; i<25; i++) {
+            scoreHTML += `
+                <div class="score-row">
+                    <div class="score-label">${cellLabels[i]}</div>
+                    <select onchange="onScoreSelect(${i})" id="score-q${i}">
+                        <option value="">---</option>
+                        ${participants.map(n => `<option value="${n}">${n}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+        }
+        scoreHTML += '<div id="winner-box"></div>';
+        scoreHTML += '<button id="reset-btn" onclick="resetBingoGame()">Reset Game</button>';
+        document.getElementById("score-panel").innerHTML = scoreHTML;
+
+        // Restore scores UI
+        for(let i=0; i<25; i++) {
+            document.getElementById('score-q'+i).value = scores[i];
+        }
+        updateWinnerBox();
+
+        // Build answer reference table
+        let refHTML = `<h2>Answer Reference for Host</h2><table>
+            <thead><tr><th>Cell</th><th>Participant</th><th>Answer Detail</th></tr></thead><tbody>`;
+        for(let item of answerReference) {
+            refHTML += `<tr><td>${item.label}</td><td>${item.participant}</td><td>${item.detail}</td></tr>`;
+        }
+        refHTML += `</tbody></table>`;
+        document.getElementById("answer-reference").innerHTML = refHTML;
+    });
+</script>
+</head>
+<body>
+    <h1>Balanced Spotlight Bingo</h1>
+    <div class="container">
+        <div id="bingo-table-container"></div>
+        <div id="score-panel"></div>
+    </div>
+    <div style="text-align:center; margin-top:22px; color:#444;">
+        Each player: pick a grid cell (e.g., <b>C-2</b>), click to reveal your question.<br />
+        When someone answers correctly, the host marks the winner for that question in the score panel.<br />
+        Progress and scores are saved and restored automatically. Use "Reset Game" to start fresh.
+    </div>
+    <div id="answer-reference" style="margin-top:50px;"></div>
+</body>
+</html>

@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
             crossorigin="anonymous">
-        <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+        <script src="https://sdk-cdn.mypurecloud.com/javascript/157.0.0/purecloud-platform-client-v2.min.js"></script>
         <script src="./dist/purecloud-client-app-sdk.js"></script>
         
 <script src="utils/oauth.js"></script>
@@ -26,7 +26,7 @@
         <style>
             body {
                 margin-left: 20px;
-                /* max-width: 450px; */
+                max-width: 450px;
             }
 
             .failure {

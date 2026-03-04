@@ -26,14 +26,19 @@ async function authenticate(client, pcEnvironment, state) {
     const { origin, protocol, host, pathname } = window.location;
     const redirectUrl = (origin || `${protocol}//${host}`) + pathname;
 
-
-    const codeVerifier = client.generatePKCECodeVerifier(128);
-    const codeChallenge = await client.computePKCECodeChallenge(codeVerifier);
-
-    return client.loginPKCEGrant(clientId, redirectUrl, codeVerifier, codeChallenge, { state })
+    // ✅ Let the SDK generate the verifier internally — correct signature
+    return client.loginPKCEGrant(clientId, redirectUrl, { state })
         .then(data => {
             window.history.replaceState(null, '', `${pathname}?${data.state}`);
         });
+
+    // const codeVerifier = client.generatePKCECodeVerifier(128);
+    // const codeChallenge = await client.computePKCECodeChallenge(codeVerifier);
+
+    // return client.loginPKCEGrant(clientId, redirectUrl, codeVerifier, codeChallenge, { state })
+    //     .then(data => {
+    //         window.history.replaceState(null, '', `${pathname}?${data.state}`);
+    //     });
     // return client.loginImplicitGrant(clientId, redirectUrl, { state })
     //     .then(data => {
     //         window.history.replaceState(null, '', `${pathname}?${data.state}`);
