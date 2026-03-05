@@ -26,7 +26,7 @@ async function authenticate(client, pcEnvironment, state) {
     const { origin, protocol, host, pathname } = window.location;
     const redirectUrl = (origin || `${protocol}//${host}`) + pathname;
 
-    // ✅ Let the SDK generate the verifier internally — correct signature
+    // Let the SDK generate the verifier internally — correct signature
     return client.loginPKCEGrant(clientId, redirectUrl, { state })
         .then(data => {
             window.history.replaceState(null, '', `${pathname}?${data.state}`);
@@ -80,6 +80,8 @@ function getQueryParameters() {
       gcTargetEnv: null,
       pcEnvironment: null
     };
+
+    // Implicit grant: params come back in the hash fragment
     if (window.location.hash && window.location.hash.indexOf('access_token') >= 0) {
       let oauthParams = extractParams(window.location.hash.substring(1));
       if (oauthParams && oauthParams.access_token && oauthParams.state) {
@@ -91,7 +93,18 @@ function getQueryParameters() {
         result.pcEnvironment = queryParams.pcEnvironment;
       }
     }
+
     const queryParams = extractParams(window.location.search.substring(1));
+
+    // PKCE grant: Genesys redirects back with ?code=...&state=... in the query string (not the hash).
+    // Recover gcHostOrigin/gcTargetEnv/pcEnvironment from the state param if not already set.
+    if (queryParams.state && (!result.gcHostOrigin && !result.gcTargetEnv && !result.pcEnvironment)) {
+      const stateParams = extractParams(unescape(queryParams.state));
+      result.gcHostOrigin = stateParams.gcHostOrigin || null;
+      result.gcTargetEnv = stateParams.gcTargetEnv || null;
+      result.pcEnvironment = stateParams.pcEnvironment || null;
+    }
+
     if (!result.gcHostOrigin) {
       result.gcHostOrigin = queryParams.gcHostOrigin;
     }
