@@ -157,18 +157,31 @@
         </p>
 
         <script>
-            // 1. Get the parameters from the current URL
-            const urlParams = new URLSearchParams(window.location.search);
+            // 1. Get the parameters to display — prefer the decoded original params from state
+            //    (set after PKCE redirect), falling back to raw query string for the initial load.
+            const rawParams = new URLSearchParams(window.location.search);
+            let displayParams;
+
+            const stateValue = rawParams.get('state');
+            const hasOAuthCallback = rawParams.has('code') && stateValue;
+
+            if (hasOAuthCallback) {
+                // PKCE callback: decode the original params out of the state value
+                displayParams = new URLSearchParams(decodeURIComponent(stateValue));
+            } else {
+                displayParams = rawParams;
+            }
+
             const tableBody = document.getElementById('tableBody');
             const noParamsMsg = document.getElementById('noParams');
 
             // 2. Check if there are any entries
-            if (urlParams.size === 0) {
+            if (![...displayParams].length) {
                 noParamsMsg.style.display = 'block';
                 document.getElementById('paramTable').style.display = 'none';
             } else {
                 // 3. Iterate through params and create rows
-                urlParams.forEach((value, name) => {
+                displayParams.forEach((value, name) => {
                     const row = document.createElement('tr');
                     
                     const nameCell = document.createElement('td');
