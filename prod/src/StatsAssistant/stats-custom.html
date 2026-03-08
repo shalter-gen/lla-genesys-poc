@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Statistics</title>
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            border: 2px solid #333;
+            padding: 20px;
+            text-align: center;
+            background-color: #f0f0f0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .refresh-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+            display: none;
+        }
+
+        #ewt {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        #timestamp,
+        #enabled {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="loginContainer" style="display: none;">
+            <!-- <button id="loginButton">Login</button> -->
+            <a href="#" id="loginLink">Login</a>
+
+        </div>
+
+        <div id="loadingMessage">Loading...</div>
+        <div id="content">
+            <div class="box">
+                <div class="title">
+                    <h2 id="refreshControl">Estimated Wait Time</h2>
+                    <img src="../Common/pngtree-white-refresh-icon-image_1338657.jpg" alt="Refresh" id="refreshButton"
+                        class="refresh-icon">
+                </div>
+                <div id="ewt">N/A</div>
+                <div id="enabled">Service Demand Bot: N/A</div>
+                <div id="updateTime"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const CLIENT_ID = '684c6d2c-285b-4597-a00e-3c71268bf2ce';
+        const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+    </script>
+    <!-- <script src="../Common/authentication.js"></script> -->
+
+    <script>
+        // https://mypurecloud.github.io/platform-client-sdk-javascript/
+        // https://github.com/MyPureCloud/platform-client-sdk-javascript?tab=readme-ov-file
+
+        // Configuration
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+        const load_count = parseInt(localStorage.getItem('LOAD_COUNT') || '0');
+        console.log(`Load count: ${load_count}`);
+
+        if (load_count == 0) {
+            localStorage.setItem('LOAD_COUNT', (load_count + 1).toString());
+            const authenticationLink = `https://login.mypurecloud.com.au/oauth/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}`;
+            console.log('First load - redirecting to authentication link:', authenticationLink);
+            window.location.href = authenticationLink;
+        } else {
+            console.log(`Authenticating through SDK using Client Library`);
+            localStorage.setItem('LOAD_COUNT', (0).toString());
+
+            const platformClient = require('platformClient');
+            console.log('SDK loaded: ', platformClient);
+
+            // Initialize the client
+            const client = platformClient.ApiClient.instance;
+            client.config.logger.log_level = client.config.logger.logLevelEnum.level.LTrace;
+            client.config.logger.log_format = client.config.logger.logFormatEnum.formats.JSON;
+            client.config.logger.log_request_body = true;
+            client.config.logger.log_response_body = true;
+            client.config.logger.log_to_console = true;
+            // client.config.logger.log_file_path = "/var/log/javascriptsdk.log";
+
+            client.config.logger.setLogger(); // To apply above changes
+
+            client.setEnvironment(platformClient.PureCloudRegionHosts.ap_southeast_2);
+            // client.setPersistSettings(true, 'monitored_chats');
+            client.setPersistSettings(true, TOKEN_KEY_NAME);
+
+            client.loginImplicitGrant(CLIENT_ID, REDIRECT_URI, { state: "INITIAL" })
+                .then((data) => {
+                    console.log('Authenticated:', data);
+                    document.cookie = `${TOKEN_KEY_NAME}=${data.accessToken}; SameSite=None; Secure`;
+                    console.log(`Saved ${TOKEN_KEY_NAME}:${data.accessToken}`);
+                })
+                .catch((err) => {
+                    // Handle failure response
+                    console.error('Error during authentication:', err);
+                });
+        }
+
+    </script>
+
+    <script src="../Common/token.js"></script>
+    <script src="stats-custom.js"></script>
+</body>
+
+</html>

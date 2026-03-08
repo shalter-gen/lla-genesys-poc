@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users activated on Multiple Queues</title>
+  <link rel="stylesheet" href="users_queues.css">
+  <link rel="stylesheet" href="../Common/admin-nav.css">
+  <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+
+<body>
+  <div id="loadingMessage">Loading...</div>
+  <div id="content">
+    <div class="header-container">
+      <div class="logo-title-group">
+      <div id="hamburgerMenu" class="hamburger-icon">
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+      </div>
+        <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo" id="adminLogo">
+        <h1>Users activated on multiple Queues</h1>
+      </div>
+    </div>
+    
+    <!-- Queue Selection Dropdowns -->
+    <div class="queue-selector-container">
+      <div class="queue-selector">
+        <label for="queue1Select">Queue 1:</label>
+        <select id="queue1Select">
+          <option value="">-- Select Queue 1 --</option>
+        </select>
+      </div>
+      
+      <div class="queue-selector">
+        <label for="queue2Select">Queue 2:</label>
+        <select id="queue2Select">
+          <option value="">-- Select Queue 2 --</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="button-container">
+      <button id="refreshButton">Refresh Data</button>
+      <button id="activateProdButton">Activate Queue 1 / Deactivate Queue 2</button>
+      <button id="activateTrainingButton">Deactivate Queue 1 / Activate Queue 2</button>
+      <button id="deactivateBothButton">Deactivate Both Queues</button>
+    </div>
+    
+    <table id="usersQueuesTable">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="selectAll">Select All</th>
+          <th>Email</th>
+          <th>Queue 1 Interactions</th>
+          <th>Queue 2 Interactions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table rows will be dynamically populated by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+  
+    <script>
+      const CLIENT_ID = '684c6d2c-285b-4597-a00e-3c71268bf2ce';
+      const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+    </script>
+    <script src="../Common/authentication-pkce.js"></script>
+    <script src="../Common/token.js"></script>
+    <script src="users_queues.js"></script>
+    <script src="../Common/admin-nav.js"></script>
+</body>
+
+</html>

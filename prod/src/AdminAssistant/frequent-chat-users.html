@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequent Chat Users</title>
+    <link rel="stylesheet" href="frequent-chat-users.css">
+    <link rel="stylesheet" href="../Common/admin-nav.css">
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+
+<body>
+    <!-- <div id="loadingMessage">Loading...</div> -->
+    <div id="content">
+        <div class="header-container">
+            <div class="logo-title-group">
+                <div id="hamburgerMenu" class="hamburger-icon">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </div>
+                <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo" id="adminLogo">
+
+                <h1>Frequent Chat Users - All</h1>
+            </div>
+        </div>
+
+        <div id="timeframeSelector">
+            <label for="timeframe">Select Timeframe:</label>
+            <select id="timeframe">
+                <option value="3hours">Past 3 Hours</option>
+                <option value="6hours">Past 6 Hours</option>
+                <option value="12hours">Past 12 Hours</option>
+                <option value="24hours">Past 24 Hours</option>
+                <option value="48hours">Past 48 Hours</option>
+                <option value="72hours">Past 72 Hours</option>
+                <option value="7days">Past 7 Days</option>
+                <option value="30days">Past 30 Days</option>
+            </select>
+        </div>
+
+        <div class="button-container">
+            <button id="refreshButton">Refresh</button>
+        </div>
+        <!-- <input type="text" id="searchBox" placeholder="Search users..."> -->
+        <table id="frequentUsersTable">
+            <thead>
+                <tr>
+                    <!-- Group 1 -->
+                    <th>Device Category</th>
+                    <th>Device Type</th>
+                    <th>Browser Family</th>
+                    <th>Browser Version</th>
+                    <!-- <th>Country</th> -->
+                    <th>Locality</th>
+                    <th>Region</th>
+                    <!-- <th>Geolocation Source</th> -->
+                    <th>IP Organization</th>
+                    <th>Number of IPs</th>
+                    <!-- <th>Customer ID Type</th> -->
+                    <!-- Group 2 -->
+                    <th>Oldest Chat</th>
+                    <th>Most Recent Chat</th>
+                    <th>Chats Attempts</th>
+                    <th>Days of Activity</th>
+                    <!-- <th>Avg/day</th> -->
+                    <th>Attempts (avg/day)</th>
+                    <th>Timedout</th>
+                    <th>SDB</th>
+                    <th>Queued Chats</th>
+                    <th>Abandoned</th>
+                    <th>Answered</th>
+                    <!-- Group 3 -->
+                    <th>Answered (avg/day)</th>
+                    <th>Answered AVG chat duration</th>
+                    <!-- <th>Today's Chats</th>
+                    <th>Today's Timedout</th>
+                    <th>Today's SDB Chats</th>
+                    <th>Today's Queued Chats</th>
+                    <th>Today's Answered</th>
+                    <th>Today's Abandoned</th> -->
+                </tr>
+            </thead>
+            <tbody id="frequentUsersBody"></tbody>
+        </table>
+    </div>
+    <script>
+        const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+    </script>
+    <script src="../Common/token.js"></script>
+    <script src="frequent-chat-users.js"></script>
+    <script src="../Common/admin-nav.js"></script>
+</body>
+
+</html>

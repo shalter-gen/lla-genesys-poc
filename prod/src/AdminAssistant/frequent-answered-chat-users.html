@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequent Answered Chat Users</title>
+    <link rel="stylesheet" href="frequent-chat-users.css">
+    <link rel="stylesheet" href="../Common/admin-nav.css">
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+
+<body>
+    <div id="content">
+        <div class="header-container">
+            <div class="logo-title-group">
+                <div id="hamburgerMenu" class="hamburger-icon">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </div>
+                <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo" id="adminLogo">
+                <h1>Frequent Chat Users - Answered</h1>
+            </div>
+        </div>
+
+        <div class="timeframe-container">
+            <div class="timeframe-select" id="timeframeSelector">
+                <label for="timeframe">Select Timeframe:</label>
+                <select id="timeframe">
+                    <option value="24hours">Past 24 Hours</option>
+                    <option value="48hours">Past 48 Hours</option>
+                    <option value="72hours">Past 72 Hours</option>
+                    <option value="7days">Past 7 Days</option>
+                    <option value="30days">Past 30 Days</option>
+                    <option value="60days">Past 60 Days</option>
+                    <option value="90days">Past 90 Days</option>
+                    <option value="120days">Past 120 Days</option>
+                    <option value="150days">Past 150 Days</option>
+                    <option value="180days">Past 180 Days</option>
+                </select>
+            </div>
+            <div class="media-select">
+                <label for="media">Media:</label>
+                <select id="media">
+                    <option value="all">All</option>
+                    <option value="sms">SMS</option>
+                    <option value="webchat">Web-Chat</option>
+                </select>
+            </div>
+        </div>
+        <button id="refreshButton">Refresh</button>
+        <table id="frequentUsersTable">
+            <thead>
+                <tr>
+                    <th>Group</th>
+                    <th>Device Category</th>
+                    <th>Device Type</th>
+                    <th>Device/Browser Info</th>
+                    <!-- <th>Browser Family</th>
+                <th>Browser Version</th> -->
+                    <th>Locality</th>
+                    <th>Region</th>
+                    <th>IP Organization</th>
+                    <th>Oldest Chat</th>
+                    <th>Most Recent Chat</th>
+                    <th>Answered Chats</th>
+                    <th>Days of Activity</th>
+                    <th>Average Chats per day</th>
+                    <th>Average Customer Duration</th>
+                    <th>Average Agent Talk Duration</th>
+                </tr>
+            </thead>
+            <tbody id="frequentUsersBody"></tbody>
+        </table>
+        <script>
+            const CLIENT_ID = '684c6d2c-285b-4597-a00e-3c71268bf2ce';
+            const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+        </script>
+        <script src="../Common/authentication-pkce.js"></script>
+        <script src="../Common/token.js"></script>
+        <script src="frequent-answered-chat-users.js"></script>
+        <script src="../Common/admin-nav.js"></script>
+</body>
+
+</html>

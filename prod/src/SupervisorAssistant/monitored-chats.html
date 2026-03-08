@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List of Monitored Chats</title>
+  <link rel="stylesheet" href="monitored-chats.css">
+  <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+
+<body>
+  <div class="header-container">
+
+    <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo" id="adminLogo">
+    <h1>Live Conversations</h1>
+
+    <button id="refreshButton">Refresh</button>
+    <div class="filter-controls">
+      <input type="checkbox" id="prodOnlyCheckbox" checked>
+      <label for="prodOnlyCheckbox">Show only Production</label>
+    </div>
+  </div>
+  <table id="monitoredChatsTable">
+    <thead>
+      <tr>
+        <th>Chat Start Date</th>
+        <th>Queue</th>
+        <th>Message Type</th>
+        <th>Conversation ID</th>
+        <th>External Tag</th>
+        <th>Interacting User(s)</th>
+        <th>Monitor Start Date</th>
+        <th>Monitoring User</th>
+        <!-- <th>Genesys Monitoring</th> -->
+        <th>Custom Monitoring</th>
+      </tr>
+    </thead>
+    <tbody id="monitoredChatsBody"></tbody>
+  </table>
+  <script>
+    const CLIENT_ID = '02c111eb-c3be-45b6-b89a-c370a4098d0f';
+    const TOKEN_KEY_NAME = 'LLA_Sup_Assist_Access_Token';
+  </script>
+  <script src="../Common/authentication-pkce.js"></script>
+  <script src="../Common/token.js"></script>
+  <script src="monitored-chats.js"></script>
+  <!-- <script src="../Common/admin-menu.js"></script> -->
+</body>
+
+</html>

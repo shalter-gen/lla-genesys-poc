@@ -1,0 +1,149 @@
+@import url('../Common/admin-nav.css');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+#loadingMessage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+}
+
+#content {
+    display: none;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgb(209 215 249);
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #eee;
+}
+
+.header-container h1 {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    font-size: 1.5em;
+    white-space: nowrap;
+}
+
+.logo-title-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+#searchBox {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+.sortable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 20px;
+}
+
+.sortable:hover {
+    background-color: #f5f5f5;
+}
+
+.sort-asc::after {
+    content: "▲";
+    position: absolute;
+    right: 5px;
+}
+
+.sort-desc::after {
+    content: "▼";
+    position: absolute;
+    right: 5px;
+}
+
+.timeframe-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.timeframe-select,
+.from-now-container,
+.date-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+select, input[type="date"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.download-button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    margin-left: 10px;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,246 @@
+﻿Model,Name,MAC address,Public IP,Uplink IP (Port 1),Uplink IP (Port 2),Tags,Network,Serial number,Clients,Usage,Contacted at,Configuration status
+MX67,08:f1:b3:65:61:21,08:f1:b3:65:61:21,159.196.220.204,192.168.1.106,,,VIC - Morwell,Q2FY-AQYK-B7PG,0,None,2 minutes ago,Up to date
+MX67,08:f1:b3:66:15:7b,08:f1:b3:66:15:7b,110.142.97.133,192.168.15.2,,,VIC-LLD-Camperdown,Q2FY-H2AW-CQC2,11,5.23 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:15:b7,08:f1:b3:66:15:b7,120.151.195.94,192.168.15.2,,,VIC-LLD-Colac,Q2FY-H2FM-FLRY,16,7.58 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:1b:45,08:f1:b3:66:1b:45,110.142.110.63,192.168.15.2,,,VIC-LLD-Drysdale,Q2FY-H86F-Z795,16,5.35 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:1f:b9,08:f1:b3:66:1f:b9,165.228.184.115,192.168.15.2,,,VIC-LLD-Portland,Q2FY-HCVC-3M4U,8,6.10 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:26:c1,08:f1:b3:66:26:c1,165.228.34.134,192.168.15.2,,,VIC-LLD-Newcomb,Q2FY-HMGV-427G,13,4.42 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:26:d9,08:f1:b3:66:26:d9,165.228.16.224,192.168.15.2,,,VIC-LLD-Warrnambool Warehouse,Q2FY-HMPF-K4Z7,10,2.95 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:27:0f,08:f1:b3:66:27:0f,203.45.75.235,192.168.15.5,,,VIC-LLD-Warrnambool Shop,Q2FY-HN23-TFAV,3,5.37 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:28:1d,08:f1:b3:66:28:1d,120.151.226.68,192.168.15.2,,,VIC-LLD-Grovedale,Q2FY-HP4F-2QJM,14,6.98 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:2a:93,08:f1:b3:66:2a:93,101.178.218.133,192.168.15.2,,,NSW-LLD-Tamworth No Use,Q2FY-HRWS-2BBT,0,None,13 months ago,Not up to date
+MX67,08:f1:b3:66:2b:17,08:f1:b3:66:2b:17,110.142.35.156,110.142.35.156,,,VIC-LLD-Moonee Ponds,Q2FY-HSM3-Y63T,11,6.08 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:2d:69,08:f1:b3:66:2d:69,165.228.139.46,165.228.139.46,,,VIC-LLD-Breakwater,Q2FY-HV7R-QCY8,23,21.11 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:31:17,08:f1:b3:66:31:17,110.143.109.135,192.168.15.2,, recently-added ,VIC-LLD-Port Fairy,Q2FY-HZB4-QGBQ,11,12.14 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:38:91,08:f1:b3:66:38:91,101.187.15.218,192.168.15.2,,,VIC-LLD-Belmont,Q2FY-J9AR-VJXB,10,5.82 GB,2 minutes ago,Up to date
+MX67,08:f1:b3:66:3a:41,08:f1:b3:66:3a:41,110.142.87.91,110.142.87.91,,,NSW-LLD-Armidale,Q2FY-JBA3-WRLA,14,13.48 GB,2 minutes ago,Up to date
+MR33,68:3a:1e:32:04:93,68:3a:1e:32:04:93,110.142.35.156,192.168.128.3,, recently-added ,VIC-LLD-Moonee Ponds,Q2PD-4P7L-VEB2,7,5.21 GB,2 minutes ago,Up to date
+MR33,68:3a:1e:32:30:6e,68:3a:1e:32:30:6e,27.32.231.106,192.168.128.3,, recently-added ,VIC-Albans,Q2PD-C3LT-Q36Z,4,18.29 GB,2 minutes ago,Up to date
+MR33,68:3a:1e:32:30:c5,68:3a:1e:32:30:c5,14.200.94.30,192.168.128.6,,,NSW-Lismore,Q2PD-C7G2-UZYW,12,23.61 GB,2 minutes ago,Up to date
+MR33,68:3a:1e:32:31:09,68:3a:1e:32:31:09,101.187.252.144,192.168.128.3,,,NSW-LLD-Ballina,Q2PD-CBES-QSTV,6,3.57 GB,2 minutes ago,Up to date
+MR33,68:3a:1e:32:31:7d,68:3a:1e:32:31:7d,14.200.94.30,192.168.128.7,,,NSW-Lismore,Q2PD-CGG6-DBR8,5,18.98 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:02:28,68:3a:1e:63:02:28,60.240.251.22,192.168.128.2,,,QLD-MAROOCHYDORE,Q2SX-L98Z-ZX8F,17,41.31 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:1a:a8,68:3a:1e:63:1a:a8,14.201.212.242,10.120.3.4,,,NSW-Balgowlah,Q2SX-LNTB-AE45,13,104.75 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:6f:e8,68:3a:1e:63:6f:e8,123.243.29.158,10.120.8.2,,,NSW-Gordon,Q2SX-TBXE-VCDA,19,200.47 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:71:08,68:3a:1e:63:71:08,123.243.29.158,10.120.11.14,,,NSW-Parramatta,Q2SX-TC6E-E4FM,23,67.29 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:75:68,68:3a:1e:63:75:68,14.203.218.174,192.168.128.3,, recently-added ,VIC NARRM,Q2SX-VKWH-R3NR,20,54.26 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:79:08,68:3a:1e:63:79:08,60.240.251.46,192.168.128.2,,,NSW-Sydney CBD,Q2SX-VMFW-HMTL,21,138.24 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:7c:08,68:3a:1e:63:7c:08,60.242.246.10,192.168.128.3,, 24P recently-added ,QLD-Brisbane-AnnSt,Q2SX-VPGY-EHVL,16,32.30 GB,2 minutes ago,Up to date
+MS210-24P,68:3a:1e:63:7e:08,68:3a:1e:63:7e:08,27.33.91.218,192.168.128.2,,,SA-Adelaide,Q2SX-VQFC-X8BL,15,88.69 GB,2 minutes ago,Up to date
+MR33,AP MR33 Office Central,68:3a:1e:32:30:d5,60.240.175.102,192.168.128.2,, recently-added ,NSW-LLD-Islington,Q2PD-C87Z-G4VG,32,26.37 GB,2 minutes ago,Up to date
+MR36,AP MR36 Counselling,e4:55:a8:ad:8e:ad,60.240.175.102,192.168.128.6,,,NSW-LLD-Islington,Q3KA-3CU3-TY45,0,None,4.1 months ago,Not up to date
+MR36,AP MR36 Finance Room,e4:55:a8:ad:90:ee,60.240.175.102,192.168.128.5,,,NSW-LLD-Islington,Q3KA-9ELW-8EUN,29,31.03 GB,2 minutes ago,Up to date
+MS120-24,AU01-MS120-SW-01,34:56:fe:33:18:c8,123.243.29.158,10.40.2.6,,,NSW-DC Sydney,Q2DX-JALQ-S7U4,3,1.54 TB,2 minutes ago,Up to date
+MS120-24,AU01-MS120-SW-02,34:56:fe:32:8c:46,123.243.29.158,10.40.2.7,,,NSW-DC Sydney,Q2DX-A4UE-P36U,2,175.12 GB,2 minutes ago,Up to date
+MS120-24,AU01-MS120-SW-03,34:56:fe:32:a7:1c,123.243.29.158,10.40.7.6,,,NSW-DC Sydney,Q2DX-B4M4-GH2V,42,471.22 GB,2 minutes ago,Up to date
+MS120-24,AU01-MS120-SW-04,0c:8d:db:0a:8e:d6,123.243.29.158,10.40.7.7,,,NSW-DC Sydney,Q2DX-PX8K-SZUX,8,102.15 GB,2 minutes ago,Up to date
+MX84,AU01-MX84-MX-01,ac:17:c8:22:bd:10,123.243.29.158,10.40.7.4,,,NSW-DC Sydney,Q2PN-8BNQ-RL82,2,4.29 GB,2 minutes ago,Up to date
+MX84,AU01-MX84-MX-02,ac:17:c8:22:d4:a0,123.243.29.158,10.40.7.5,,,NSW-DC Sydney,Q2PN-2RCV-W3XU,0,None,2 minutes ago,Up to date
+MS120-24,AU02-MS120-SW-01,34:56:fe:32:18:06,14.201.212.242,10.50.2.6,,,VIC-DC Melbourne,Q2DX-3JSW-PE4F,3,736.50 GB,2 minutes ago,Up to date
+MS120-24,AU02-MS120-SW-02,34:56:fe:b3:e9:e4,14.201.212.242,10.50.2.7,,,VIC-DC Melbourne,Q2DX-DTE5-3YEP,2,106.00 GB,2 minutes ago,Up to date
+MS120-24,AU02-MS120-SW-03,34:56:fe:34:fb:3e,14.201.212.242,10.50.7.6,,,VIC-DC Melbourne,Q2DX-KWKG-GHXB,24,100.98 GB,2 minutes ago,Up to date
+MS120-24,AU02-MS120-SW-04,34:56:fe:33:15:bc,14.201.212.242,10.50.7.7,,,VIC-DC Melbourne,Q2DX-J3TF-XA5Y,8,23.30 GB,2 minutes ago,Up to date
+MX84,AU02-MX84-MX-01,ac:17:c8:22:c6:30,14.201.212.242,10.50.7.4,,,VIC-DC Melbourne,Q2PN-6B4J-ZSM4,2,2.50 GB,2 minutes ago,Up to date
+MX84,AU02-MX84-MX-02,ac:17:c8:23:00:b0,14.201.212.242,10.50.7.5,,,VIC-DC Melbourne,Q2PN-P73Z-K8HR,0,None,2 minutes ago,Up to date
+MS120-8FP,Bathurst-MS120-SW-01,ac:17:c8:65:da:09,14.201.212.242,10.120.4.8,, recently-added ,NSW-Bathurst,Q2CX-692T-SNVP,9,20.53 GB,2 minutes ago,Up to date
+MS210-48LP,Bottom-SW2,68:3a:1e:70:c1:f0,60.240.51.190,192.168.200.3,,,NSW-Sydney National Office Level 12,Q2UX-6WRG-NVLW,261,406.02 GB,2 minutes ago,Up to date
+MR36,BottomSW29 MR36,e4:55:a8:94:4c:5c,60.240.51.190,192.168.200.14,,,NSW-Sydney National Office Level 12,Q3AJ-KPZ3-VVZC,67,23.08 GB,2 minutes ago,Up to date
+MX67,Bryon Bay Router,ac:17:c8:cf:dd:47,120.151.205.72,192.168.15.2,,,NSW-LLD-Byron Bay,Q2FY-BN6N-UTAS,8,10.56 GB,2 minutes ago,Up to date
+MR33,Byron Bay AP,68:3a:1e:32:30:e8,120.151.205.72,192.168.128.4,,,NSW-LLD-Byron Bay,Q2PD-C98M-PDAQ,4,4.20 GB,2 minutes ago,Up to date
+MS130-8P,Byron Bay SW,bc:33:40:c0:d2:f7,120.151.205.72,192.168.128.3,,,NSW-LLD-Byron Bay,Q4CB-BBQW-2BAW,7,10.40 GB,2 minutes ago,Up to date
+MX67,Cardiff Router,ac:17:c8:d0:19:2f,120.151.132.89,192.168.15.3,, recently-added ,NSW-LLD-Cardiff,Q2FY-Z97K-94F5,5,3.64 GB,2 minutes ago,Up to date
+MS130-8P,Cardiff SW,bc:33:40:c0:e9:de,120.151.132.89,192.168.128.3,, recently-added ,NSW-LLD-Cardiff,Q4CB-WUFQ-ESC8,5,7.25 GB,2 minutes ago,Up to date
+MR33,Casino AP,68:3a:1e:32:30:ed,203.45.55.88,192.168.128.3,,,NSW-LLD-Casino,Q2PD-C9KJ-XDW5,9,15.28 GB,2 minutes ago,Up to date
+MX67,Casino Router,ac:17:c8:d0:1b:cf,203.45.55.88,203.45.55.88,,,NSW-LLD-Casino,Q2FY-ZFD7-YGHA,13,15.81 GB,2 minutes ago,Up to date
+MS130-8P,Casino SW,bc:33:40:c0:d9:8a,203.45.55.88,192.168.128.2,, recently-added ,NSW-LLD-Casino,Q4CB-VFQK-5JUE,12,15.69 GB,2 minutes ago,Up to date
+MR36,East Maitland AP,e4:55:a8:94:4a:67,144.139.0.61,192.168.128.2,,,NSW-LLD-East Maitland,Q3AJ-LCEH-HAWQ,10,3.40 GB,2 minutes ago,Up to date
+MX67,East Maitland Router,ac:17:c8:cf:f7:3f,144.139.0.61,144.139.0.61,,,NSW-LLD-East Maitland,Q2FY-WK9J-KA5K,15,6.26 GB,2 minutes ago,Up to date
+MS130-8P,East Maitland SW,bc:33:40:c0:c8:86,144.139.0.61,192.168.128.3,,,NSW-LLD-East Maitland,Q4CB-SCKP-ERNC,14,6.10 GB,2 minutes ago,Up to date
+MS130-8P,EastGosfordSW,bc:33:40:c0:db:fd,120.151.236.153,192.168.128.2,,,NSW-LLD-East Gosford,Q4CB-A29E-3LQC,14,5.62 GB,2 minutes ago,Up to date
+MR33,Goonellabah AP,68:3a:1e:32:30:a0,120.150.136.75,192.168.128.3,,,NSW-LLD-Goonellabah,Q2PD-C5WL-CA6W,11,21.09 GB,2 minutes ago,Up to date
+MX67,Goonellabah MX67,08:f1:b3:65:46:ed,120.150.136.75,192.168.15.3,,,NSW-LLD-Goonellabah,Q2FY-9UA2-C9AV,13,21.81 GB,2 minutes ago,Up to date
+MS130-8P,Goonellabah SW,bc:33:40:c0:de:7b,120.150.136.75,192.168.128.2,, recently-added ,NSW-LLD-Goonellabah,Q4CB-GSF5-75PA,12,21.70 GB,2 minutes ago,Up to date
+MR33,Gosford AP,68:3a:1e:32:11:e9,101.187.252.149,192.168.128.3,, recently-added ,NSW-LLD-Gosford,Q2PD-VYEH-P938,4,97.71 GB,2 minutes ago,Up to date
+MX67,Gosford MX67,ac:17:c8:cf:fc:e5,101.187.252.149,101.187.252.149,,,NSW-LLD-Gosford,Q2FY-X2TS-35SN,7,98.17 GB,2 minutes ago,Up to date
+MS130-8P,Gosford SW,bc:33:40:c0:c6:c3,101.187.252.149,192.168.128.2,, recently-added ,NSW-LLD-Gosford,Q4CB-69JX-6GEU,6,98.05 GB,2 minutes ago,Up to date
+MR33,Hamilton North AP,68:3a:1e:32:10:7a,110.142.215.211,192.168.128.4,, recently-added ,NSW-LLD-Hamilton North,Q2PD-VGL3-73YB,8,1.94 GB,2 minutes ago,Up to date
+MX67,Hamilton North MX67,ac:17:c8:d0:1d:7f,110.142.215.211,192.168.15.2,, recently-added ,NSW-LLD-Hamilton North,Q2FY-ZK7D-W6EL,12,7.62 GB,2 minutes ago,Up to date
+MS130-8P,Hamilton North SW,bc:33:40:c0:cf:c9,110.142.215.211,192.168.128.3,,,NSW-LLD-Hamilton North,Q4CB-9DU2-EZ7G,11,7.43 GB,2 minutes ago,Up to date
+MS130-8P,IT-SW02,bc:33:40:c1:04:1f,,,,,NSW-Sydney National Office Level 12,Q4CB-A328-WK7C,0,None,never,Not up to date
+MS120-24P,Islington office SW01,00:84:1e:0c:62:8f,60.240.175.102,192.168.128.4,,,NSW-LLD-Islington,Q4DD-SATB-XZZK,62,31.27 GB,2 minutes ago,Up to date
+MS210-24P,LA-NSW-LIS-MS-02,68:3a:1e:63:79:68,14.200.94.30,10.110.99.19,, recently-added ,NSW-Lismore,Q2SX-VMTB-D9D9,20,106.99 GB,2 minutes ago,Up to date
+MS120-8FP,LA-NSW-PortM-MS-02,ac:17:c8:65:c7:37,123.243.29.158,10.120.12.8,, recently-added ,NSW-Port Macquarie,Q2CX-4AA6-F8HH,6,39.03 GB,2 minutes ago,Up to date
+MX84,LLA NAT SYD RT01,e0:cb:bc:9d:4a:c0,60.240.51.190,60.240.51.190,, LLA-NationalOfficeMX ,NSW-Sydney National Office Level 12,Q2PN-DXZH-4W7C,359,956.72 GB,2 minutes ago,Up to date
+MR36,LLD AP,e4:55:a8:ad:91:92,60.241.125.142,192.168.128.3,, recently-added ,VIC-LLD-Geelong,Q3KA-Y732-5RF9,16,53.86 GB,2 minutes ago,Up to date
+MS210-24P,LLD SW,68:3a:1e:63:7d:28,60.241.125.142,192.168.128.5,, recently-added ,VIC-LLD-Geelong,Q2SX-VQ4L-EDEE,20,74.55 GB,2 minutes ago,Up to date
+MR33,LLD_NSW_Cardiff_AP,68:3a:1e:32:34:34,120.151.132.89,192.168.128.4,, recently-added ,NSW-LLD-Cardiff,Q2PD-DG27-BDKZ,2,16.1 MB,2 minutes ago,Up to date
+MS210-24P,Lifeline SW,68:3a:1e:63:7d:a8,60.241.125.142,192.168.128.18,, recently-added ,VIC-LLD-Geelong,Q2SX-VQ8W-MJJV,23,27.20 GB,2 minutes ago,Up to date
+MR33,Lismore AP,68:3a:1e:32:30:b3,101.187.252.154,192.168.128.3,, recently-added ,NSW-LLD-Lismore,Q2PD-C6MX-LV7W,13,5.49 GB,2 minutes ago,Up to date
+MX67,Lismore MX67,ac:17:c8:d0:15:21,101.187.252.154,101.187.252.154,,,NSW-LLD-Lismore,Q2FY-YXWX-T645,17,8.52 GB,2 minutes ago,Up to date
+MS130-8P,Lismore SW,bc:33:40:c0:f8:90,101.187.252.154,192.168.128.2,,,NSW-LLD-Lismore,Q4CB-4SQD-ENUN,16,8.39 GB,2 minutes ago,Up to date
+MR33,Maitland AP,68:3a:1e:32:11:66,144.139.2.171,192.168.128.4,,,NSW-LLD-Maitland,Q2PD-VSAE-CR4J,26,7.21 GB,2 minutes ago,Up to date
+MX67,Maitland MX67,ac:17:c8:cf:e3:8f,144.139.2.171,144.139.2.171,,,NSW-LLD-Maitland,Q2FY-UY84-BLN8,33,15.33 GB,2 minutes ago,Up to date
+MS130-8P,Maitland SW,bc:33:40:c0:c3:a0,144.139.2.171,192.168.128.3,,,NSW-LLD-Maitland,Q4CB-NZDG-226M,32,15.18 GB,2 minutes ago,Up to date
+MR36,MeetingRoom11,e4:55:a8:ad:8e:b2,60.240.51.190,192.168.200.26,,,NSW-Sydney National Office Level 12,Q3KA-C6F8-V734,75,37.98 GB,2 minutes ago,Up to date
+MS210-48LP,Middle-SW2,68:3a:1e:70:b8:18,60.240.51.190,10.60.100.209,, LLA-NationalOffce-SW1 ,NSW-Sydney National Office Level 12,Q2UX-6QEY-ZPN5,264,356.09 GB,2 minutes ago,Up to date
+MR33,MiddleSW1-MR33-6,68:3a:1e:32:06:b6,120.151.236.153,192.168.128.3,, recently-added ,NSW-LLD-East Gosford,Q2PD-RU97-KEFV,9,1.31 GB,2 minutes ago,Up to date
+MR33,MiddleSW21-MR33-4,68:3a:1e:32:10:57,144.139.1.221,192.168.128.2,, recently-added ,NSW-LLD-Toronto,Q2PD-VF69-DHHE,13,11.69 GB,2 minutes ago,Up to date
+MR36,MiddleSW21-MR36-4,e4:55:a8:94:4c:b5,60.240.51.190,192.168.200.13,,,NSW-Sydney National Office Level 12,Q3AJ-Z6RB-DYWB,87,25.19 GB,2 minutes ago,Up to date
+MR36,MiddleSW35-MR36-1,e4:55:a8:94:4c:ad,60.240.51.190,192.168.200.17,,,NSW-Sydney National Office Level 12,Q3AJ-J4GR-CSK8,87,6.03 GB,2 minutes ago,Up to date
+MS120-8FP,NSW Armidale SW,bc:33:40:bf:1d:f9,123.243.29.158,10.120.42.5,,,NSW-ARMIDALE,Q4AC-L3DH-JX5D,3,45.8 MB,2 minutes ago,Up to date
+MX67,NSW-LLD-Islington MX67,ac:17:c8:cf:f0:6d,60.240.175.102,60.240.175.102,, recently-added ,NSW-LLD-Islington,Q2FY-VZWZ-428Q,67,102.25 GB,2 minutes ago,Up to date
+MX67,NSW-Mudgee MX67,ac:17:c8:cf:d4:77,101.173.228.13,192.168.0.113,, recently-added ,NSW-Mudgee ,Q2FY-AWK6-PEVT,0,None,57 days ago,Not up to date
+MS130-8P,NSW-Mudgee-SW,bc:33:40:c1:15:2e,1.145.28.3,192.168.1.37,,,NSW-Mudgee ,Q4CB-KU3Q-EUPK,0,None,42 days ago,Up to date
+MX67,NSW-Nth-Sydney-R,08:f1:b3:65:61:15,14.200.176.42,14.200.176.42,,,NSW-Nth-Sydney,Q2FY-AQVW-59EQ,17,66.17 GB,2 minutes ago,Up to date
+MS120-24P,NSW-Nth-Sydney-SW,00:84:1e:11:ce:b5,14.200.176.42,10.110.98.2,,,NSW-Nth-Sydney,Q4DD-PUKJ-MT77,15,29.57 GB,2 minutes ago,Up to date
+MX67,NSW-Sydney Level 9 MX,ac:17:c8:cf:fd:f3,14.200.133.78,14.200.133.78,,,NSW-Sydney National Office Level 9,Q2FY-X4UW-7BVJ,67,68.63 GB,2 minutes ago,Up to date
+MS120-24P,National Office Level 9 SW,00:84:1e:0c:50:18,14.200.133.78,10.110.90.3,,,NSW-Sydney National Office Level 9,Q4DD-MNQD-SYZ6,67,68.38 GB,2 minutes ago,Up to date
+MR33,Nelson Bay AP,68:3a:1e:32:2e:a7,110.143.93.202,192.168.128.3,,,NSW-LLD-Nelson Bay,Q2PD-BG2G-VVYM,13,2.99 GB,2 minutes ago,Up to date
+MX67,Nelson Bay Router,08:f1:b3:66:3a:6b,110.143.93.202,192.168.15.2,,,NSW-LLD-Nelson Bay,Q2FY-JBFU-YA89,18,6.26 GB,2 minutes ago,Up to date
+MS130-8P,Nelson Bay SW,bc:33:40:c0:de:e9,110.143.93.202,192.168.128.2,, recently-added ,NSW-LLD-Nelson Bay,Q4CB-EUDN-2342,17,6.15 GB,2 minutes ago,Up to date
+MS210-24P,Nowra-24Ports,68:3a:1e:63:6a:28,123.243.29.158,10.120.17.9,, recently-added ,NSW-Nowra,Q2SX-TB2V-C2GP,14,32.82 GB,2 minutes ago,Up to date
+MS130-8P,Orange-new SW,bc:33:40:c0:b5:30,60.240.51.190,192.168.200.30,, recently-added ,NSW-Orange,Q4CB-4G6H-SD38,0,None,11.3 weeks ago,Not up to date
+MX67,QLD-IpswichMobile1-MX,ac:17:c8:cf:f0:f7,1.146.92.121,192.168.5.30,, recently-added ,QLD-IPSwich-Mobile1,Q2FY-W34C-DSE8,0,None,41 days ago,Up to date
+MX67,QLD-IpswichMobile2-MX,ac:17:c8:cf:fd:45,1.146.95.99,192.168.1.79,, recently-added ,QLD-Ipswich-Mobile2,Q2FY-X3D3-R4EN,9,11.08 GB,2 minutes ago,Up to date
+MS120-8FP,QLD-IpswichMobile2-SW,ac:17:c8:65:e5:e5,1.146.95.99,192.168.128.2,, recently-added ,QLD-Ipswich-Mobile2,Q2CX-7HE3-6XAS,8,10.73 GB,2 minutes ago,Up to date
+MS120-8FP,QLD-Mackay-SW,ac:17:c8:65:d8:9e,14.202.42.202,192.168.128.3,, recently-added ,QLD-Mackay,Q2CX-64YM-ZSXX,5,6.70 GB,2 minutes ago,Up to date
+MX67,QLD-Southport,ac:17:c8:cf:e3:41,60.240.193.74,60.240.193.74,, recently-added ,QLD-SouthPort,Q2FY-UXNE-BPEY,13,36.78 GB,2 minutes ago,Up to date
+MS120-8FP,QLD-Southport-SW,ac:17:c8:65:e3:04,60.240.193.74,192.168.128.7,, recently-added ,QLD-SouthPort,Q2CX-77HA-5P35,12,36.42 GB,2 minutes ago,Up to date
+MR33,Raymond Terrace AP,ac:17:c8:11:b5:b8,58.162.221.134,192.168.128.4,, recently-added ,NSW-LLD-Raymond Terrace,Q2PD-RB28-5CAN,4,1.06 GB,2 minutes ago,Up to date
+MX67,Raymond Terrace MX67,ac:17:c8:cf:dd:17,58.162.221.134,192.168.15.3,,,NSW-LLD-Raymond Terrace,Q2FY-BMRG-25RE,5,3.71 GB,2 minutes ago,Up to date
+MS130-8P,Raymond Terrace SW,bc:33:40:c0:da:7c,58.162.221.134,192.168.128.3,,,NSW-LLD-Raymond Terrace,Q4CB-KCL4-U4JD,4,3.54 GB,2 minutes ago,Up to date
+MR33,Rutherford AP,68:3a:1e:32:07:1e,110.143.93.191,192.168.128.3,, recently-added ,NSW-LLD-Rutherford,Q2PD-RZYG-XJLZ,10,6.94 GB,2 minutes ago,Up to date
+MX67,Rutherford MX67,ac:17:c8:cf:e6:53,110.143.93.191,192.168.15.3,,,NSW-LLD-Rutherford,Q2FY-V72W-S5SP,13,7.42 GB,2 minutes ago,Up to date
+MS130-8P,Rutherford SW,bc:33:40:c0:fe:c0,110.143.93.191,192.168.128.2,, recently-added ,NSW-LLD-Rutherford,Q4CB-9NLZ-9VXB,12,7.25 GB,2 minutes ago,Up to date
+MR33,Singleton AP,68:3a:1e:32:10:59,110.142.92.207,192.168.128.4,, recently-added ,NSW-LLD-Singleton,Q2PD-VF6F-BK8Y,7,1.80 GB,2 minutes ago,Up to date
+MX67,Singleton MX67,ac:17:c8:cf:dd:2f,110.142.92.207,192.168.15.2,,,NSW-LLD-Singleton,Q2FY-BMZV-W7S8,12,7.01 GB,2 minutes ago,Up to date
+MS130-8P,Singleton SW,bc:33:40:c0:e7:29,110.142.92.207,192.168.128.3,,,NSW-LLD-Singleton,Q4CB-9S93-YAHR,12,6.88 GB,2 minutes ago,Up to date
+MS210-48LP,TOP-SW2,08:f1:b3:11:80:f1,60.240.51.190,10.60.101.143,,,NSW-Sydney National Office Level 12,Q4AU-9VX4-JECM,261,348.06 GB,2 minutes ago,Up to date
+MR36,Thorton AP,e4:55:a8:94:4a:54,110.142.141.25,192.168.128.4,,,NSW-LLD-Thorton,Q3AJ-78TC-TPJR,19,13.22 GB,2 minutes ago,Up to date
+MX67,Thorton MX67,ac:17:c8:cf:dd:a7,110.142.141.25,192.168.15.2,,,NSW-LLD-Thorton,Q2FY-BNXH-UEW4,25,16.55 GB,2 minutes ago,Up to date
+MS130-8P,Thorton SW,bc:33:40:c0:d2:3c,110.142.141.25,192.168.128.3,,,NSW-LLD-Thorton,Q4CB-3J4P-SHY9,24,16.43 GB,2 minutes ago,Up to date
+MS210-48LP,Top-SW1,68:3a:1e:70:bb:28,60.240.51.190,10.60.101.55,,,NSW-Sydney National Office Level 12,Q2UX-6SNE-AG6F,260,488.82 GB,2 minutes ago,Up to date
+MS120-24P,VIC-Albans-SW,00:84:1e:0c:7e:8a,27.32.231.106,192.168.128.2,,,VIC-Albans,Q4DD-DPG7-HJ43,17,33.22 GB,2 minutes ago,Up to date
+MS210-24P,VIC-Bendigo,68:3a:1e:63:7c:68,125.254.17.46,192.168.128.3,, recently-added ,VIC-Bendigo,Q2SX-VPSE-FT2C,13,17.90 GB,2 minutes ago,Up to date
+MS210-24P,VIC-Prahran,68:3a:1e:63:7c:a8,14.201.213.222,192.168.128.5,, recently-added ,VIC-Prahran,Q2SX-VPUZ-FXTS,12,73.24 GB,2 minutes ago,Up to date
+MS210-24P,WA-Perth-SW,68:3a:1e:63:6a:a8,124.148.246.178,192.168.128.2,,,WA-Perth,Q2SX-TB55-YPTS,35,183.09 GB,2 minutes ago,Up to date
+MR33,Wallsend AP,68:3a:1e:32:30:2f,144.139.1.125,192.168.128.3,, recently-added ,NSW-LLD-Wallsend,Q2PD-BZD8-7T8L,10,5.06 GB,2 minutes ago,Up to date
+MX67,Wallsend MX67,ac:17:c8:d0:1d:6d,144.139.1.125,192.168.15.2,,,NSW-LLD-Wallsend,Q2FY-ZK3N-2FAV,13,11.89 GB,2 minutes ago,Up to date
+MS130-8P,Wallsend SW,bc:33:40:c0:e1:f6,144.139.1.125,192.168.128.2,,,NSW-LLD-Wallsend,Q4CB-H2VG-TGFX,13,11.71 GB,2 minutes ago,Up to date
+MR36,Warners Bay AP,e4:55:a8:94:4a:44,110.142.92.157,192.168.110.86,,,NSW-LLD-Warners Bay,Q3AJ-4UBP-TC5B,0,None,38 days ago,Not up to date
+MX67,Warners Bay MX67,ac:17:c8:cf:e5:a5,110.142.92.157,192.168.15.2,,,NSW-LLD-Warners Bay,Q2FY-V59S-JJ6K,5,6.93 GB,2 minutes ago,Up to date
+MS130-8P,Warners Bay SW,bc:33:40:c0:cb:bf,110.142.92.157,192.168.128.3,,,NSW-LLD-Warners Bay,Q4CB-VCPL-PKGP,4,6.77 GB,2 minutes ago,Up to date
+MR33,Woy Woy AP,68:3a:1e:32:11:5f,144.139.2.88,192.168.128.3,, recently-added ,NSW-LLD-Woy Woy,Q2PD-VS2H-62AE,11,742.5 MB,2 minutes ago,Up to date
+MX67,Woy Woy MX67,ac:17:c8:cf:e6:b3,144.139.2.88,192.168.15.10,,,NSW-LLD-Woy Woy,Q2FY-V84U-FD74,15,5.97 GB,2 minutes ago,Up to date
+MS130-8P,Woy Woy SW,bc:33:40:c0:fe:ec,144.139.2.88,192.168.128.2,,,NSW-LLD-Woy Woy,Q4CB-6623-V4FZ,14,5.77 GB,2 minutes ago,Up to date
+MS210-24P,a8:46:9d:a3:d7:ff,a8:46:9d:a3:d7:ff,123.243.29.158,10.120.41.12,, recently-added ,NSW-Bondi,Q4AS-SMHE-CPYY,16,72.53 GB,2 minutes ago,Up to date
+MS210-24P,a8:46:9d:a4:12:1f,a8:46:9d:a4:12:1f,60.242.152.242,192.168.128.3,,,QLD-Bundaberg,Q4AS-KRP4-XZML,7,12.41 GB,2 minutes ago,Up to date
+MS210-24P,a8:46:9d:a4:1f:df,a8:46:9d:a4:1f:df,123.243.29.158,10.120.13.14,,,NSW-Smeaton Grange,Q4AS-R33X-9ZBS,22,67.16 GB,2 minutes ago,Up to date
+MS210-24P,a8:46:9d:a4:6b:bf,a8:46:9d:a4:6b:bf,27.33.218.66,192.168.128.2,, recently-added ,NSW-Wollongong,Q4AS-R2QZ-TA8E,16,50.36 GB,2 minutes ago,Up to date
+MS210-24P,a8:46:9d:a4:77:9f,a8:46:9d:a4:77:9f,60.240.251.42,192.168.128.2,,,SA-Mt Gambier,Q4AS-T9VD-Z3J9,6,6.88 GB,2 minutes ago,Up to date
+MS210-24P,a8:46:9d:a4:93:5f,a8:46:9d:a4:93:5f,60.240.175.102,10.110.97.10,,,NSW-Newcastle,Q4AS-L68C-AX6Y,67,168.32 GB,2 minutes ago,Up to date
+MS210-24P,ac:17:c8:29:8b:20,ac:17:c8:29:8b:20,14.201.208.30,192.168.128.2,,,TAS-Bellerieve,Q2SX-F942-LKV2,9,23.59 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:c1:5f,ac:17:c8:65:c1:5f,14.201.212.242,10.120.2.6,,,NSW-Albury,Q2CX-3MA5-HCET,8,25.50 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:c1:80,ac:17:c8:65:c1:80,123.243.29.158,10.120.7.6,, recently-added ,NSW-Orange,Q2CX-3MTE-A8RC,11,52.44 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:c8:c3,ac:17:c8:65:c8:c3,14.201.212.242,10.120.6.2,, recently-added ,NSW-Dubbo,Q2CX-4GV8-EG5E,15,42.37 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:d1:d4,ac:17:c8:65:d1:d4,14.201.212.242,10.120.5.2,,,NSW-Coffs Harbour,Q2CX-5DAL-8Y3J,7,17.77 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:d2:42,ac:17:c8:65:d2:42,110.174.32.182,192.168.128.4,, recently-added ,NSW-Wyoming,Q2CX-5ES6-HNPP,44,30.36 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:d4:3c,ac:17:c8:65:d4:3c,60.242.152.234,192.168.128.2,,,NSW-Sylvania,Q2CX-5MHZ-NYNR,9,23.44 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:d4:e1,ac:17:c8:65:d4:e1,61.68.105.238,192.168.128.7,,,VIC-Maffra,Q2CX-5PQ4-VHET,0,None,19 months ago,Not up to date
+MS120-8FP,ac:17:c8:65:db:a0,ac:17:c8:65:db:a0,60.242.152.238,192.168.128.7,, recently-added ,QLD-Rockhampton,Q2CX-6DNA-ETPK,7,11.44 GB,3.5 hours ago,Up to date
+MS120-8FP,ac:17:c8:65:db:c1,ac:17:c8:65:db:c1,14.202.42.206,192.168.128.2,,,QLD-Townsville,Q2CX-6E33-SSWC,11,20.30 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:dd:4d,ac:17:c8:65:dd:4d,14.202.42.210,192.168.128.2,,,QLD-Bungalow,Q2CX-6KW4-BJX4,9,18.64 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:de:6b,ac:17:c8:65:de:6b,14.203.195.178,192.168.128.2,, recently-added ,QLD-MARYBOROUGH,Q2CX-6PQX-MJRY,6,7.69 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:de:fa,ac:17:c8:65:de:fa,1.132.107.157,192.168.128.3,, recently-added ,QLD-IPSwich-Mobile1,Q2CX-6RT4-3CGF,0,None,41 days ago,Up to date
+MS120-8FP,ac:17:c8:65:e3:3b,ac:17:c8:65:e3:3b,14.201.120.198,192.168.128.5,,,VIC-Ballarat,Q2CX-77YE-UAKB,5,49.56 GB,2 minutes ago,Up to date
+MS120-8FP,ac:17:c8:65:e4:01,ac:17:c8:65:e4:01,60.240.251.50,192.168.128.4,,,VIC-Drouin,Q2CX-7AM7-FH86,9,14.86 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:cf:dd:53,ac:17:c8:cf:dd:53,120.151.236.153,120.151.236.153,,,NSW-LLD-East Gosford,Q2FY-BN6P-BLBK,15,5.66 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:cf:e3:53,ac:17:c8:cf:e3:53,101.187.252.144,101.187.252.144,,,NSW-LLD-Ballina,Q2FY-UXS6-YLJH,10,7.36 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:cf:e3:77,ac:17:c8:cf:e3:77,203.87.6.162,203.87.6.162,,,VIC Mildura,Q2FY-UY2P-MGDD,7,10.13 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:cf:ec:8f,ac:17:c8:cf:ec:8f,60.242.246.10,60.242.246.10,, recently-added ,QLD-Brisbane-AnnSt,Q2FY-VNZV-ALYW,17,32.68 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:cf:ef:05,ac:17:c8:cf:ef:05,144.139.1.221,144.139.1.221,,,NSW-LLD-Toronto,Q2FY-VVRV-NRCA,17,18.62 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:d0:04:23,ac:17:c8:d0:04:23,60.241.125.142,60.241.125.142,, recently-added ,VIC-LLD-Geelong,Q2FY-XLZE-XPUP,43,102.16 GB,2 minutes ago,Up to date
+MX67,ac:17:c8:d0:17:73,ac:17:c8:d0:17:73,14.200.94.30,14.200.94.30,, recently-added ,NSW-Lismore,Q2FY-Z4Y4-UU7K,21,56.81 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c0:af:58,bc:33:40:c0:af:58,60.242.136.70,192.168.128.2,,,VIC - Morwell,Q4CB-EPHU-VJAV,8,7.19 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c0:b1:47,bc:33:40:c0:b1:47,203.87.6.162,192.168.128.3,,,VIC Mildura,Q4CB-P4QP-B323,6,9.89 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c0:bc:47,bc:33:40:c0:bc:47,101.187.252.144,192.168.128.2,,,NSW-LLD-Ballina,Q4CB-VLLU-2AWA,9,7.19 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c0:cf:3a,bc:33:40:c0:cf:3a,144.139.1.221,192.168.128.3,,,NSW-LLD-Toronto,Q4CB-UFDA-RF3X,16,18.54 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:05:a0,bc:33:40:c1:05:a0,101.178.218.133,192.168.128.2,,,NSW-LLD-Tamworth No Use,Q4CB-NC5S-C9BX,0,None,13 months ago,Not up to date
+MS130-8P,bc:33:40:c1:0a:d3,bc:33:40:c1:0a:d3,101.187.15.218,192.168.128.2,,,VIC-LLD-Belmont,Q4CB-RAGC-VGSL,9,5.72 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:0d:88,bc:33:40:c1:0d:88,110.142.87.91,192.168.128.2,,,NSW-LLD-Armidale,Q4CB-J367-R2JY,14,13.36 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:0d:f6,bc:33:40:c1:0d:f6,165.228.184.115,192.168.128.2,,,VIC-LLD-Portland,Q4CB-RQ4D-QBH9,7,5.95 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:17:33,bc:33:40:c1:17:33,110.174.32.182,192.168.128.6,,,NSW-Wyoming,Q4CB-LF62-VT2B,39,46.54 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:1b:f8,bc:33:40:c1:1b:f8,203.45.75.235,192.168.15.5,,,VIC-LLD-Warrnambool Shop,Q4CB-QP5D-SGNU,0,None,6 months ago,Not up to date
+MS130-8P,bc:33:40:c1:1f:52,bc:33:40:c1:1f:52,165.228.16.224,192.168.128.2,,,VIC-LLD-Warrnambool Warehouse,Q4CB-ECB2-V9WC,10,2.77 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:28:4d,bc:33:40:c1:28:4d,165.228.34.134,192.168.128.3,,,VIC-LLD-Newcomb,Q4CB-LM9X-FRNW,12,4.23 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:38:80,bc:33:40:c1:38:80,14.200.94.30,10.110.99.28,, recently-added ,NSW-Lismore,Q4CB-VG8R-AUPW,1,74.3 MB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:39:d5,bc:33:40:c1:39:d5,110.142.97.133,192.168.128.2,,,VIC-LLD-Camperdown,Q4CB-PAGZ-B6GZ,10,4.92 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:3d:a8,bc:33:40:c1:3d:a8,165.228.139.46,192.168.128.3,,,VIC-LLD-Breakwater,Q4CB-JD3F-2365,24,20.35 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:45:d2,bc:33:40:c1:45:d2,110.142.110.63,192.168.128.3,,,VIC-LLD-Drysdale,Q4CB-NR6X-6HRC,15,5.18 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:51:a3,bc:33:40:c1:51:a3,110.143.109.135,192.168.128.2,, recently-added ,VIC-LLD-Port Fairy,Q4CB-RBNT-K76B,11,12.02 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:53:19,bc:33:40:c1:53:19,120.151.195.94,192.168.128.2,,,VIC-LLD-Colac,Q4CB-N7D4-SHX2,15,7.35 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:53:2f,bc:33:40:c1:53:2f,120.151.226.68,192.168.128.2,,,VIC-LLD-Grovedale,Q4CB-HHP5-3JLK,15,6.80 GB,2 minutes ago,Up to date
+MS130-8P,bc:33:40:c1:53:3a,bc:33:40:c1:53:3a,110.142.35.156,192.168.128.2,,,VIC-LLD-Moonee Ponds,Q4CB-F75Z-A774,10,6.20 GB,2 minutes ago,Up to date
+MS130-24P,bc:33:40:c1:c8:d2,bc:33:40:c1:c8:d2,14.201.212.242,10.120.1.21,, recently-added ,ACT-CanberraTemp,Q4CF-TSEQ-C9XL,25,52.92 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:94:4a:ba,e4:55:a8:94:4a:ba,60.240.51.190,192.168.200.22,,,NSW-Sydney National Office Level 12,Q3AJ-SKMB-C2NJ,99,50.49 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:94:4c:a9,e4:55:a8:94:4c:a9,60.240.51.190,192.168.200.24,,,NSW-Sydney National Office Level 12,Q3AJ-4LEK-FPNS,115,37.48 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:94:4c:d0,e4:55:a8:94:4c:d0,60.240.51.190,192.168.200.19,,,NSW-Sydney National Office Level 12,Q3AJ-PT8Z-DVDR,100,40.83 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:94:4c:dc,e4:55:a8:94:4c:dc,60.240.51.190,192.168.200.18,,,NSW-Sydney National Office Level 12,Q3AJ-PA8U-RE95,118,56.92 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:2e,e4:55:a8:ad:91:2e,203.45.75.235,192.168.128.2,,,VIC-LLD-Warrnambool Shop,Q3KA-2HL9-S8BJ,0,None,6 months ago,Not up to date
+MR36,e4:55:a8:ad:91:46,e4:55:a8:ad:91:46,120.151.226.68,192.168.128.3,,,VIC-LLD-Grovedale,Q3KA-6DJ8-LEKU,11,5.01 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:49,e4:55:a8:ad:91:49,101.178.218.133,192.168.128.3,,,NSW-LLD-Tamworth No Use,Q3KA-YQ9H-CSRR,0,None,13 months ago,Not up to date
+MR36,e4:55:a8:ad:91:4c,e4:55:a8:ad:91:4c,165.228.184.115,192.168.128.3,,,VIC-LLD-Portland,Q3KA-5UHK-XJZ7,5,5.56 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:50,e4:55:a8:ad:91:50,165.228.139.46,192.168.128.4,,,VIC-LLD-Breakwater,Q3KA-9C2Z-G9PK,14,8.18 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:51,e4:55:a8:ad:91:51,110.174.32.182,192.168.128.8,,,NSW-Wyoming,Q3KA-XNZE-W8UU,16,17.93 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:5c,e4:55:a8:ad:91:5c,,,,,TAS-Bellerieve,Q3KA-WV97-4PSX,0,None,never,Not up to date
+MR36,e4:55:a8:ad:91:78,e4:55:a8:ad:91:78,165.228.34.134,192.168.128.4,,,VIC-LLD-Newcomb,Q3KA-26F5-LVKJ,9,1.12 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:7e,e4:55:a8:ad:91:7e,110.142.97.133,192.168.128.3,,,VIC-LLD-Camperdown,Q3KA-CKSD-FH72,6,2.41 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:7f,e4:55:a8:ad:91:7f,110.143.109.135,192.168.128.3,, recently-added ,VIC-LLD-Port Fairy,Q3KA-TB44-FLDJ,8,6.81 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:82,e4:55:a8:ad:91:82,165.228.16.224,192.168.128.3,,,VIC-LLD-Warrnambool Warehouse,Q3KA-6JWH-9Z3V,7,685.7 MB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:87,e4:55:a8:ad:91:87,101.187.15.218,192.168.128.3,,,VIC-LLD-Belmont,Q3KA-JESW-VTDE,6,3.81 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:8d,e4:55:a8:ad:91:8d,110.142.87.91,192.168.128.3,,,NSW-LLD-Armidale,Q3KA-88HW-N7UV,10,12.85 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:a4,e4:55:a8:ad:91:a4,110.142.110.63,192.168.128.4,,,VIC-LLD-Drysdale,Q3KA-7SMW-6GCV,13,4.77 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:ae,e4:55:a8:ad:91:ae,120.151.195.94,192.168.128.3,,,VIC-LLD-Colac,Q3KA-8URL-DM8A,13,7.01 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:91:c2,e4:55:a8:ad:91:c2,165.228.139.46,192.168.128.2,,,VIC-LLD-Breakwater,Q3KA-H5BC-9N2D,12,6.99 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:a6:c3,e4:55:a8:ad:a6:c3,14.200.133.78,10.110.90.5,,,NSW-Sydney National Office Level 9,Q3KA-GGF6-5UEE,67,15.76 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:a6:f7,e4:55:a8:ad:a6:f7,14.200.133.78,10.110.90.4,,,NSW-Sydney National Office Level 9,Q3KA-7FVR-KRYA,55,18.00 GB,2 minutes ago,Up to date
+MR36,e4:55:a8:ad:a7:e4,e4:55:a8:ad:a7:e4,110.174.32.182,192.168.128.7,,,NSW-Wyoming,Q3KA-3NHA-U58E,4,3.69 GB,2 minutes ago,Up to date
+"MX67C-WW","Adelaide SA","2c:3f:0b:ca:93:c6","27.33.91.218","","","","S36-SA-FRANKLIN STREET-ADELAIDE ","Q2JY-N9JZ-BHJK","15","49.69 GB","43 seconds ago","Up to date"
+"MX67C-WW","Aitkenvale QLD","2c:3f:0b:ca:70:09","14.202.42.206","","","","S19-QLD-ROSS RIVER ROAD-AITKENVALE ","Q2JY-D8TX-KVUY","11","12.73 GB","45 seconds ago","Up to date"
+"MX67C-WW","Albury NSW","2c:3f:0b:ca:5b:e9","60.240.251.58","","","","S2-NSW -YOUNG STREET-ALBURY","Q2JY-8C9X-YL4M","8","15.99 GB","70 seconds ago","Up to date"
+"MX67C-WW","Armidale NSW","a8:46:9d:7a:49:f0","27.32.102.58","",""," 900909442 ","S45-NSW-BEARDY STREET- ARMIDALE","Q2JY-LTUL-2RZU","3","312.2 MB","51 seconds ago","Up to date"
+"MX67C-WW","Balgowlah NSW","2c:3f:0b:ca:5d:47","110.174.32.202","","","","S3-NSW - SYDNEY ROAD -BALGOWLAH ","Q2JY-8MYJ-TNWD","13","59.00 GB","52 seconds ago","Up to date"
+"MX67C-WW","Bathurst NSW","2c:3f:0b:ca:5d:cc","60.240.251.90","","","","S4-NSW - HOWICK STREET- BATHURST ","Q2JY-8RQL-K93F","9","13.21 GB","60 seconds ago","Up to date"
+"MX67C-WW","Bellerive TAS","2c:3f:0b:ca:94:de","14.201.208.30","","","","S39-TAS-CAMBRIDGE ROAD-BELLERIVE ","Q2JY-NNKH-2R7H","9","13.07 GB","75 seconds ago","Up to date"
+"MX67C-WW","Bendigo VIC","2c:3f:0b:ca:7f:d7","125.254.17.46","","","","S30-VIC-HARGREAVES STREET-BENDIGO","Q2JY-HC87-BLBG","13","10.13 GB","82 seconds ago","Up to date"
+"MX67C-WW","Berserker QLD","2c:3f:0b:ca:7c:34","60.242.152.238","",""," recently-added ","S28-QLD-MUSGRAVE STREET-BERSERKER","Q2JY-GEHL-RCNT","7","6.84 GB","57 seconds ago","Up to date"
+"MX67C-WW","Bondi Junction NSW","a8:46:9d:6b:e3:7d","182.239.245.166","",""," 900885865 ","S42-NSW-OXFORD STREET BONDI JUNCTION ","Q2JY-FYDS-AAFR","16","39.43 GB","47 seconds ago","Up to date"
+"MX67C-WW","Bungalow QLD","2c:3f:0b:ca:76:df","14.202.42.210","","","","S22-QLD-AUMULLER STREET-BUNGALOW ","Q2JY-EYSK-R6MK","9","11.33 GB","51 seconds ago","Up to date"
+"MX67C-WW","Canberra ACT","2c:3f:0b:ca:59:50","193.119.49.116","","","","S1-ACT-NORTHBOURNE AVENUE-CANBERRA","Q2JY-7ULZ-KFXL","26","55.95 GB","51 seconds ago","Up to date"
+"MX67C-WW","Coffs Harbour NSW","2c:3f:0b:ca:5d:da","14.200.97.62","","","","S5-NSW -WEST HIGH STREET- COFFS HARBOUR ","Q2JY-8S7K-BZKL","7","11.39 GB","64 seconds ago","Up to date"
+"MX67C-WW","Drouin VIC","2c:3f:0b:ca:8b:61","60.240.251.50","","","","S31-VIC-PRINCES WAY-DROUIN ","Q2JY-L5PV-6HCS","9","9.61 GB","78 seconds ago","Up to date"
+"MX67C-WW","Dubbo NSW","2c:3f:0b:ca:60:49","110.175.18.102","","","","S6-NSW-BRISBANE STREET-DUBBO  ","Q2JY-9DCV-9YDB","15","27.03 GB","70 seconds ago","Up to date"
+"MX67C-WW","Gordon NSW","2c:3f:0b:ca:61:61","110.174.32.214","","","","S8-NSW-PARK AVENUE-GORDON ","Q2JY-9MP8-AXSH","19","112.96 GB","76 seconds ago","Up to date"
+"MX250","H1-Global SW NSW","f8:9e:28:3f:b1:2d","203.219.243.186","","","","H1-GLOBAL SWITCH","Q2SW-GS6F-ZENC","2","244.96 GB","59 seconds ago","Up to date"
+"MX250","H2-Next DC VIC","f8:9e:28:3f:98:75","203.219.243.219","","","","H2-NEXT DC M1","Q2SW-X8FF-RKNY","2","105.28 GB","63 seconds ago","Up to date"
+"MX67C-WW","Maroochydore QLD","2c:3f:0b:ca:7a:4a","60.240.251.22","","","","S26-QLD-DALTON DRIVE-MAROOCHYDORE","Q2JY-FVF9-PCRT","17","23.08 GB","82 seconds ago","Up to date"
+"MX67C-WW","Maryborough QLD","2c:3f:0b:ca:7a:eb","14.203.195.178","","","","S27-QLD-ALICE STREET-MARYBOROUGH ","Q2JY-G38T-9QTS","6","4.50 GB","56 seconds ago","Up to date"
+"MX67C-WW","Millbank QLD","2c:3f:0b:ca:72:cc","60.242.152.242","","","","S21-QLD-RIVER TERRACE-MILLBANK ","Q2JY-E3J7-Z9G2","7","7.08 GB","72 seconds ago","Up to date"
+"MX67C-WW","Morwell VIC","2c:3f:0b:ca:93:33","60.242.136.70","","","","S34-VIC-FLEMING-STREET-MORWELL","Q2JY-N5M5-U6W9","9","7.65 GB","68 seconds ago","Up to date"
+"MX67C-WW","Mount Gambier SA","2c:3f:0b:ca:94:52","60.240.251.42","","","","S37-SA-MARK STREET-MOUNT GAMBIER ","Q2JY-NG7V-ARTP","6","4.06 GB","58 seconds ago","Up to date"
+"MX67C-WW","Mount Pleasant VIC","2c:3f:0b:ca:7f:ad","14.201.120.198","","","","S29-VIC-MORTON STREET-MOUNT PLEASANT ","Q2JY-HB7W-RV2Q","5","29.88 GB","66 seconds ago","Up to date"
+"MX67C-WW","Mundamia NSW","2c:3f:0b:ca:6a:4b","14.200.19.38","","","","S17-NSW-GEORGE EVANS ROAD - MUNDAMIA","Q2JY-BSP6-8YFW","14","18.40 GB","47 seconds ago","Up to date"
+"MX67C-WW","Orange NSW","2c:3f:0b:ca:60:f8","60.242.152.230","","","","S7-NSW -DORA STREET- ORANGE ","Q2JY-9J86-PZLW","11","32.90 GB","72 seconds ago","Up to date"
+"MX67C-WW","Parramatta NSW","2c:3f:0b:ca:63:05","220.244.182.82","","","","S11-NSW-MARSDEN STREET-PARRAMATTA ","Q2JY-A47C-TGRP","23","37.69 GB","81 seconds ago","Up to date"
+"MX67C-WW","Pitt St SYD NSW","2c:3f:0b:ca:67:d5","60.240.251.46","","","","S14-NSW-PITT STREET-SYDNEY","Q2JY-B6VE-CVX4","22","76.66 GB","64 seconds ago","Up to date"
+"MX67C-WW","Port Macquarie NSW","2c:3f:0b:ca:63:36","60.240.251.74","","","","S12-NSW-SHERWOOD ROAD-PORT MACQUARIE ","Q2JY-A53H-2H4Q","6","25.89 GB","72 seconds ago","Up to date"
+"MX67C-WW","Prahran VIC","2c:3f:0b:ca:8e:1d","14.201.213.222","","","","S33-VIC-CHAPEL STREET-PRAHRAN ","Q2JY-LW2J-BYCN","12","40.49 GB","47 seconds ago","Up to date"
+"MX250","Richmond DC","bc:db:09:b2:3b:c9","27.33.7.2","",""," 900893429 ","S44-VIC-Burnley Street-Richmond","Q2SW-AXH5-BSZ6","1","25 KB","69 seconds ago","Up to date"
+"MX67C-WW","Smeaton Grange NSW","2c:3f:0b:ca:65:d6","110.174.32.226","","","","S13-NSW-MCPHERSON ROAD-SMEATON GRANGE ","Q2JY-ARNY-LZD9","22","37.53 GB","52 seconds ago","Up to date"
+"MX67C-WW","Subiaco WA","2c:3f:0b:ca:b7:c2","124.148.246.178","","","","S41-WA-Subiaco Square Road-Subiaco","Q2JY-7SGT-6H5M","35","102.66 GB","65 seconds ago","Up to date"
+"MX67C-WW","Sylvania NSW","2c:3f:0b:ca:69:e9","60.242.152.234","","","","S15-NSW-PORT HACKING ROAD-SYLVANIA","Q2JY-BPPL-VF8M","9","14.08 GB","48 seconds ago","Up to date"
+"MX67C-WW","University Victoria VIC","2c:3f:0b:b3:10:7a","27.32.231.106","",""," 900907841 ","S48-VIC-Andrea Street-St Albans","Q2JY-BCGS-DZ4A","17","33.77 GB","58 seconds ago","Up to date"
+"MX67C-WW","Wollongong NSW","2c:3f:0b:ca:69:f7","27.33.218.66","","","","S16-NSW-COURT LANE-WOLLONGONG","Q2JY-BQK2-PJH5","16","28.33 GB","51 seconds ago","Up to date"
+"MX67C-WW","Wyoming NSW","2c:3f:0b:ca:6c:12","110.174.32.182","","","","S18-NSW-CARY STREET-WYOMING","Q2JY-C9JS-J3EF","41","53.77 GB","60 seconds ago","Up to date"
+"MX67C-WW","bc:db:09:c0:c9:49","bc:db:09:c0:c9:49","14.202.42.202","","","","S25-QLD-SHAKESPEARE STREET-MACKAY ","Q2JY-T8AP-73G6","5","3.99 GB","66 seconds ago","Up to date"
+"MX67C-WW","cc:9c:3e:44:35:35","cc:9c:3e:44:35:35","14.203.218.174","",""," 900913509 ","S47-VIC-Victoria Crescent-Abbotsford","Q2JY-U7BB-E2C2","21","56.96 GB","88 seconds ago","Up to date"

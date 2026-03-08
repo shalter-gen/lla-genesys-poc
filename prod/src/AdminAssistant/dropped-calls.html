@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropped Calls</title>
+    <link rel="stylesheet" href="dropped-calls.css">
+    <link rel="stylesheet" href="../Common/admin-nav.css">
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+
+<body>
+    <div id="loadingMessage">Loading...</div>
+    <div id="content">
+        <div class="header-container">
+            <div class="logo-title-group">
+                <div id="hamburgerMenu" class="hamburger-icon">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </div>
+                <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo"
+                    id="adminLogo">
+                <h1>Dropped Calls</h1>
+            </div>
+        </div>
+
+        <div class="timeframe-container">
+            <div class="timeframe-select">
+                <label for="timeframe">Select Timeframe:</label>
+                <select id="timeframe">
+                    <option value="current-day">Current Day</option>
+                    <option value="24hours">Past 24 Hours</option>
+                    <option value="72hours">Past 72 Hours</option>
+                    <option value="7days">Past 7 Days</option>
+                </select>
+            </div>
+            <div class="from-now-container">
+                <input type="checkbox" id="fromTodayCheckbox" checked>
+                <label for="fromTodayCheckbox">From today</label>
+            </div>
+            <div class="date-picker-container">
+                <label for="endDatePicker">End Date:</label>
+                <input type="date" id="endDatePicker" disabled>
+            </div>
+            <button id="refreshButton" class="download-button">Refresh Data</button>
+            <button id="downloadCSV" class="download-button">Download CSV</button>
+            <div class="upload-container">
+                <label for="signInUpload" class="download-button">Upload Sign-In CSV</label>
+                <input type="file" id="signInUpload" accept=".csv" style="display: none;">
+                <span id="uploadStatus"></span>
+            </div>
+        </div>
+
+        <input type="text" id="searchBox" placeholder="Search dropped calls...">
+
+        <h2>Summary Statistics</h2>
+        <table id="summaryTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody id="summaryBody">
+                <!-- Summary stats will be populated dynamically -->
+            </tbody>
+        </table>
+
+        <h2>Dropped Calls Details</h2>
+        <table id="droppedCallsTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Conversation ID</th>
+                    <th>Queue Name</th>
+                    <th>Call Type</th>
+                    <th>Recording</th>
+                    <th>Call Details</th>
+                    <th>User Name</th>
+                    <th>Answer Time</th>
+                    <th>Disconnect Time</th>
+                    <th>Actor Type</th>
+                    <th>Error Info</th>
+                    <th class="device-column hidden">Device Name</th>
+                    <th class="device-column hidden">Managed/Unmanaged</th>
+                    <th class="device-column hidden">IP Address</th>
+                    <th class="device-column hidden">Model [OS]</th>
+                    <th class="device-column hidden">Centre</th>
+                    <th class="device-column hidden">Zscaler</th>
+                </tr>
+            </thead>
+            <tbody id="droppedCallsBody">
+                <!-- Table content will be populated dynamically -->
+            </tbody>
+        </table>
+        <script>
+            const CLIENT_ID = '684c6d2c-285b-4597-a00e-3c71268bf2ce';
+            const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+        </script>
+    </div>
+    <script src="../Common/authentication-pkce.js"></script>
+
+    <script src="../Common/token.js"></script>
+    <script src="../Common/admin-nav.js"></script>
+    <script src="dropped-calls.js"></script>
+</body>
+
+</html>

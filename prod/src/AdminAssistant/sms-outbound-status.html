@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Outbound Status</title>
+    <link rel="stylesheet" href="sms-outbound-status.css">
+    <link rel="stylesheet" href="../Common/admin-nav.css">
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+
+<body>
+    <div id="loadingMessage">Loading...</div>
+    <div id="content">
+        <div class="header-container">
+            <div class="logo-title-group">
+                <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo"
+                    id="adminLogo">
+                <div id="hamburgerMenu" class="hamburger-icon">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </div>
+
+                <h1>SMS Outbound Status</h1>
+            </div>
+        </div>
+
+        <div class="timeframe-container">
+            <div class="timeframe-select">
+                <label for="timeframe">Select Timeframe:</label>
+                <select id="timeframe">
+                    <option value="3hours">Past 3 Hours</option>
+                    <option value="6hours">Past 6 Hours</option>
+                    <option value="12hours">Past 12 Hours</option>
+                    <option value="24hours">Past 24 Hours</option>
+                    <option value="48hours">Past 48 Hours</option>
+                    <option value="72hours">Past 72 Hours</option>
+                    <option value="7days">Past 7 Days</option>
+                    <option value="30days">Past 30 Days</option>
+                </select>
+            </div>
+            <div class="from-now-container">
+                <input type="checkbox" id="fromNowCheckbox" checked>
+                <label for="fromNowCheckbox">End date is now</label>
+            </div>
+            <div class="date-picker-container">
+                <label for="endDatePicker">End Date:</label>
+                <input type="date" id="endDatePicker" disabled>
+                <button id="downloadFailedIds" class="download-button">Download Not-Delivered IDs</button>
+            </div>
+        </div>
+    </div>
+
+    <h2>Daily SMS Summary</h2>
+    <table id="terminatedChatsTable" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Total Conversations</th>
+            <th class="sortable">Total Inbound Messages</th>
+            <th>Total Outbound Messages</th>
+            <th>Messages Sent-not-acked</th>
+            <th>Messages Failed</th>
+            <th>Messages Delivered</th>
+            <th>Sent-not-acked Ratio</th>
+            <th>Failed Ratio</th>
+            <th>Delivered Ratio</th>
+          </tr>
+        </thead>
+        <tbody id="smsSummaryBody">
+          <!-- Table content will be populated dynamically -->
+        </tbody>
+      </table>
+      
+    <h2>SMS Details</h2>
+    <table id="unattendedChatsTable" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Chat Start Date</th>
+            <th>Conversation ID</th>
+            <th>External Tag</th>
+            <th>Interacting User(s)</th>
+            <th>Duration</th>
+            <th class="sortable">Inbound</th>
+            <th>Messages Sent-not-acked</th>
+            <th>Messages Failed</th>
+            <th>Messages Delivered</th>
+            <th>Sent-not-acked Ratio</th>
+            <th>Failed Ratio</th>
+            <th>Delivered Ratio</th>
+            <th>Transcript</th>
+          </tr>
+        </thead>
+        <tbody id="smsDetailsBody">
+          <!-- Table content will be populated dynamically -->
+        </tbody>
+      </table>
+          </div>
+    <script>
+        const CLIENT_ID = '684c6d2c-285b-4597-a00e-3c71268bf2ce';
+        const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+    </script>
+    <script src="../Common/authentication-pkce.js"></script>
+    <script src="../Common/token.js"></script>
+    <script src="sms-outbound-status.js"></script>
+    <script src="../Common/admin-nav.js"></script>
+</body>
+
+</html>

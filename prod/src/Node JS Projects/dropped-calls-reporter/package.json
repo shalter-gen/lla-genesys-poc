@@ -1,0 +1,25 @@
+{
+  "name": "dropped-calls-reporter",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "daemon": "node app.js --daemon",
+    "daemon-test": "node app.js --daemon --run-now",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.7"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Genesys Cloud Dropped Calls Reporter with Azure Sign-In Integration",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

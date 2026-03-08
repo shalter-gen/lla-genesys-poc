@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesys Cloud Data Extractor</title>
+    <link rel="stylesheet" href="data-extractor.css">
+    <link rel="stylesheet" href="../Common/admin-nav.css">
+    <script src="https://sdk-cdn.mypurecloud.com/javascript/latest/purecloud-platform-client-v2.min.js"></script>
+</head>
+<body>
+    <div class="header-container">
+        <div class="logo-title-group">
+
+                <div id="hamburgerMenu" class="hamburger-icon">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </div>
+                <img src="../Common/LIFE0020-MasterLogo-White-RGB.png" alt="Lifeline" class="header-logo" id="adminLogo">
+
+            <h1>Genesys Cloud Data Extractor</h1>
+        </div>
+        <div class="controls-container">
+            <button id="extractButton" class="action-button">Extract Data</button>
+            <button id="downloadButton" class="action-button" disabled>Download Data</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="selection-panel">
+            <h3>Select Objects to Extract:</h3>
+            <div class="checkbox-grid">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="users" value="users">
+                    <span class="checkmark"></span>
+                    Users
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="groups" value="groups">
+                    <span class="checkmark"></span>
+                    Groups
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="queues" value="queues">
+                    <span class="checkmark"></span>
+                    Queues
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="workteams" value="workteams">
+                    <span class="checkmark"></span>
+                    Work Teams
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="divisions" value="divisions">
+                    <span class="checkmark"></span>
+                    Divisions
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="roles" value="roles">
+                    <span class="checkmark"></span>
+                    Roles
+                </label>
+            </div>
+            
+            <div class="user-options" id="userOptions" style="display: none;">
+                <h4>User Options:</h4>
+                <label class="checkbox-item">
+                    <input type="radio" name="userState" value="active" checked>
+                    Active Users
+                </label>
+                <label class="checkbox-item">
+                    <input type="radio" name="userState" value="inactive">
+                    Inactive Users
+                </label>
+                <label class="checkbox-item">
+                    <input type="radio" name="userState" value="deleted">
+                    Deleted Users
+                </label>
+            </div>
+        </div>
+
+        <div class="progress-panel">
+            <div id="progressContainer" style="display: none;">
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-fill"></div>
+                </div>
+                <div id="progressText">Preparing extraction...</div>
+                <div id="statusLog" class="status-log"></div>
+            </div>
+        </div>
+
+        <div class="results-panel">
+            <div id="resultsContainer" style="display: none;">
+                <h3>Extraction Results:</h3>
+                <div id="resultsSummary"></div>
+            </div>
+        </div>
+    </div>
+  <script>
+    const TOKEN_KEY_NAME = 'LLA_Admin_Assist_Access_Token';
+  </script>
+  <script src="../Common/token.js"></script>
+  <script src="data-extractor.js"></script>
+  <script src="../Common/admin-nav.js"></script>
+</body>
+</html>
